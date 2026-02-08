@@ -33,6 +33,20 @@ lib/
 └── routing/           # GoRouter config
 ```
 
+## Git Branching Strategy
+- **GitHub Flow**: `main` is always deployable
+- Branch from `main`, work, PR, merge back to `main`, delete branch
+- Branch naming: `<type>/<short-description>` (e.g., `feat/google-auth`, `fix/task-crash`)
+- Never commit directly to `main` — always use feature branches + PR
+
+## Git Commit Convention
+- Follow [Conventional Commits](https://www.conventionalcommits.org/)
+- Format: `<type>(<scope>): <description>`
+- Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `style`, `perf`, `ci`, `build`
+- Subject: English, imperative mood, max 50 chars, no period
+- Body (optional): explain **why**, wrap at 72 chars
+- Example: `feat(auth): add Google OAuth login`
+
 ## Conventions
 - Use Freezed for all domain entities
 - Use Riverpod annotation style (@riverpod)
