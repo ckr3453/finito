@@ -83,4 +83,4 @@ flutter run
 
 ## 라이선스
 
-개인 사용 목적의 프로젝트입니다.
+MIT 라이선스. 자세한 내용은 [LICENSE](LICENSE)를 참조하세요.
