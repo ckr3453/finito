@@ -119,9 +119,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text('오류가 발생했습니다: $error'),
-      ),
+      error: (error, stack) => Center(child: Text('오류가 발생했습니다: $error')),
     );
   }
 }

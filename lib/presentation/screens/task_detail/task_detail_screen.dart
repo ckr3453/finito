@@ -126,8 +126,9 @@ class TaskDetailScreen extends ConsumerWidget {
                         label: '카테고리',
                         child: Chip(
                           label: Text(cat.name),
-                          backgroundColor:
-                              Color(cat.colorValue).withValues(alpha: 0.2),
+                          backgroundColor: Color(
+                            cat.colorValue,
+                          ).withValues(alpha: 0.2),
                           visualDensity: VisualDensity.compact,
                         ),
                       ),
@@ -154,8 +155,9 @@ class TaskDetailScreen extends ConsumerWidget {
                           children: tags.map((tag) {
                             return Chip(
                               label: Text(tag.name),
-                              backgroundColor:
-                                  Color(tag.colorValue).withValues(alpha: 0.2),
+                              backgroundColor: Color(
+                                tag.colorValue,
+                              ).withValues(alpha: 0.2),
                               visualDensity: VisualDensity.compact,
                             );
                           }).toList(),
@@ -204,13 +206,12 @@ class TaskDetailScreen extends ConsumerWidget {
                 width: double.infinity,
                 child: FilledButton.icon(
                   onPressed: () => _toggleCompletion(ref, task),
-                  icon: Icon(isCompleted
-                      ? Icons.undo
-                      : Icons.check_circle),
+                  icon: Icon(isCompleted ? Icons.undo : Icons.check_circle),
                   label: Text(isCompleted ? '미완료로 변경' : '완료로 변경'),
                   style: FilledButton.styleFrom(
-                    backgroundColor:
-                        isCompleted ? Colors.grey : theme.colorScheme.primary,
+                    backgroundColor: isCompleted
+                        ? Colors.grey
+                        : theme.colorScheme.primary,
                   ),
                 ),
               ),
@@ -218,9 +219,7 @@ class TaskDetailScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(
-          child: Text('오류가 발생했습니다: $error'),
-        ),
+        error: (error, _) => Center(child: Text('오류가 발생했습니다: $error')),
       ),
     );
   }

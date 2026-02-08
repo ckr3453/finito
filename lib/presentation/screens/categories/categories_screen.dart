@@ -15,9 +15,7 @@ class CategoriesScreen extends ConsumerWidget {
     final categoriesAsync = ref.watch(categoryListProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('카테고리'),
-      ),
+      appBar: AppBar(title: const Text('카테고리')),
       body: categoriesAsync.when(
         data: (categories) {
           if (categories.isEmpty) {
@@ -51,9 +49,7 @@ class CategoriesScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('오류가 발생했습니다: $error'),
-        ),
+        error: (error, stack) => Center(child: Text('오류가 발생했습니다: $error')),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showEditorDialog(context),

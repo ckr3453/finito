@@ -211,21 +211,18 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
 
                   // Tag multi-select
                   const SizedBox(height: 8),
-                  Text(
-                    '태그',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
+                  Text('태그', style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(height: 8),
                   tagsAsync.when(
                     data: (tags) {
                       if (tags.isEmpty) {
                         return Text(
                           '태그가 없습니다',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withValues(alpha: 0.5),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.5),
                               ),
                         );
                       }
@@ -237,8 +234,9 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                           return FilterChip(
                             label: Text(tag.name),
                             selected: isSelected,
-                            selectedColor:
-                                Color(tag.colorValue).withValues(alpha: 0.3),
+                            selectedColor: Color(
+                              tag.colorValue,
+                            ).withValues(alpha: 0.3),
                             onSelected: (selected) {
                               setState(() {
                                 if (selected) {
@@ -285,8 +283,9 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
 
       if (_isEditing) {
         // Update existing task
-        final existingTask =
-            await ref.read(taskDetailProvider(widget.taskId!).future);
+        final existingTask = await ref.read(
+          taskDetailProvider(widget.taskId!).future,
+        );
         if (existingTask == null) return;
 
         final updated = existingTask.copyWith(
@@ -323,9 +322,9 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('저장 실패: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('저장 실패: $e')));
       }
     } finally {
       if (mounted) {

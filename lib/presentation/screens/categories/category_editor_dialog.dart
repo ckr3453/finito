@@ -72,10 +72,7 @@ class _CategoryEditorDialogState extends ConsumerState<CategoryEditorDialog> {
               autofocus: !_isEditing,
             ),
             const SizedBox(height: 16),
-            Text(
-              '색상',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
+            Text('색상', style: Theme.of(context).textTheme.titleSmall),
             const SizedBox(height: 8),
             ColorPickerGrid(
               selectedColor: _selectedColor,
@@ -84,10 +81,7 @@ class _CategoryEditorDialogState extends ConsumerState<CategoryEditorDialog> {
               },
             ),
             const SizedBox(height: 16),
-            Text(
-              '아이콘',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
+            Text('아이콘', style: Theme.of(context).textTheme.titleSmall),
             const SizedBox(height: 8),
             _buildIconSelector(),
           ],
@@ -98,10 +92,7 @@ class _CategoryEditorDialogState extends ConsumerState<CategoryEditorDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('취소'),
         ),
-        FilledButton(
-          onPressed: _save,
-          child: const Text('저장'),
-        ),
+        FilledButton(onPressed: _save, child: const Text('저장')),
       ],
     );
   }

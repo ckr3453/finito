@@ -11,11 +11,7 @@ class TaskListTile extends ConsumerWidget {
   final TaskEntity task;
   final CategoryEntity? category;
 
-  const TaskListTile({
-    super.key,
-    required this.task,
-    this.category,
-  });
+  const TaskListTile({super.key, required this.task, this.category});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,19 +38,13 @@ class TaskListTile extends ConsumerWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
-            context.pushNamed(
-              'taskDetail',
-              pathParameters: {'id': task.id},
-            );
+            context.pushNamed('taskDetail', pathParameters: {'id': task.id});
           },
           child: IntrinsicHeight(
             child: Row(
               children: [
                 // Priority color bar on the left
-                PriorityIndicator(
-                  priority: task.priority,
-                  width: 5,
-                ),
+                PriorityIndicator(priority: task.priority, width: 5),
                 // Checkbox
                 Checkbox(
                   value: isCompleted,
@@ -63,7 +53,10 @@ class TaskListTile extends ConsumerWidget {
                 // Content area
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 4,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -75,7 +68,9 @@ class TaskListTile extends ConsumerWidget {
                                 ? TextDecoration.lineThrough
                                 : null,
                             color: isCompleted
-                                ? theme.colorScheme.onSurface.withValues(alpha: 0.5)
+                                ? theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  )
                                 : null,
                           ),
                           maxLines: 1,
@@ -92,7 +87,9 @@ class TaskListTile extends ConsumerWidget {
                                 size: 14,
                                 color: isOverdue
                                     ? Colors.red
-                                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                    : theme.colorScheme.onSurface.withValues(
+                                        alpha: 0.5,
+                                      ),
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -100,7 +97,9 @@ class TaskListTile extends ConsumerWidget {
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: isOverdue
                                       ? Colors.red
-                                      : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                      : theme.colorScheme.onSurface.withValues(
+                                          alpha: 0.5,
+                                        ),
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -111,7 +110,9 @@ class TaskListTile extends ConsumerWidget {
                                 child: Chip(
                                   label: Text(category!.name),
                                   labelStyle: theme.textTheme.labelSmall,
-                                  backgroundColor: Color(category!.colorValue).withValues(alpha: 0.2),
+                                  backgroundColor: Color(
+                                    category!.colorValue,
+                                  ).withValues(alpha: 0.2),
                                   padding: EdgeInsets.zero,
                                   materialTapTargetSize:
                                       MaterialTapTargetSize.shrinkWrap,

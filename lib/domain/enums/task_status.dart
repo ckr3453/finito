@@ -1,5 +1,1 @@
-enum TaskStatus {
-  pending,
-  completed,
-  archived;
-}
+enum TaskStatus { pending, completed, archived }

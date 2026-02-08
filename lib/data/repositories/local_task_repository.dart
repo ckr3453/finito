@@ -87,9 +87,7 @@ class LocalTaskRepository implements TaskRepository {
           categoryId: categoryId,
           searchQuery: searchQuery,
         )
-        .map(
-          (items) => items.map((item) => _toEntity(item)).toList(),
-        );
+        .map((items) => items.map((item) => _toEntity(item)).toList());
   }
 
   @override

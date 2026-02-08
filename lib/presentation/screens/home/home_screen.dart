@@ -23,9 +23,7 @@ class HomeScreen extends ConsumerWidget {
     });
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('TODO'),
-      ),
+      appBar: AppBar(title: const Text('TODO')),
       body: Column(
         children: [
           // Filter chips
@@ -45,7 +43,9 @@ class HomeScreen extends ConsumerWidget {
                   label: '진행중',
                   selected: filter.status == TaskStatus.pending,
                   onSelected: (_) {
-                    ref.read(taskFilterProvider.notifier).setStatus(TaskStatus.pending);
+                    ref
+                        .read(taskFilterProvider.notifier)
+                        .setStatus(TaskStatus.pending);
                   },
                 ),
                 const SizedBox(width: 8),
@@ -53,7 +53,9 @@ class HomeScreen extends ConsumerWidget {
                   label: '완료',
                   selected: filter.status == TaskStatus.completed,
                   onSelected: (_) {
-                    ref.read(taskFilterProvider.notifier).setStatus(TaskStatus.completed);
+                    ref
+                        .read(taskFilterProvider.notifier)
+                        .setStatus(TaskStatus.completed);
                   },
                 ),
               ],
@@ -77,7 +79,8 @@ class HomeScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final task = tasks[index];
                     final category = categoryMap.whenData(
-                      (map) => task.categoryId != null ? map[task.categoryId] : null,
+                      (map) =>
+                          task.categoryId != null ? map[task.categoryId] : null,
                     );
                     return TaskListTile(
                       task: task,
@@ -91,7 +94,11 @@ class HomeScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
                     const SizedBox(height: 8),
                     Text('오류가 발생했습니다: $error'),
                   ],

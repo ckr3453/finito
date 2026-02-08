@@ -71,10 +71,7 @@ class AppShell extends StatelessWidget {
             selectedIcon: Icon(Icons.folder),
             label: '카테고리',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.search),
-            label: '검색',
-          ),
+          NavigationDestination(icon: Icon(Icons.search), label: '검색'),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
             selectedIcon: Icon(Icons.settings),

@@ -38,11 +38,7 @@ class ColorPickerGrid extends StatelessWidget {
                   : null,
             ),
             child: isSelected
-                ? Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 20,
-                  )
+                ? Icon(Icons.check, color: Colors.white, size: 20)
                 : null,
           ),
         );

@@ -6,15 +6,13 @@ class TaskItems extends Table {
   TextColumn get description => text().withDefault(const Constant(''))();
   IntColumn get status => integer()();
   IntColumn get priority => integer()();
-  TextColumn get categoryId =>
-      text().nullable().references(Categories, #id)();
+  TextColumn get categoryId => text().nullable().references(Categories, #id)();
   DateTimeColumn get dueDate => dateTime().nullable()();
   DateTimeColumn get completedAt => dateTime().nullable()();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
-  BoolColumn get isSynced =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -24,8 +22,7 @@ class Categories extends Table {
   TextColumn get id => text()();
   TextColumn get name => text().withLength(min: 1, max: 100)();
   IntColumn get colorValue => integer()();
-  TextColumn get iconName =>
-      text().withDefault(const Constant('folder'))();
+  TextColumn get iconName => text().withDefault(const Constant('folder'))();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();

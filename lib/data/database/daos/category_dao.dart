@@ -9,13 +9,13 @@ class CategoryDao extends DatabaseAccessor<AppDatabase>
     with _$CategoryDaoMixin {
   CategoryDao(super.db);
 
-  Future<List<Category>> getAllCategories() =>
-      (select(categories)..orderBy([(c) => OrderingTerm.asc(c.sortOrder)]))
-          .get();
+  Future<List<Category>> getAllCategories() => (select(
+    categories,
+  )..orderBy([(c) => OrderingTerm.asc(c.sortOrder)])).get();
 
-  Stream<List<Category>> watchAllCategories() =>
-      (select(categories)..orderBy([(c) => OrderingTerm.asc(c.sortOrder)]))
-          .watch();
+  Stream<List<Category>> watchAllCategories() => (select(
+    categories,
+  )..orderBy([(c) => OrderingTerm.asc(c.sortOrder)])).watch();
 
   Future<int> insertCategory(CategoriesCompanion category) =>
       into(categories).insert(category);

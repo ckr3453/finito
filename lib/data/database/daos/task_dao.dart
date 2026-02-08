@@ -18,8 +18,7 @@ class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
   }
 
   Future<TaskItem?> getTaskById(String id) {
-    return (select(taskItems)..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    return (select(taskItems)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<int> insertTask(TaskItemsCompanion task) {
@@ -38,18 +37,16 @@ class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
   Future<void> setTagsForTask(String taskId, List<String> tagIds) async {
     await (delete(taskTags)..where((t) => t.taskId.equals(taskId))).go();
     for (final tagId in tagIds) {
-      await into(taskTags).insert(TaskTagsCompanion.insert(
-        taskId: taskId,
-        tagId: tagId,
-      ));
+      await into(
+        taskTags,
+      ).insert(TaskTagsCompanion.insert(taskId: taskId, tagId: tagId));
     }
   }
 
   Future<List<Tag>> getTagsForTask(String taskId) {
     final query = select(tags).join([
       innerJoin(taskTags, taskTags.tagId.equalsExp(tags.id)),
-    ])
-      ..where(taskTags.taskId.equals(taskId));
+    ])..where(taskTags.taskId.equals(taskId));
     return query.map((row) => row.readTable(tags)).get();
   }
 
@@ -68,7 +65,8 @@ class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
     }
     if (searchQuery != null && searchQuery.isNotEmpty) {
       query.where(
-        (t) => t.title.contains(searchQuery) | t.description.contains(searchQuery),
+        (t) =>
+            t.title.contains(searchQuery) | t.description.contains(searchQuery),
       );
     }
     query.orderBy([(t) => OrderingTerm.asc(t.sortOrder)]);
@@ -81,7 +79,8 @@ class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
   }
 
   Future<void> markSynced(String id) {
-    return (update(taskItems)..where((t) => t.id.equals(id)))
-        .write(const TaskItemsCompanion(isSynced: Value(true)));
+    return (update(taskItems)..where((t) => t.id.equals(id))).write(
+      const TaskItemsCompanion(isSynced: Value(true)),
+    );
   }
 }

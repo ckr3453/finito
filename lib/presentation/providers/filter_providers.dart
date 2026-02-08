@@ -18,12 +18,15 @@ class TaskFilterNotifier extends StateNotifier<TaskFilter> {
   TaskFilterNotifier() : super(const TaskFilter());
 
   void setStatus(TaskStatus? status) => state = state.copyWith(status: status);
-  void setPriority(Priority? priority) => state = state.copyWith(priority: priority);
+  void setPriority(Priority? priority) =>
+      state = state.copyWith(priority: priority);
   void setCategoryId(String? id) => state = state.copyWith(categoryId: id);
-  void setSearchQuery(String? query) => state = state.copyWith(searchQuery: query);
+  void setSearchQuery(String? query) =>
+      state = state.copyWith(searchQuery: query);
   void clearAll() => state = const TaskFilter();
 }
 
-final taskFilterProvider = StateNotifierProvider<TaskFilterNotifier, TaskFilter>(
-  (ref) => TaskFilterNotifier(),
-);
+final taskFilterProvider =
+    StateNotifierProvider<TaskFilterNotifier, TaskFilter>(
+      (ref) => TaskFilterNotifier(),
+    );
