@@ -1,0 +1,10 @@
+pre-commit:
+  parallel: true
+  commands:
+    analyze:
+      run: flutter analyze --fatal-warnings --no-fatal-infos
+      stage_fixed: true
+    format-check:
+      run: dart format --set-exit-if-changed .
+    test:
+      run: flutter test
