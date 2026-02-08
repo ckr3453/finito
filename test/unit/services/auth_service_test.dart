@@ -42,6 +42,14 @@ void main() {
       expect(authService.authStateChanges(), emits(mockUser));
     });
 
+    test('authStateChanges emits null on sign out', () {
+      when(
+        () => mockAuth.authStateChanges(),
+      ).thenAnswer((_) => Stream.value(null));
+
+      expect(authService.authStateChanges(), emits(isNull));
+    });
+
     test('signInWithEmail delegates to FirebaseAuth', () async {
       final mockCredential = MockUserCredential();
       when(
@@ -63,6 +71,23 @@ void main() {
           password: 'password123',
         ),
       ).called(1);
+    });
+
+    test('signInWithEmail propagates FirebaseAuthException', () async {
+      when(
+        () => mockAuth.signInWithEmailAndPassword(
+          email: any(named: 'email'),
+          password: any(named: 'password'),
+        ),
+      ).thenThrow(FirebaseAuthException(code: 'wrong-password'));
+
+      expect(
+        () => authService.signInWithEmail(
+          email: 'test@example.com',
+          password: 'wrong',
+        ),
+        throwsA(isA<FirebaseAuthException>()),
+      );
     });
 
     test('signUpWithEmail delegates to FirebaseAuth', () async {
@@ -88,12 +113,35 @@ void main() {
       ).called(1);
     });
 
+    test('signUpWithEmail propagates FirebaseAuthException', () async {
+      when(
+        () => mockAuth.createUserWithEmailAndPassword(
+          email: any(named: 'email'),
+          password: any(named: 'password'),
+        ),
+      ).thenThrow(FirebaseAuthException(code: 'email-already-in-use'));
+
+      expect(
+        () => authService.signUpWithEmail(
+          email: 'existing@example.com',
+          password: 'password123',
+        ),
+        throwsA(isA<FirebaseAuthException>()),
+      );
+    });
+
     test('signOut delegates to FirebaseAuth', () async {
       when(() => mockAuth.signOut()).thenAnswer((_) async {});
 
       await authService.signOut();
 
       verify(() => mockAuth.signOut()).called(1);
+    });
+
+    test('signOut propagates exception', () async {
+      when(() => mockAuth.signOut()).thenThrow(Exception('sign out failed'));
+
+      expect(() => authService.signOut(), throwsA(isA<Exception>()));
     });
 
     test('resetPassword delegates to FirebaseAuth', () async {
@@ -106,6 +154,16 @@ void main() {
       verify(
         () => mockAuth.sendPasswordResetEmail(email: 'test@example.com'),
       ).called(1);
+    });
+    test('resetPassword propagates FirebaseAuthException', () async {
+      when(
+        () => mockAuth.sendPasswordResetEmail(email: any(named: 'email')),
+      ).thenThrow(FirebaseAuthException(code: 'user-not-found'));
+
+      expect(
+        () => authService.resetPassword(email: 'noone@example.com'),
+        throwsA(isA<FirebaseAuthException>()),
+      );
     });
   });
 }
