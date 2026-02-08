@@ -6,6 +6,8 @@ import 'package:todo_app/presentation/screens/task_detail/task_detail_screen.dar
 import 'package:todo_app/presentation/screens/categories/categories_screen.dart';
 import 'package:todo_app/presentation/screens/search/search_screen.dart';
 import 'package:todo_app/presentation/screens/settings/settings_screen.dart';
+import 'package:todo_app/presentation/screens/auth/login_screen.dart';
+import 'package:todo_app/presentation/screens/auth/register_screen.dart';
 import 'app_shell.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -40,6 +42,19 @@ final appRouter = GoRouter(
           builder: (context, state) => const SettingsScreen(),
         ),
       ],
+    ),
+    // Auth routes (outside shell - no bottom nav)
+    GoRoute(
+      path: '/login',
+      name: 'login',
+      parentNavigatorKey: rootNavigatorKey,
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/register',
+      name: 'register',
+      parentNavigatorKey: rootNavigatorKey,
+      builder: (context, state) => const RegisterScreen(),
     ),
     // Full-screen routes (outside shell)
     GoRoute(

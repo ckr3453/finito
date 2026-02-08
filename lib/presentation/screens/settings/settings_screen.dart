@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:todo_app/presentation/providers/auth_provider.dart';
 import 'package:todo_app/presentation/providers/theme_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -64,15 +66,59 @@ class SettingsScreen extends ConsumerWidget {
 
           const Divider(height: 32),
 
-          // Account section (placeholder)
+          // Account section
           _SectionHeader(title: '계정'),
-          const ListTile(
-            leading: Icon(Icons.person),
-            title: Text('계정 관리'),
-            subtitle: Text('준비 중입니다'),
-            enabled: false,
-          ),
+          _AccountSection(),
         ],
+      ),
+    );
+  }
+}
+
+class _AccountSection extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(currentUserProvider);
+
+    if (user == null) {
+      return ListTile(
+        leading: const Icon(Icons.login),
+        title: const Text('로그인'),
+        subtitle: const Text('로그인하여 데이터를 동기화하세요'),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => context.go('/login'),
+      );
+    }
+
+    return ListTile(
+      leading: const Icon(Icons.person),
+      title: Text(user.email ?? '사용자'),
+      subtitle: const Text('로그인됨'),
+      trailing: TextButton(
+        onPressed: () async {
+          final confirmed = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('로그아웃'),
+              content: const Text('로그아웃 하시겠습니까?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('취소'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('로그아웃'),
+                ),
+              ],
+            ),
+          );
+
+          if (confirmed == true) {
+            await ref.read(authServiceProvider).signOut();
+          }
+        },
+        child: const Text('로그아웃'),
       ),
     );
   }
