@@ -1,5 +1,7 @@
 # Finito
 
+[한국어](README_KO.md)
+
 Cross-platform TODO app with cloud sync and native widgets.
 
 ## Features
