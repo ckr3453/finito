@@ -9,7 +9,6 @@ Cross-platform TODO application with cloud sync and native widgets.
 - **Backend**: Firebase (Firestore + Auth + FCM)
 - **Routing**: go_router
 - **Models**: Freezed + json_serializable
-- **Notifications**: flutter_local_notifications + FCM
 - **Widget Bridge**: home_widget
 
 ## Architecture
