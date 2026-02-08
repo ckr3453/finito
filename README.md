@@ -74,6 +74,10 @@ lib/
 # Install dependencies
 flutter pub get
 
+# Firebase setup (required once per environment)
+dart pub global activate flutterfire_cli
+flutterfire configure --project=<your-firebase-project-id>
+
 # Run code generation
 dart run build_runner build --delete-conflicting-outputs
 
