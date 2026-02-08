@@ -1,0 +1,65 @@
+name: todo_app
+description: "Cross-platform TODO app with cloud sync and native widgets."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.8
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Local Database
+  drift: ^2.27.0
+  sqlite3_flutter_libs: ^0.5.32
+
+  # Routing
+  go_router: ^14.8.1
+
+  # Models (Freezed)
+  freezed_annotation: ^3.0.0
+  json_annotation: ^4.9.0
+
+  # Firebase
+  firebase_core: ^4.4.0
+  firebase_auth: ^6.1.4
+  cloud_firestore: ^6.1.2
+  firebase_messaging: ^16.1.1
+
+  # Notifications
+  flutter_local_notifications: ^19.2.1
+
+  # Widget Bridge
+  home_widget: ^0.7.0
+
+  # Utilities
+  uuid: ^4.5.1
+  intl: ^0.20.2
+  connectivity_plus: ^6.1.4
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  collection: ^1.19.1
+  shared_preferences: ^2.5.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+  # Code Generation
+  build_runner: ^2.4.15
+  freezed: ^3.0.6
+  json_serializable: ^6.9.4
+  riverpod_generator: ^2.6.5
+  drift_dev: ^2.27.1
+
+flutter:
+  uses-material-design: true
