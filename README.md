@@ -1,16 +1,84 @@
-# todo_app
+# Finito
 
-A new Flutter project.
+Cross-platform TODO app with cloud sync and native widgets.
+
+## Features
+
+- Task CRUD with title, description, due date, priority
+- Categories and tags for organization
+- Search and filtering (status, priority, category)
+- Drag-and-drop sorting
+- Dark mode support
+- Responsive layout (mobile / desktop)
+
+## Tech Stack
+
+| Area | Technology |
+|------|------------|
+| Framework | Flutter 3.38+ (Dart) |
+| State Management | Riverpod 2.x |
+| Local DB | Drift (SQLite ORM) |
+| Backend | Firebase (Firestore + Auth) |
+| Routing | GoRouter |
+| Models | Freezed + json_serializable |
+
+## Architecture
+
+**Local-First + Cloud-Synced** - UI always reads from local Drift DB. Background sync to Firestore when online.
+
+```
+[UI] <--watches--> [Riverpod Providers]
+                          |
+                     [Repository]
+                      /        \
+              [Drift DB]    [Firestore]
+           (read from here)  (sync when online)
+```
+
+## Project Structure
+
+```
+lib/
+├── core/              # Constants, extensions, theme
+├── data/              # Data layer
+│   ├── database/      # Drift DB tables, DAOs
+│   └── repositories/  # Repository implementations
+├── domain/            # Entities (Freezed), enums, repository interfaces
+├── presentation/      # UI layer
+│   ├── screens/       # home, task_detail, task_editor, categories, search, settings
+│   ├── providers/     # Riverpod providers
+│   └── shared_widgets/
+├── services/          # sync, connectivity
+└── routing/           # GoRouter config
+```
+
+## Supported Platforms
+
+- iOS
+- Android
+- macOS
+- Windows
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- Flutter 3.38+
+- Dart 3.10+
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Setup
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+# Install dependencies
+flutter pub get
+
+# Run code generation
+dart run build_runner build --delete-conflicting-outputs
+
+# Run the app
+flutter run
+```
+
+## License
+
+This project is for personal use.

@@ -1,4 +1,4 @@
-# TODO App
+# Finito
 
 Cross-platform TODO application with cloud sync and native widgets.
 

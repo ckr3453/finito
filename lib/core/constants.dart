@@ -1,7 +1,7 @@
 class AppConstants {
   AppConstants._();
 
-  static const String appName = 'TODO';
+  static const String appName = 'Finito';
   static const String dbName = 'todo_app.sqlite';
 
   // Default category colors

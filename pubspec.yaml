@@ -1,5 +1,5 @@
 name: todo_app
-description: "Cross-platform TODO app with cloud sync and native widgets."
+description: "Finito - Cross-platform TODO app with cloud sync and native widgets."
 publish_to: 'none'
 version: 1.0.0+1
 
