@@ -128,8 +128,7 @@ void main() {
   group('fetchAllTasks', () {
     test('returns list of DTOs from stored documents', () async {
       // Seed data directly into fake Firestore
-      final col =
-          fakeFirestore.collection(FirestorePaths.tasksCol(testUserId));
+      final col = fakeFirestore.collection(FirestorePaths.tasksCol(testUserId));
       await col.doc('task-1').set(sampleTaskData(id: 'task-1'));
       await col.doc('task-2').set(sampleTaskData(id: 'task-2'));
 
