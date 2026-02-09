@@ -612,6 +612,17 @@ class $TaskItemsTable extends TaskItems
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -626,6 +637,7 @@ class $TaskItemsTable extends TaskItems
     createdAt,
     updatedAt,
     isSynced,
+    deletedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -726,6 +738,12 @@ class $TaskItemsTable extends TaskItems
         isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
       );
     }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -783,6 +801,10 @@ class $TaskItemsTable extends TaskItems
         DriftSqlType.bool,
         data['${effectivePrefix}is_synced'],
       )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
     );
   }
 
@@ -805,6 +827,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isSynced;
+  final DateTime? deletedAt;
   const TaskItem({
     required this.id,
     required this.title,
@@ -818,6 +841,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
     required this.createdAt,
     required this.updatedAt,
     required this.isSynced,
+    this.deletedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -840,6 +864,9 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     map['is_synced'] = Variable<bool>(isSynced);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
     return map;
   }
 
@@ -863,6 +890,9 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       isSynced: Value(isSynced),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -884,6 +914,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       isSynced: serializer.fromJson<bool>(json['isSynced']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
   }
   @override
@@ -902,6 +933,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'isSynced': serializer.toJson<bool>(isSynced),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
   }
 
@@ -918,6 +950,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isSynced,
+    Value<DateTime?> deletedAt = const Value.absent(),
   }) => TaskItem(
     id: id ?? this.id,
     title: title ?? this.title,
@@ -931,6 +964,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     isSynced: isSynced ?? this.isSynced,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   TaskItem copyWithCompanion(TaskItemsCompanion data) {
     return TaskItem(
@@ -952,6 +986,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -969,7 +1004,8 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
           ..write('sortOrder: $sortOrder, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('isSynced: $isSynced')
+          ..write('isSynced: $isSynced, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
@@ -988,6 +1024,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
     createdAt,
     updatedAt,
     isSynced,
+    deletedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -1004,7 +1041,8 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
           other.sortOrder == this.sortOrder &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
-          other.isSynced == this.isSynced);
+          other.isSynced == this.isSynced &&
+          other.deletedAt == this.deletedAt);
 }
 
 class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
@@ -1020,6 +1058,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<bool> isSynced;
+  final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const TaskItemsCompanion({
     this.id = const Value.absent(),
@@ -1034,6 +1073,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.isSynced = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TaskItemsCompanion.insert({
@@ -1049,6 +1089,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
     required DateTime createdAt,
     required DateTime updatedAt,
     this.isSynced = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        title = Value(title),
@@ -1069,6 +1110,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<bool>? isSynced,
+    Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1084,6 +1126,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isSynced != null) 'is_synced': isSynced,
+      if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1101,6 +1144,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<bool>? isSynced,
+    Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return TaskItemsCompanion(
@@ -1116,6 +1160,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isSynced: isSynced ?? this.isSynced,
+      deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1159,6 +1204,9 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
     if (isSynced.present) {
       map['is_synced'] = Variable<bool>(isSynced.value);
     }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1180,6 +1228,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('isSynced: $isSynced, ')
+          ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2089,6 +2138,7 @@ typedef $$TaskItemsTableCreateCompanionBuilder =
       required DateTime createdAt,
       required DateTime updatedAt,
       Value<bool> isSynced,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 typedef $$TaskItemsTableUpdateCompanionBuilder =
@@ -2105,6 +2155,7 @@ typedef $$TaskItemsTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<bool> isSynced,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 
@@ -2212,6 +2263,11 @@ class $$TaskItemsTableFilterComposer
 
   ColumnFilters<bool> get isSynced => $composableBuilder(
     column: $table.isSynced,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2328,6 +2384,11 @@ class $$TaskItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$CategoriesTableOrderingComposer get categoryId {
     final $$CategoriesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2397,6 +2458,9 @@ class $$TaskItemsTableAnnotationComposer
 
   GeneratedColumn<bool> get isSynced =>
       $composableBuilder(column: $table.isSynced, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 
   $$CategoriesTableAnnotationComposer get categoryId {
     final $$CategoriesTableAnnotationComposer composer = $composerBuilder(
@@ -2487,6 +2551,7 @@ class $$TaskItemsTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<bool> isSynced = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TaskItemsCompanion(
                 id: id,
@@ -2501,6 +2566,7 @@ class $$TaskItemsTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 isSynced: isSynced,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2517,6 +2583,7 @@ class $$TaskItemsTableTableManager
                 required DateTime createdAt,
                 required DateTime updatedAt,
                 Value<bool> isSynced = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TaskItemsCompanion.insert(
                 id: id,
@@ -2531,6 +2598,7 @@ class $$TaskItemsTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 isSynced: isSynced,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
