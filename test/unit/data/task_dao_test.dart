@@ -248,9 +248,9 @@ void main() {
       await dao.deleteTask('task-1');
 
       // Query raw to bypass deletedAt IS NULL filter
-      final raw = await (db.select(db.taskItems)
-            ..where((t) => t.id.equals('task-1')))
-          .getSingleOrNull();
+      final raw = await (db.select(
+        db.taskItems,
+      )..where((t) => t.id.equals('task-1'))).getSingleOrNull();
 
       expect(raw, isNotNull);
       expect(raw!.deletedAt, isNotNull);
@@ -335,15 +335,15 @@ void main() {
       await dao.purgeDeletedTasks(cutoff);
 
       // 'old' should be physically gone
-      final oldRaw = await (db.select(db.taskItems)
-            ..where((t) => t.id.equals('old')))
-          .getSingleOrNull();
+      final oldRaw = await (db.select(
+        db.taskItems,
+      )..where((t) => t.id.equals('old'))).getSingleOrNull();
       expect(oldRaw, isNull);
 
       // 'recent' should still exist (soft-deleted but not yet purged)
-      final recentRaw = await (db.select(db.taskItems)
-            ..where((t) => t.id.equals('recent')))
-          .getSingleOrNull();
+      final recentRaw = await (db.select(
+        db.taskItems,
+      )..where((t) => t.id.equals('recent'))).getSingleOrNull();
       expect(recentRaw, isNotNull);
       expect(recentRaw!.deletedAt, isNotNull);
     });
@@ -362,7 +362,9 @@ void main() {
     test('getUnsyncedTasks includes soft-deleted items', () async {
       await dao.insertTask(makeTask(id: 'active', isSynced: true));
       await dao.insertTask(makeTask(id: 'deleted-unsynced', isSynced: true));
-      await dao.deleteTask('deleted-unsynced'); // soft delete sets isSynced=false
+      await dao.deleteTask(
+        'deleted-unsynced',
+      ); // soft delete sets isSynced=false
 
       final unsynced = await dao.getUnsyncedTasks();
       expect(unsynced, hasLength(1));

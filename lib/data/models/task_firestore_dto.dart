@@ -41,7 +41,8 @@ class TaskFirestoreDto {
       status: data['status'] as String,
       priority: data['priority'] as String,
       categoryId: data['categoryId'] as String?,
-      tagIds: (data['tagIds'] as List<dynamic>?)
+      tagIds:
+          (data['tagIds'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
@@ -82,8 +83,9 @@ class TaskFirestoreDto {
       'categoryId': categoryId,
       'tagIds': tagIds,
       'dueDate': dueDate != null ? Timestamp.fromDate(dueDate!) : null,
-      'completedAt':
-          completedAt != null ? Timestamp.fromDate(completedAt!) : null,
+      'completedAt': completedAt != null
+          ? Timestamp.fromDate(completedAt!)
+          : null,
       'deletedAt': deletedAt != null ? Timestamp.fromDate(deletedAt!) : null,
       'sortOrder': sortOrder,
       'createdAt': Timestamp.fromDate(createdAt),

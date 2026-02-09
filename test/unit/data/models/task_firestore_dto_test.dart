@@ -11,37 +11,37 @@ void main() {
   final deletedAt = DateTime(2025, 6, 25, 8, 0, 0);
 
   Map<String, dynamic> fullFirestoreData() => {
-        'id': 'task-1',
-        'title': 'Test Task',
-        'description': 'A test description',
-        'status': 'completed',
-        'priority': 'high',
-        'categoryId': 'cat-1',
-        'tagIds': ['tag-1', 'tag-2'],
-        'dueDate': Timestamp.fromDate(dueDate),
-        'completedAt': Timestamp.fromDate(completedAt),
-        'deletedAt': Timestamp.fromDate(deletedAt),
-        'sortOrder': 5,
-        'createdAt': Timestamp.fromDate(now),
-        'updatedAt': Timestamp.fromDate(now),
-      };
+    'id': 'task-1',
+    'title': 'Test Task',
+    'description': 'A test description',
+    'status': 'completed',
+    'priority': 'high',
+    'categoryId': 'cat-1',
+    'tagIds': ['tag-1', 'tag-2'],
+    'dueDate': Timestamp.fromDate(dueDate),
+    'completedAt': Timestamp.fromDate(completedAt),
+    'deletedAt': Timestamp.fromDate(deletedAt),
+    'sortOrder': 5,
+    'createdAt': Timestamp.fromDate(now),
+    'updatedAt': Timestamp.fromDate(now),
+  };
 
   TaskEntity fullEntity() => TaskEntity(
-        id: 'task-1',
-        title: 'Test Task',
-        description: 'A test description',
-        status: TaskStatus.completed,
-        priority: Priority.high,
-        categoryId: 'cat-1',
-        tagIds: ['tag-1', 'tag-2'],
-        dueDate: dueDate,
-        completedAt: completedAt,
-        deletedAt: deletedAt,
-        sortOrder: 5,
-        createdAt: now,
-        updatedAt: now,
-        isSynced: true,
-      );
+    id: 'task-1',
+    title: 'Test Task',
+    description: 'A test description',
+    status: TaskStatus.completed,
+    priority: Priority.high,
+    categoryId: 'cat-1',
+    tagIds: ['tag-1', 'tag-2'],
+    dueDate: dueDate,
+    completedAt: completedAt,
+    deletedAt: deletedAt,
+    sortOrder: 5,
+    createdAt: now,
+    updatedAt: now,
+    isSynced: true,
+  );
 
   group('fromFirestore', () {
     test('maps all fields correctly from Firestore data', () {
@@ -282,10 +282,7 @@ void main() {
       data['status'] = 'invalid_status';
       final dto = TaskFirestoreDto.fromFirestore(data);
 
-      expect(
-        () => dto.toEntity(isSynced: true),
-        throwsA(isA<ArgumentError>()),
-      );
+      expect(() => dto.toEntity(isSynced: true), throwsA(isA<ArgumentError>()));
     });
 
     test('toEntity throws on invalid priority string', () {
@@ -293,10 +290,7 @@ void main() {
       data['priority'] = 'invalid_priority';
       final dto = TaskFirestoreDto.fromFirestore(data);
 
-      expect(
-        () => dto.toEntity(isSynced: true),
-        throwsA(isA<ArgumentError>()),
-      );
+      expect(() => dto.toEntity(isSynced: true), throwsA(isA<ArgumentError>()));
     });
   });
 }

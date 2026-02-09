@@ -128,9 +128,9 @@ void main() {
       await repo.createTask(task);
 
       // Read raw from DB to verify deletedAt was persisted
-      final raw = await (db.select(db.taskItems)
-            ..where((t) => t.id.equals('del-task')))
-          .getSingleOrNull();
+      final raw = await (db.select(
+        db.taskItems,
+      )..where((t) => t.id.equals('del-task'))).getSingleOrNull();
       expect(raw, isNotNull);
       expect(raw!.deletedAt, isNotNull);
       // DateTime precision: compare to second

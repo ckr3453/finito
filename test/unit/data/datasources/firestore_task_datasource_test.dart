@@ -32,20 +32,20 @@ const testUserId = 'user-123';
 final _now = DateTime(2025, 6, 15, 10, 30, 0);
 
 Map<String, dynamic> sampleTaskData({String id = 'task-1'}) => {
-      'id': id,
-      'title': 'Test Task $id',
-      'description': 'Description',
-      'status': 'pending',
-      'priority': 'medium',
-      'categoryId': null,
-      'tagIds': <dynamic>[],
-      'dueDate': null,
-      'completedAt': null,
-      'deletedAt': null,
-      'sortOrder': 0,
-      'createdAt': Timestamp.fromDate(_now),
-      'updatedAt': Timestamp.fromDate(_now),
-    };
+  'id': id,
+  'title': 'Test Task $id',
+  'description': 'Description',
+  'status': 'pending',
+  'priority': 'medium',
+  'categoryId': null,
+  'tagIds': <dynamic>[],
+  'dueDate': null,
+  'completedAt': null,
+  'deletedAt': null,
+  'sortOrder': 0,
+  'createdAt': Timestamp.fromDate(_now),
+  'updatedAt': Timestamp.fromDate(_now),
+};
 
 TaskFirestoreDto sampleDto({String id = 'task-1'}) =>
     TaskFirestoreDto.fromFirestore(sampleTaskData(id: id));
@@ -75,10 +75,7 @@ void main() {
 
   group('FirestorePaths', () {
     test('tasksCol returns correct path', () {
-      expect(
-        FirestorePaths.tasksCol('user-1'),
-        'users/user-1/tasks',
-      );
+      expect(FirestorePaths.tasksCol('user-1'), 'users/user-1/tasks');
     });
 
     test('taskDoc returns correct path', () {
@@ -106,8 +103,9 @@ void main() {
 
       await dataSource.setTask(testUserId, dto);
 
-      verify(() => mockFirestore.doc('users/$testUserId/tasks/${dto.id}'))
-          .called(1);
+      verify(
+        () => mockFirestore.doc('users/$testUserId/tasks/${dto.id}'),
+      ).called(1);
       verify(() => mockDocRef.set(dto.toFirestore())).called(1);
     });
 
@@ -142,10 +140,12 @@ void main() {
       final dto2 = sampleDto(id: 'task-2');
 
       when(() => mockFirestore.batch()).thenReturn(mockBatch);
-      when(() => mockFirestore.doc('users/$testUserId/tasks/task-1'))
-          .thenReturn(mockDocRef1);
-      when(() => mockFirestore.doc('users/$testUserId/tasks/task-2'))
-          .thenReturn(mockDocRef2);
+      when(
+        () => mockFirestore.doc('users/$testUserId/tasks/task-1'),
+      ).thenReturn(mockDocRef1);
+      when(
+        () => mockFirestore.doc('users/$testUserId/tasks/task-2'),
+      ).thenReturn(mockDocRef2);
       when(() => mockBatch.set(any(), any())).thenReturn(null);
       when(() => mockBatch.commit()).thenAnswer((_) async {});
 
@@ -184,8 +184,9 @@ void main() {
       expect(result, hasLength(2));
       expect(result[0].id, 'task-1');
       expect(result[1].id, 'task-2');
-      verify(() => mockFirestore.collection('users/$testUserId/tasks'))
-          .called(1);
+      verify(
+        () => mockFirestore.collection('users/$testUserId/tasks'),
+      ).called(1);
     });
 
     test('returns empty list for empty snapshot', () async {
@@ -205,8 +206,9 @@ void main() {
       final mockSnapshot = MockQuerySnapshot();
       final doc1 = createMockDoc(sampleTaskData(id: 'task-1'));
 
-      when(() => mockCollection.snapshots())
-          .thenAnswer((_) => Stream.value(mockSnapshot));
+      when(
+        () => mockCollection.snapshots(),
+      ).thenAnswer((_) => Stream.value(mockSnapshot));
       when(() => mockSnapshot.docs).thenReturn([doc1]);
 
       final result = await dataSource.watchTasks(testUserId).first;
@@ -218,8 +220,9 @@ void main() {
     test('emits empty list for empty snapshot', () async {
       final mockSnapshot = MockQuerySnapshot();
 
-      when(() => mockCollection.snapshots())
-          .thenAnswer((_) => Stream.value(mockSnapshot));
+      when(
+        () => mockCollection.snapshots(),
+      ).thenAnswer((_) => Stream.value(mockSnapshot));
       when(() => mockSnapshot.docs).thenReturn([]);
 
       final result = await dataSource.watchTasks(testUserId).first;
@@ -237,8 +240,9 @@ void main() {
       when(() => snapshot1.docs).thenReturn([doc1]);
       when(() => snapshot2.docs).thenReturn([doc1, doc2]);
 
-      when(() => mockCollection.snapshots())
-          .thenAnswer((_) => Stream.fromIterable([snapshot1, snapshot2]));
+      when(
+        () => mockCollection.snapshots(),
+      ).thenAnswer((_) => Stream.fromIterable([snapshot1, snapshot2]));
 
       final results = await dataSource.watchTasks(testUserId).toList();
 

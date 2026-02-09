@@ -18,15 +18,15 @@ class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
   }
 
   Stream<List<TaskItem>> watchTasksByStatus(int status) {
-    return (select(taskItems)
-          ..where((t) => t.deletedAt.isNull() & t.status.equals(status)))
-        .watch();
+    return (select(
+      taskItems,
+    )..where((t) => t.deletedAt.isNull() & t.status.equals(status))).watch();
   }
 
   Future<TaskItem?> getTaskById(String id) {
-    return (select(taskItems)
-          ..where((t) => t.id.equals(id) & t.deletedAt.isNull()))
-        .getSingleOrNull();
+    return (select(
+      taskItems,
+    )..where((t) => t.id.equals(id) & t.deletedAt.isNull())).getSingleOrNull();
   }
 
   Future<int> insertTask(TaskItemsCompanion task) {
@@ -53,9 +53,10 @@ class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
 
   // Purge
   Future<int> purgeDeletedTasks(DateTime before) {
-    return (delete(taskItems)
-          ..where(
-              (t) => t.deletedAt.isNotNull() & t.deletedAt.isSmallerThanValue(before)))
+    return (delete(taskItems)..where(
+          (t) =>
+              t.deletedAt.isNotNull() & t.deletedAt.isSmallerThanValue(before),
+        ))
         .go();
   }
 

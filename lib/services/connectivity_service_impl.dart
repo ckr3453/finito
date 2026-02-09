@@ -14,8 +14,9 @@ class ConnectivityServiceImpl implements ConnectivityService {
 
   @override
   Stream<bool> get onConnectivityChanged {
-    return _connectivity.onConnectivityChanged
-        .map((results) => _hasConnection(results));
+    return _connectivity.onConnectivityChanged.map(
+      (results) => _hasConnection(results),
+    );
   }
 
   bool _hasConnection(List<ConnectivityResult> results) {

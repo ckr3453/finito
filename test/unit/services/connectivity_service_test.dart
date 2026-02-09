@@ -19,47 +19,55 @@ void main() {
 
   group('isOnline', () {
     test('returns true when connected via wifi', () async {
-      when(() => mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => [ConnectivityResult.wifi]);
+      when(
+        () => mockConnectivity.checkConnectivity(),
+      ).thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       expect(await service.isOnline, isTrue);
     });
 
     test('returns true when connected via mobile', () async {
-      when(() => mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => [ConnectivityResult.mobile]);
+      when(
+        () => mockConnectivity.checkConnectivity(),
+      ).thenAnswer((_) async => [ConnectivityResult.mobile]);
 
       expect(await service.isOnline, isTrue);
     });
 
     test('returns true when connected via ethernet', () async {
-      when(() => mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => [ConnectivityResult.ethernet]);
+      when(
+        () => mockConnectivity.checkConnectivity(),
+      ).thenAnswer((_) async => [ConnectivityResult.ethernet]);
 
       expect(await service.isOnline, isTrue);
     });
 
     test('returns false when no connectivity', () async {
-      when(() => mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => [ConnectivityResult.none]);
+      when(
+        () => mockConnectivity.checkConnectivity(),
+      ).thenAnswer((_) async => [ConnectivityResult.none]);
 
       expect(await service.isOnline, isFalse);
     });
 
-    test('returns true when multiple results include a real connection',
-        () async {
-      when(() => mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => [ConnectivityResult.wifi, ConnectivityResult.mobile]);
+    test(
+      'returns true when multiple results include a real connection',
+      () async {
+        when(() => mockConnectivity.checkConnectivity()).thenAnswer(
+          (_) async => [ConnectivityResult.wifi, ConnectivityResult.mobile],
+        );
 
-      expect(await service.isOnline, isTrue);
-    });
+        expect(await service.isOnline, isTrue);
+      },
+    );
   });
 
   group('onConnectivityChanged', () {
     test('emits true when connectivity changes to wifi', () async {
       final controller = StreamController<List<ConnectivityResult>>();
-      when(() => mockConnectivity.onConnectivityChanged)
-          .thenAnswer((_) => controller.stream);
+      when(
+        () => mockConnectivity.onConnectivityChanged,
+      ).thenAnswer((_) => controller.stream);
 
       final stream = service.onConnectivityChanged;
 
@@ -72,8 +80,9 @@ void main() {
 
     test('emits false when connectivity changes to none', () async {
       final controller = StreamController<List<ConnectivityResult>>();
-      when(() => mockConnectivity.onConnectivityChanged)
-          .thenAnswer((_) => controller.stream);
+      when(
+        () => mockConnectivity.onConnectivityChanged,
+      ).thenAnswer((_) => controller.stream);
 
       final stream = service.onConnectivityChanged;
 
@@ -86,8 +95,9 @@ void main() {
 
     test('emits sequential changes', () async {
       final controller = StreamController<List<ConnectivityResult>>();
-      when(() => mockConnectivity.onConnectivityChanged)
-          .thenAnswer((_) => controller.stream);
+      when(
+        () => mockConnectivity.onConnectivityChanged,
+      ).thenAnswer((_) => controller.stream);
 
       final results = <bool>[];
       final sub = service.onConnectivityChanged.listen(results.add);

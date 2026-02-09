@@ -19,9 +19,11 @@ class FirestoreTaskDataSourceImpl implements FirestoreTaskDataSource {
     return _firestore
         .collection(FirestorePaths.tasksCol(userId))
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => TaskFirestoreDto.fromFirestore(doc.data()))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => TaskFirestoreDto.fromFirestore(doc.data()))
+              .toList(),
+        );
   }
 
   @override
@@ -43,8 +45,9 @@ class FirestoreTaskDataSourceImpl implements FirestoreTaskDataSource {
 
   @override
   Future<List<TaskFirestoreDto>> fetchAllTasks(String userId) async {
-    final snapshot =
-        await _firestore.collection(FirestorePaths.tasksCol(userId)).get();
+    final snapshot = await _firestore
+        .collection(FirestorePaths.tasksCol(userId))
+        .get();
     return snapshot.docs
         .map((doc) => TaskFirestoreDto.fromFirestore(doc.data()))
         .toList();
