@@ -9,16 +9,24 @@ class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
   TaskDao(super.db);
 
   // CRUD
-  Future<List<TaskItem>> getAllTasks() => select(taskItems).get();
+  Future<List<TaskItem>> getAllTasks() {
+    return (select(taskItems)..where((t) => t.deletedAt.isNull())).get();
+  }
 
-  Stream<List<TaskItem>> watchAllTasks() => select(taskItems).watch();
+  Stream<List<TaskItem>> watchAllTasks() {
+    return (select(taskItems)..where((t) => t.deletedAt.isNull())).watch();
+  }
 
   Stream<List<TaskItem>> watchTasksByStatus(int status) {
-    return (select(taskItems)..where((t) => t.status.equals(status))).watch();
+    return (select(taskItems)
+          ..where((t) => t.deletedAt.isNull() & t.status.equals(status)))
+        .watch();
   }
 
   Future<TaskItem?> getTaskById(String id) {
-    return (select(taskItems)..where((t) => t.id.equals(id))).getSingleOrNull();
+    return (select(taskItems)
+          ..where((t) => t.id.equals(id) & t.deletedAt.isNull()))
+        .getSingleOrNull();
   }
 
   Future<int> insertTask(TaskItemsCompanion task) {
@@ -29,8 +37,26 @@ class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
     return update(taskItems).replace(task);
   }
 
-  Future<int> deleteTask(String id) {
-    return (delete(taskItems)..where((t) => t.id.equals(id))).go();
+  Future<void> deleteTask(String id) {
+    return (update(taskItems)..where((t) => t.id.equals(id))).write(
+      TaskItemsCompanion(
+        deletedAt: Value(DateTime.now()),
+        isSynced: const Value(false),
+      ),
+    );
+  }
+
+  // Upsert
+  Future<void> upsertTask(TaskItemsCompanion task) {
+    return into(taskItems).insertOnConflictUpdate(task);
+  }
+
+  // Purge
+  Future<int> purgeDeletedTasks(DateTime before) {
+    return (delete(taskItems)
+          ..where(
+              (t) => t.deletedAt.isNotNull() & t.deletedAt.isSmallerThanValue(before)))
+        .go();
   }
 
   // Tag relations
@@ -58,6 +84,7 @@ class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
     String? searchQuery,
   }) {
     final query = select(taskItems);
+    query.where((t) => t.deletedAt.isNull());
     if (status != null) query.where((t) => t.status.equals(status));
     if (priority != null) query.where((t) => t.priority.equals(priority));
     if (categoryId != null) {

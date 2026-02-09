@@ -20,6 +20,7 @@ abstract class TaskEntity with _$TaskEntity {
     required DateTime createdAt,
     required DateTime updatedAt,
     @Default(false) bool isSynced,
+    DateTime? deletedAt,
   }) = _TaskEntity;
 
   factory TaskEntity.fromJson(Map<String, dynamic> json) =>

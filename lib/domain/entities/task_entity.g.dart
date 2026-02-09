@@ -30,6 +30,9 @@ _TaskEntity _$TaskEntityFromJson(Map<String, dynamic> json) => _TaskEntity(
   createdAt: DateTime.parse(json['createdAt'] as String),
   updatedAt: DateTime.parse(json['updatedAt'] as String),
   isSynced: json['isSynced'] as bool? ?? false,
+  deletedAt: json['deletedAt'] == null
+      ? null
+      : DateTime.parse(json['deletedAt'] as String),
 );
 
 Map<String, dynamic> _$TaskEntityToJson(_TaskEntity instance) =>
@@ -47,6 +50,7 @@ Map<String, dynamic> _$TaskEntityToJson(_TaskEntity instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
       'isSynced': instance.isSynced,
+      'deletedAt': instance.deletedAt?.toIso8601String(),
     };
 
 const _$TaskStatusEnumMap = {

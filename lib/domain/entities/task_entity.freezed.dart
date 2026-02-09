@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TaskEntity {
 
- String get id; String get title; String get description; TaskStatus get status; Priority get priority; String? get categoryId; List<String> get tagIds; DateTime? get dueDate; DateTime? get completedAt; int get sortOrder; DateTime get createdAt; DateTime get updatedAt; bool get isSynced;
+ String get id; String get title; String get description; TaskStatus get status; Priority get priority; String? get categoryId; List<String> get tagIds; DateTime? get dueDate; DateTime? get completedAt; int get sortOrder; DateTime get createdAt; DateTime get updatedAt; bool get isSynced; DateTime? get deletedAt;
 /// Create a copy of TaskEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TaskEntityCopyWith<TaskEntity> get copyWith => _$TaskEntityCopyWithImpl<TaskEnt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&const DeepCollectionEquality().equals(other.tagIds, tagIds)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isSynced, isSynced) || other.isSynced == isSynced));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&const DeepCollectionEquality().equals(other.tagIds, tagIds)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isSynced, isSynced) || other.isSynced == isSynced)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,status,priority,categoryId,const DeepCollectionEquality().hash(tagIds),dueDate,completedAt,sortOrder,createdAt,updatedAt,isSynced);
+int get hashCode => Object.hash(runtimeType,id,title,description,status,priority,categoryId,const DeepCollectionEquality().hash(tagIds),dueDate,completedAt,sortOrder,createdAt,updatedAt,isSynced,deletedAt);
 
 @override
 String toString() {
-  return 'TaskEntity(id: $id, title: $title, description: $description, status: $status, priority: $priority, categoryId: $categoryId, tagIds: $tagIds, dueDate: $dueDate, completedAt: $completedAt, sortOrder: $sortOrder, createdAt: $createdAt, updatedAt: $updatedAt, isSynced: $isSynced)';
+  return 'TaskEntity(id: $id, title: $title, description: $description, status: $status, priority: $priority, categoryId: $categoryId, tagIds: $tagIds, dueDate: $dueDate, completedAt: $completedAt, sortOrder: $sortOrder, createdAt: $createdAt, updatedAt: $updatedAt, isSynced: $isSynced, deletedAt: $deletedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $TaskEntityCopyWith<$Res>  {
   factory $TaskEntityCopyWith(TaskEntity value, $Res Function(TaskEntity) _then) = _$TaskEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String description, TaskStatus status, Priority priority, String? categoryId, List<String> tagIds, DateTime? dueDate, DateTime? completedAt, int sortOrder, DateTime createdAt, DateTime updatedAt, bool isSynced
+ String id, String title, String description, TaskStatus status, Priority priority, String? categoryId, List<String> tagIds, DateTime? dueDate, DateTime? completedAt, int sortOrder, DateTime createdAt, DateTime updatedAt, bool isSynced, DateTime? deletedAt
 });
 
 
@@ -65,7 +65,7 @@ class _$TaskEntityCopyWithImpl<$Res>
 
 /// Create a copy of TaskEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? status = null,Object? priority = null,Object? categoryId = freezed,Object? tagIds = null,Object? dueDate = freezed,Object? completedAt = freezed,Object? sortOrder = null,Object? createdAt = null,Object? updatedAt = null,Object? isSynced = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? status = null,Object? priority = null,Object? categoryId = freezed,Object? tagIds = null,Object? dueDate = freezed,Object? completedAt = freezed,Object? sortOrder = null,Object? createdAt = null,Object? updatedAt = null,Object? isSynced = null,Object? deletedAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -80,7 +80,8 @@ as DateTime?,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignor
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,isSynced: null == isSynced ? _self.isSynced : isSynced // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -165,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  TaskStatus status,  Priority priority,  String? categoryId,  List<String> tagIds,  DateTime? dueDate,  DateTime? completedAt,  int sortOrder,  DateTime createdAt,  DateTime updatedAt,  bool isSynced)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  TaskStatus status,  Priority priority,  String? categoryId,  List<String> tagIds,  DateTime? dueDate,  DateTime? completedAt,  int sortOrder,  DateTime createdAt,  DateTime updatedAt,  bool isSynced,  DateTime? deletedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TaskEntity() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.categoryId,_that.tagIds,_that.dueDate,_that.completedAt,_that.sortOrder,_that.createdAt,_that.updatedAt,_that.isSynced);case _:
+return $default(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.categoryId,_that.tagIds,_that.dueDate,_that.completedAt,_that.sortOrder,_that.createdAt,_that.updatedAt,_that.isSynced,_that.deletedAt);case _:
   return orElse();
 
 }
@@ -186,10 +187,10 @@ return $default(_that.id,_that.title,_that.description,_that.status,_that.priori
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  TaskStatus status,  Priority priority,  String? categoryId,  List<String> tagIds,  DateTime? dueDate,  DateTime? completedAt,  int sortOrder,  DateTime createdAt,  DateTime updatedAt,  bool isSynced)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  TaskStatus status,  Priority priority,  String? categoryId,  List<String> tagIds,  DateTime? dueDate,  DateTime? completedAt,  int sortOrder,  DateTime createdAt,  DateTime updatedAt,  bool isSynced,  DateTime? deletedAt)  $default,) {final _that = this;
 switch (_that) {
 case _TaskEntity():
-return $default(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.categoryId,_that.tagIds,_that.dueDate,_that.completedAt,_that.sortOrder,_that.createdAt,_that.updatedAt,_that.isSynced);case _:
+return $default(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.categoryId,_that.tagIds,_that.dueDate,_that.completedAt,_that.sortOrder,_that.createdAt,_that.updatedAt,_that.isSynced,_that.deletedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +207,10 @@ return $default(_that.id,_that.title,_that.description,_that.status,_that.priori
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  TaskStatus status,  Priority priority,  String? categoryId,  List<String> tagIds,  DateTime? dueDate,  DateTime? completedAt,  int sortOrder,  DateTime createdAt,  DateTime updatedAt,  bool isSynced)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  TaskStatus status,  Priority priority,  String? categoryId,  List<String> tagIds,  DateTime? dueDate,  DateTime? completedAt,  int sortOrder,  DateTime createdAt,  DateTime updatedAt,  bool isSynced,  DateTime? deletedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _TaskEntity() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.categoryId,_that.tagIds,_that.dueDate,_that.completedAt,_that.sortOrder,_that.createdAt,_that.updatedAt,_that.isSynced);case _:
+return $default(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.categoryId,_that.tagIds,_that.dueDate,_that.completedAt,_that.sortOrder,_that.createdAt,_that.updatedAt,_that.isSynced,_that.deletedAt);case _:
   return null;
 
 }
@@ -221,7 +222,7 @@ return $default(_that.id,_that.title,_that.description,_that.status,_that.priori
 @JsonSerializable()
 
 class _TaskEntity implements TaskEntity {
-  const _TaskEntity({required this.id, required this.title, this.description = '', this.status = TaskStatus.pending, this.priority = Priority.medium, this.categoryId, final  List<String> tagIds = const [], this.dueDate, this.completedAt, this.sortOrder = 0, required this.createdAt, required this.updatedAt, this.isSynced = false}): _tagIds = tagIds;
+  const _TaskEntity({required this.id, required this.title, this.description = '', this.status = TaskStatus.pending, this.priority = Priority.medium, this.categoryId, final  List<String> tagIds = const [], this.dueDate, this.completedAt, this.sortOrder = 0, required this.createdAt, required this.updatedAt, this.isSynced = false, this.deletedAt}): _tagIds = tagIds;
   factory _TaskEntity.fromJson(Map<String, dynamic> json) => _$TaskEntityFromJson(json);
 
 @override final  String id;
@@ -243,6 +244,7 @@ class _TaskEntity implements TaskEntity {
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
 @override@JsonKey() final  bool isSynced;
+@override final  DateTime? deletedAt;
 
 /// Create a copy of TaskEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -257,16 +259,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&const DeepCollectionEquality().equals(other._tagIds, _tagIds)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isSynced, isSynced) || other.isSynced == isSynced));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&const DeepCollectionEquality().equals(other._tagIds, _tagIds)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isSynced, isSynced) || other.isSynced == isSynced)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,status,priority,categoryId,const DeepCollectionEquality().hash(_tagIds),dueDate,completedAt,sortOrder,createdAt,updatedAt,isSynced);
+int get hashCode => Object.hash(runtimeType,id,title,description,status,priority,categoryId,const DeepCollectionEquality().hash(_tagIds),dueDate,completedAt,sortOrder,createdAt,updatedAt,isSynced,deletedAt);
 
 @override
 String toString() {
-  return 'TaskEntity(id: $id, title: $title, description: $description, status: $status, priority: $priority, categoryId: $categoryId, tagIds: $tagIds, dueDate: $dueDate, completedAt: $completedAt, sortOrder: $sortOrder, createdAt: $createdAt, updatedAt: $updatedAt, isSynced: $isSynced)';
+  return 'TaskEntity(id: $id, title: $title, description: $description, status: $status, priority: $priority, categoryId: $categoryId, tagIds: $tagIds, dueDate: $dueDate, completedAt: $completedAt, sortOrder: $sortOrder, createdAt: $createdAt, updatedAt: $updatedAt, isSynced: $isSynced, deletedAt: $deletedAt)';
 }
 
 
@@ -277,7 +279,7 @@ abstract mixin class _$TaskEntityCopyWith<$Res> implements $TaskEntityCopyWith<$
   factory _$TaskEntityCopyWith(_TaskEntity value, $Res Function(_TaskEntity) _then) = __$TaskEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String description, TaskStatus status, Priority priority, String? categoryId, List<String> tagIds, DateTime? dueDate, DateTime? completedAt, int sortOrder, DateTime createdAt, DateTime updatedAt, bool isSynced
+ String id, String title, String description, TaskStatus status, Priority priority, String? categoryId, List<String> tagIds, DateTime? dueDate, DateTime? completedAt, int sortOrder, DateTime createdAt, DateTime updatedAt, bool isSynced, DateTime? deletedAt
 });
 
 
@@ -294,7 +296,7 @@ class __$TaskEntityCopyWithImpl<$Res>
 
 /// Create a copy of TaskEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? status = null,Object? priority = null,Object? categoryId = freezed,Object? tagIds = null,Object? dueDate = freezed,Object? completedAt = freezed,Object? sortOrder = null,Object? createdAt = null,Object? updatedAt = null,Object? isSynced = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? status = null,Object? priority = null,Object? categoryId = freezed,Object? tagIds = null,Object? dueDate = freezed,Object? completedAt = freezed,Object? sortOrder = null,Object? createdAt = null,Object? updatedAt = null,Object? isSynced = null,Object? deletedAt = freezed,}) {
   return _then(_TaskEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -309,7 +311,8 @@ as DateTime?,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignor
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,isSynced: null == isSynced ? _self.isSynced : isSynced // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

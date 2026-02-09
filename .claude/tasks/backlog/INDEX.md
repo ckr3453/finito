@@ -3,13 +3,6 @@
 ## Queue (proceed in order)
 
 ### Phase 2B: Firestore Task Sync
-1. task-drift-schema-v2.md (S) — deletedAt 컬럼 + v1→v2 마이그레이션
-2. task-entity-deleted-at.md (S) — TaskEntity에 deletedAt 추가 + build_runner (blocked by: 1)
-3. task-dao-soft-delete.md (M) — TaskDao soft delete + 필터 + upsert (blocked by: 2)
-4. task-local-repo-update.md (S) — LocalTaskRepository deletedAt 매핑 (blocked by: 3)
-5. task-firestore-dto.md (S) — TaskFirestoreDto 작성 (blocked by: 2)
-6. task-remote-datasource.md (M) — FirestoreTaskDataSource 인터페이스 + 구현 (blocked by: 5)
-7. task-connectivity-service.md (S) — ConnectivityService 작성
 8. task-sync-service.md (L) — TaskSyncService 핵심 로직 (blocked by: 4, 6, 7)
 9. task-synced-repository.md (M) — SyncedTaskRepository 작성 (blocked by: 8)
 10. task-sync-providers.md (M) — Provider 변경 (blocked by: 9)
@@ -41,3 +34,10 @@
 - ~~lefthook-setup.md~~ → 인프라
 - ~~unit-widget-tests.md~~ → 인프라
 - ~~git-conventions.md~~ → 인프라
+- ~~task-drift-schema-v2.md~~ → Phase 2B (2026-02-09)
+- ~~task-entity-deleted-at.md~~ → Phase 2B (2026-02-09)
+- ~~task-dao-soft-delete.md~~ → Phase 2B (2026-02-09)
+- ~~task-local-repo-update.md~~ → Phase 2B (2026-02-09)
+- ~~task-connectivity-service.md~~ → Phase 2B (2026-02-09)
+- ~~task-firestore-dto.md~~ → Phase 2B (2026-02-10)
+- ~~task-remote-datasource.md~~ → Phase 2B (2026-02-10)
