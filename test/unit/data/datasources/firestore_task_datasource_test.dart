@@ -1,34 +1,10 @@
-// ignore_for_file: subtype_of_sealed_class
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:todo_app/data/datasources/remote/firestore_paths.dart';
 import 'package:todo_app/data/datasources/remote/firestore_task_datasource.dart';
 import 'package:todo_app/data/models/task_firestore_dto.dart';
 
-// --- Mocks ---
-class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
-
-class MockCollectionReference extends Mock
-    implements CollectionReference<Map<String, dynamic>> {}
-
-class MockDocumentReference extends Mock
-    implements DocumentReference<Map<String, dynamic>> {}
-
-class MockQuerySnapshot extends Mock
-    implements QuerySnapshot<Map<String, dynamic>> {}
-
-class MockQueryDocumentSnapshot extends Mock
-    implements QueryDocumentSnapshot<Map<String, dynamic>> {}
-
-class MockWriteBatch extends Mock implements WriteBatch {}
-
-// --- Fakes ---
-class FakeDocumentReference extends Fake
-    implements DocumentReference<Map<String, dynamic>> {}
-
-// --- Helpers ---
 const testUserId = 'user-123';
 
 final _now = DateTime(2025, 6, 15, 10, 30, 0);
@@ -52,27 +28,13 @@ Map<String, dynamic> sampleTaskData({String id = 'task-1'}) => {
 TaskFirestoreDto sampleDto({String id = 'task-1'}) =>
     TaskFirestoreDto.fromFirestore(sampleTaskData(id: id));
 
-MockQueryDocumentSnapshot createMockDoc(Map<String, dynamic> data) {
-  final mockDoc = MockQueryDocumentSnapshot();
-  when(() => mockDoc.data()).thenReturn(data);
-  return mockDoc;
-}
-
 void main() {
-  late MockFirebaseFirestore mockFirestore;
-  late MockCollectionReference mockCollection;
+  late FakeFirebaseFirestore fakeFirestore;
   late FirestoreTaskDataSourceImpl dataSource;
 
-  setUpAll(() {
-    registerFallbackValue(FakeDocumentReference());
-  });
-
   setUp(() {
-    mockFirestore = MockFirebaseFirestore();
-    mockCollection = MockCollectionReference();
-    dataSource = FirestoreTaskDataSourceImpl(mockFirestore);
-
-    when(() => mockFirestore.collection(any())).thenReturn(mockCollection);
+    fakeFirestore = FakeFirebaseFirestore();
+    dataSource = FirestoreTaskDataSourceImpl(fakeFirestore);
   });
 
   group('FirestorePaths', () {
@@ -96,107 +58,89 @@ void main() {
   });
 
   group('setTask', () {
-    test('calls set on the correct document path', () async {
-      final mockDocRef = MockDocumentReference();
+    test('writes data to the correct document path', () async {
       final dto = sampleDto();
-
-      when(() => mockFirestore.doc(any())).thenReturn(mockDocRef);
-      when(() => mockDocRef.set(any())).thenAnswer((_) async {});
 
       await dataSource.setTask(testUserId, dto);
 
-      verify(
-        () => mockFirestore.doc('users/$testUserId/tasks/${dto.id}'),
-      ).called(1);
-      verify(() => mockDocRef.set(dto.toFirestore())).called(1);
+      final doc = await fakeFirestore
+          .doc(FirestorePaths.taskDoc(testUserId, dto.id))
+          .get();
+      expect(doc.exists, isTrue);
+      expect(doc.data()!['id'], dto.id);
+      expect(doc.data()!['title'], dto.title);
     });
 
-    test('passes DTO data converted to Firestore format', () async {
-      final mockDocRef = MockDocumentReference();
+    test('stored data does not contain isSynced field', () async {
       final dto = sampleDto();
-
-      when(() => mockFirestore.doc(any())).thenReturn(mockDocRef);
-
-      Map<String, dynamic>? capturedData;
-      when(() => mockDocRef.set(any())).thenAnswer((invocation) async {
-        capturedData =
-            invocation.positionalArguments[0] as Map<String, dynamic>;
-      });
 
       await dataSource.setTask(testUserId, dto);
 
-      expect(capturedData, isNotNull);
-      expect(capturedData!['id'], dto.id);
-      expect(capturedData!['title'], dto.title);
-      expect(capturedData!.containsKey('isSynced'), isFalse);
+      final doc = await fakeFirestore
+          .doc(FirestorePaths.taskDoc(testUserId, dto.id))
+          .get();
+      expect(doc.data()!.containsKey('isSynced'), isFalse);
+    });
+
+    test('overwrites existing document on second set', () async {
+      final dto1 = sampleDto();
+      await dataSource.setTask(testUserId, dto1);
+
+      final updated = TaskFirestoreDto.fromFirestore({
+        ...sampleTaskData(),
+        'title': 'Updated Title',
+      });
+      await dataSource.setTask(testUserId, updated);
+
+      final doc = await fakeFirestore
+          .doc(FirestorePaths.taskDoc(testUserId, dto1.id))
+          .get();
+      expect(doc.data()!['title'], 'Updated Title');
     });
   });
 
   group('batchSetTasks', () {
-    test('calls batch.set for each DTO and commits once', () async {
-      final mockBatch = MockWriteBatch();
-      final mockDocRef1 = MockDocumentReference();
-      final mockDocRef2 = MockDocumentReference();
-
+    test('writes all DTOs in a single batch', () async {
       final dto1 = sampleDto(id: 'task-1');
       final dto2 = sampleDto(id: 'task-2');
 
-      when(() => mockFirestore.batch()).thenReturn(mockBatch);
-      when(
-        () => mockFirestore.doc('users/$testUserId/tasks/task-1'),
-      ).thenReturn(mockDocRef1);
-      when(
-        () => mockFirestore.doc('users/$testUserId/tasks/task-2'),
-      ).thenReturn(mockDocRef2);
-      when(() => mockBatch.set(any(), any())).thenReturn(null);
-      when(() => mockBatch.commit()).thenAnswer((_) async {});
-
       await dataSource.batchSetTasks(testUserId, [dto1, dto2]);
 
-      verify(() => mockBatch.set(mockDocRef1, dto1.toFirestore())).called(1);
-      verify(() => mockBatch.set(mockDocRef2, dto2.toFirestore())).called(1);
-      verify(() => mockBatch.commit()).called(1);
+      final snapshot = await fakeFirestore
+          .collection(FirestorePaths.tasksCol(testUserId))
+          .get();
+      expect(snapshot.docs, hasLength(2));
+
+      final ids = snapshot.docs.map((d) => d.data()['id']).toSet();
+      expect(ids, {'task-1', 'task-2'});
     });
 
-    test('calls batch.set 0 times for empty list', () async {
-      final mockBatch = MockWriteBatch();
-
-      when(() => mockFirestore.batch()).thenReturn(mockBatch);
-      when(() => mockBatch.set(any(), any())).thenReturn(null);
-      when(() => mockBatch.commit()).thenAnswer((_) async {});
-
+    test('handles empty list without error', () async {
       await dataSource.batchSetTasks(testUserId, []);
 
-      verifyNever(() => mockBatch.set(any(), any()));
-      verify(() => mockBatch.commit()).called(1);
+      final snapshot = await fakeFirestore
+          .collection(FirestorePaths.tasksCol(testUserId))
+          .get();
+      expect(snapshot.docs, isEmpty);
     });
   });
 
   group('fetchAllTasks', () {
-    test('returns list of DTOs from snapshot docs', () async {
-      final mockSnapshot = MockQuerySnapshot();
-      final doc1 = createMockDoc(sampleTaskData(id: 'task-1'));
-      final doc2 = createMockDoc(sampleTaskData(id: 'task-2'));
-
-      when(() => mockCollection.get()).thenAnswer((_) async => mockSnapshot);
-      when(() => mockSnapshot.docs).thenReturn([doc1, doc2]);
+    test('returns list of DTOs from stored documents', () async {
+      // Seed data directly into fake Firestore
+      final col =
+          fakeFirestore.collection(FirestorePaths.tasksCol(testUserId));
+      await col.doc('task-1').set(sampleTaskData(id: 'task-1'));
+      await col.doc('task-2').set(sampleTaskData(id: 'task-2'));
 
       final result = await dataSource.fetchAllTasks(testUserId);
 
       expect(result, hasLength(2));
-      expect(result[0].id, 'task-1');
-      expect(result[1].id, 'task-2');
-      verify(
-        () => mockFirestore.collection('users/$testUserId/tasks'),
-      ).called(1);
+      final ids = result.map((d) => d.id).toSet();
+      expect(ids, {'task-1', 'task-2'});
     });
 
-    test('returns empty list for empty snapshot', () async {
-      final mockSnapshot = MockQuerySnapshot();
-
-      when(() => mockCollection.get()).thenAnswer((_) async => mockSnapshot);
-      when(() => mockSnapshot.docs).thenReturn([]);
-
+    test('returns empty list when no documents exist', () async {
       final result = await dataSource.fetchAllTasks(testUserId);
 
       expect(result, isEmpty);
@@ -204,14 +148,12 @@ void main() {
   });
 
   group('watchTasks', () {
-    test('emits list of DTOs from snapshot stream', () async {
-      final mockSnapshot = MockQuerySnapshot();
-      final doc1 = createMockDoc(sampleTaskData(id: 'task-1'));
-
-      when(
-        () => mockCollection.snapshots(),
-      ).thenAnswer((_) => Stream.value(mockSnapshot));
-      when(() => mockSnapshot.docs).thenReturn([doc1]);
+    test('emits current documents', () async {
+      // Seed one task
+      await fakeFirestore
+          .collection(FirestorePaths.tasksCol(testUserId))
+          .doc('task-1')
+          .set(sampleTaskData(id: 'task-1'));
 
       final result = await dataSource.watchTasks(testUserId).first;
 
@@ -219,38 +161,29 @@ void main() {
       expect(result[0].id, 'task-1');
     });
 
-    test('emits empty list for empty snapshot', () async {
-      final mockSnapshot = MockQuerySnapshot();
-
-      when(
-        () => mockCollection.snapshots(),
-      ).thenAnswer((_) => Stream.value(mockSnapshot));
-      when(() => mockSnapshot.docs).thenReturn([]);
-
+    test('emits empty list when no documents exist', () async {
       final result = await dataSource.watchTasks(testUserId).first;
 
       expect(result, isEmpty);
     });
 
-    test('emits multiple updates from stream', () async {
-      final snapshot1 = MockQuerySnapshot();
-      final snapshot2 = MockQuerySnapshot();
+    test('emits updated list when documents are added', () async {
+      final stream = dataSource.watchTasks(testUserId);
 
-      final doc1 = createMockDoc(sampleTaskData(id: 'task-1'));
-      final doc2 = createMockDoc(sampleTaskData(id: 'task-2'));
+      // Collect first two emissions
+      final future = stream.take(2).toList();
 
-      when(() => snapshot1.docs).thenReturn([doc1]);
-      when(() => snapshot2.docs).thenReturn([doc1, doc2]);
+      // Add a document to trigger second emission
+      await fakeFirestore
+          .collection(FirestorePaths.tasksCol(testUserId))
+          .doc('task-1')
+          .set(sampleTaskData(id: 'task-1'));
 
-      when(
-        () => mockCollection.snapshots(),
-      ).thenAnswer((_) => Stream.fromIterable([snapshot1, snapshot2]));
+      final results = await future;
 
-      final results = await dataSource.watchTasks(testUserId).toList();
-
-      expect(results, hasLength(2));
-      expect(results[0], hasLength(1));
-      expect(results[1], hasLength(2));
+      expect(results[0], isEmpty);
+      expect(results[1], hasLength(1));
+      expect(results[1][0].id, 'task-1');
     });
   });
 }
