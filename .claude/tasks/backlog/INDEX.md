@@ -1,43 +1,32 @@
 # Task Backlog
 
-## Queue (proceed in order)
+## Archived Phases
+- [Phase 1](../archive/phase-1.md) — 로컬 TODO 앱 (9 tasks, 2026-02-08)
+- [Phase 2A](../archive/phase-2a.md) — Firebase Auth (1 task, 2026-02-09)
+- [Infra](../archive/infra.md) — CI, lefthook, tests, git conventions (4 tasks)
 
-### Phase 2B: Firestore Task Sync
-8. task-sync-service.md (L) — TaskSyncService 핵심 로직 (blocked by: 4, 6, 7)
-9. task-synced-repository.md (M) — SyncedTaskRepository 작성 (blocked by: 8)
-10. task-sync-providers.md (M) — Provider 변경 (blocked by: 9)
-11. task-sync-settings-ui.md (S) — 설정 화면 동기화 섹션 (blocked by: 10)
-12. task-sync-tests.md (M) — 단위 테스트 (blocked by: 10)
+## Queue (Phase 2B: Firestore 동기화)
+9. (M) SyncedTaskRepository 작성 — blocked by: 8
+10. (M) Provider 변경 (조건부 Synced/Local) — blocked by: 9
+11. (S) 설정 화면 동기화 섹션 UI — blocked by: 10
+12. (M) 동기화 통합 테스트 — blocked by: 10
 
 ### Phase 3+
-13. task-google-auth.md (M) — Phase 3: Google 소셜 로그인 (blocked by: 12)
-14. task-native-widget.md (L) — Phase 4: Native Widget Bridge
-15. task-notifications.md (L) — Phase 5: 알림 (FCM + 로컬)
+13. (M) Google 소셜 로그인 — blocked by: 12
+14. (L) Native Widget Bridge (iOS/Android/Windows)
+15. (L) 알림 (FCM + 로컬)
 
-## Independent Tasks (can run anytime)
-- task-app-icon-splash.md (S) - 앱 아이콘 + 스플래시 스크린
-- task-i18n.md (M) - 다국어 지원
-- task-store-deploy.md (M) - 스토어 배포
+## Independent Tasks
+- (S) 앱 아이콘 + 스플래시 스크린
+- (M) 다국어 지원
+- (M) 스토어 배포
 
-## Completed
-- ~~01-domain-models.md~~ → Phase 1
-- ~~02-drift-database.md~~ → Phase 1
-- ~~03-repository-layer.md~~ → Phase 1
-- ~~04-core-and-theme.md~~ → Phase 1
-- ~~05-riverpod-providers.md~~ → Phase 1
-- ~~06-router-and-main.md~~ → Phase 1
-- ~~07-ui-home-and-task-crud.md~~ → Phase 1
-- ~~08-ui-categories-tags-search.md~~ → Phase 1
-- ~~09-build-and-verify.md~~ → Phase 1
-- ~~firebase-auth.md~~ → Phase 2A (2026-02-09)
-- ~~ci-pipeline.md~~ → 인프라
-- ~~lefthook-setup.md~~ → 인프라
-- ~~unit-widget-tests.md~~ → 인프라
-- ~~git-conventions.md~~ → 인프라
-- ~~task-drift-schema-v2.md~~ → Phase 2B (2026-02-09)
-- ~~task-entity-deleted-at.md~~ → Phase 2B (2026-02-09)
-- ~~task-dao-soft-delete.md~~ → Phase 2B (2026-02-09)
-- ~~task-local-repo-update.md~~ → Phase 2B (2026-02-09)
-- ~~task-connectivity-service.md~~ → Phase 2B (2026-02-09)
-- ~~task-firestore-dto.md~~ → Phase 2B (2026-02-10)
-- ~~task-remote-datasource.md~~ → Phase 2B (2026-02-10)
+## Completed (Phase 2B)
+- ~~Drift schema v2 (deletedAt)~~ (2026-02-09)
+- ~~TaskEntity deletedAt 필드~~ (2026-02-09)
+- ~~TaskDao soft delete~~ (2026-02-09)
+- ~~LocalTaskRepository 업데이트~~ (2026-02-09)
+- ~~ConnectivityService~~ (2026-02-09)
+- ~~TaskFirestoreDto~~ (2026-02-10)
+- ~~FirestoreTaskDataSource~~ (2026-02-10)
+- ~~TaskSyncService~~ (2026-02-10)

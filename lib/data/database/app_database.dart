@@ -3,10 +3,10 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
-import 'tables.dart';
-import 'daos/task_dao.dart';
-import 'daos/category_dao.dart';
-import 'daos/tag_dao.dart';
+import 'package:todo_app/data/database/tables.dart';
+import 'package:todo_app/data/database/daos/task_dao.dart';
+import 'package:todo_app/data/database/daos/category_dao.dart';
+import 'package:todo_app/data/database/daos/tag_dao.dart';
 
 part 'app_database.g.dart';
 

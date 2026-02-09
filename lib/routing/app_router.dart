@@ -8,7 +8,7 @@ import 'package:todo_app/presentation/screens/search/search_screen.dart';
 import 'package:todo_app/presentation/screens/settings/settings_screen.dart';
 import 'package:todo_app/presentation/screens/auth/login_screen.dart';
 import 'package:todo_app/presentation/screens/auth/register_screen.dart';
-import 'app_shell.dart';
+import 'package:todo_app/routing/app_shell.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 final shellNavigatorKey = GlobalKey<NavigatorState>();

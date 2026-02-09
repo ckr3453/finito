@@ -6,7 +6,7 @@ part of 'auth_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authServiceHash() => r'd21f5a7ae5a9021d9140938c3ad864d22ad0fd6f';
+String _$authServiceHash() => r'd95f6f0327b9783a3e7e039c4caaa93c6a60aa27';
 
 /// See also [authService].
 @ProviderFor(authService)
@@ -23,7 +23,7 @@ final authServiceProvider = Provider<AuthService>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthServiceRef = ProviderRef<AuthService>;
-String _$authStateHash() => r'ae52b2fcb966cc3d12a6f9f841e8cfdcd7dc60ea';
+String _$authStateHash() => r'048787f1d00781a20a2fe060cd752f5ada19bac7';
 
 /// See also [authState].
 @ProviderFor(authState)
@@ -40,7 +40,7 @@ final authStateProvider = StreamProvider<User?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthStateRef = StreamProviderRef<User?>;
-String _$currentUserHash() => r'c82969b0b37d03239b9c45e84fa559bb41058125';
+String _$currentUserHash() => r'1ce1323ddde988e765c0207c734028e2a6db8d2a';
 
 /// See also [currentUser].
 @ProviderFor(currentUser)
@@ -57,7 +57,7 @@ final currentUserProvider = AutoDisposeProvider<User?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentUserRef = AutoDisposeProviderRef<User?>;
-String _$isAuthenticatedHash() => r'04e1665da030cafe94d0fb9a120b250e6f570f5f';
+String _$isAuthenticatedHash() => r'b72ba2077fffcbed5f0a4b6a5d3cbf052855b804';
 
 /// See also [isAuthenticated].
 @ProviderFor(isAuthenticated)

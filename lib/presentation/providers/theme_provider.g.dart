@@ -6,20 +6,20 @@ part of 'theme_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$themeMode_Hash() => r'988d19b42b72aead5eaeec2111ca3af09cabe3ef';
+String _$appThemeModeHash() => r'8321412e2225db2de6003a2502488a77d266b2a3';
 
-/// See also [ThemeMode_].
-@ProviderFor(ThemeMode_)
-final themeMode_Provider = NotifierProvider<ThemeMode_, ThemeMode>.internal(
-  ThemeMode_.new,
-  name: r'themeMode_Provider',
+/// See also [AppThemeMode].
+@ProviderFor(AppThemeMode)
+final appThemeModeProvider = NotifierProvider<AppThemeMode, ThemeMode>.internal(
+  AppThemeMode.new,
+  name: r'appThemeModeProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$themeMode_Hash,
+      : _$appThemeModeHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ThemeMode_ = Notifier<ThemeMode>;
+typedef _$AppThemeMode = Notifier<ThemeMode>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
