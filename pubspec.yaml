@@ -59,6 +59,7 @@ dev_dependencies:
   json_serializable: ^6.9.4
   riverpod_generator: ^2.6.5
   drift_dev: ^2.27.1
+  fake_cloud_firestore: ^4.0.1
 
 flutter:
   uses-material-design: true

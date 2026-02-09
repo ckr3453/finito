@@ -84,10 +84,11 @@ void main() {
       expect(result.status, 1);
     });
 
-    test('deleteTask removes the task', () async {
+    test('deleteTask soft-deletes the task', () async {
       await dao.insertTask(makeTask());
       await dao.deleteTask('task-1');
 
+      // getTaskById filters deletedAt IS NULL, so returns null
       final result = await dao.getTaskById('task-1');
       expect(result, isNull);
     });
@@ -241,6 +242,113 @@ void main() {
     });
   });
 
+  group('Soft delete', () {
+    test('deleteTask sets deletedAt and marks unsynced', () async {
+      await dao.insertTask(makeTask(isSynced: true));
+      await dao.deleteTask('task-1');
+
+      // Query raw to bypass deletedAt IS NULL filter
+      final raw = await (db.select(
+        db.taskItems,
+      )..where((t) => t.id.equals('task-1'))).getSingleOrNull();
+
+      expect(raw, isNotNull);
+      expect(raw!.deletedAt, isNotNull);
+      expect(raw.isSynced, isFalse);
+    });
+
+    test('soft-deleted task excluded from getAllTasks', () async {
+      await dao.insertTask(makeTask(id: 'a'));
+      await dao.insertTask(makeTask(id: 'b'));
+      await dao.deleteTask('a');
+
+      final all = await dao.getAllTasks();
+      expect(all, hasLength(1));
+      expect(all.first.id, 'b');
+    });
+
+    test('soft-deleted task excluded from watchAllTasks', () async {
+      await dao.insertTask(makeTask(id: 'a'));
+      await dao.insertTask(makeTask(id: 'b'));
+      await dao.deleteTask('a');
+
+      final result = await dao.watchAllTasks().first;
+      expect(result, hasLength(1));
+      expect(result.first.id, 'b');
+    });
+
+    test('soft-deleted task excluded from watchTasksFiltered', () async {
+      await dao.insertTask(makeTask(id: 'a', status: 0));
+      await dao.insertTask(makeTask(id: 'b', status: 0));
+      await dao.deleteTask('a');
+
+      final result = await dao.watchTasksFiltered(status: 0).first;
+      expect(result, hasLength(1));
+      expect(result.first.id, 'b');
+    });
+
+    test('soft-deleted task excluded from getTaskById', () async {
+      await dao.insertTask(makeTask());
+      await dao.deleteTask('task-1');
+
+      final result = await dao.getTaskById('task-1');
+      expect(result, isNull);
+    });
+  });
+
+  group('upsertTask', () {
+    test('inserts a new task', () async {
+      await dao.upsertTask(makeTask(id: 'new-task', title: 'New'));
+
+      final result = await dao.getTaskById('new-task');
+      expect(result, isNotNull);
+      expect(result!.title, 'New');
+    });
+
+    test('updates existing task on conflict', () async {
+      await dao.insertTask(makeTask(id: 'task-1', title: 'Original'));
+      await dao.upsertTask(makeTask(id: 'task-1', title: 'Upserted'));
+
+      final result = await dao.getTaskById('task-1');
+      expect(result, isNotNull);
+      expect(result!.title, 'Upserted');
+    });
+  });
+
+  group('purgeDeletedTasks', () {
+    test('physically removes tasks deleted before cutoff', () async {
+      await dao.insertTask(makeTask(id: 'old'));
+      await dao.insertTask(makeTask(id: 'recent'));
+
+      // Soft delete both
+      await dao.deleteTask('old');
+      await dao.deleteTask('recent');
+
+      // Manually backdate 'old' deletedAt to 10 days ago
+      final tenDaysAgo = DateTime.now().subtract(const Duration(days: 10));
+      await (db.update(db.taskItems)..where((t) => t.id.equals('old'))).write(
+        TaskItemsCompanion(deletedAt: Value(tenDaysAgo)),
+      );
+
+      // Purge tasks deleted more than 7 days ago
+      final cutoff = DateTime.now().subtract(const Duration(days: 7));
+      await dao.purgeDeletedTasks(cutoff);
+
+      // 'old' should be physically gone
+      final oldRaw = await (db.select(
+        db.taskItems,
+      )..where((t) => t.id.equals('old'))).getSingleOrNull();
+      expect(oldRaw, isNull);
+
+      // 'recent' should still exist (soft-deleted but not yet purged)
+      final recentRaw = await (db.select(
+        db.taskItems,
+      )..where((t) => t.id.equals('recent'))).getSingleOrNull();
+      expect(recentRaw, isNotNull);
+      expect(recentRaw!.deletedAt, isNotNull);
+    });
+  });
+
   group('Sync support', () {
     test('getUnsyncedTasks returns only unsynced', () async {
       await dao.insertTask(makeTask(id: 'synced', isSynced: true));
@@ -249,6 +357,19 @@ void main() {
       final unsynced = await dao.getUnsyncedTasks();
       expect(unsynced, hasLength(1));
       expect(unsynced.first.id, 'unsynced');
+    });
+
+    test('getUnsyncedTasks includes soft-deleted items', () async {
+      await dao.insertTask(makeTask(id: 'active', isSynced: true));
+      await dao.insertTask(makeTask(id: 'deleted-unsynced', isSynced: true));
+      await dao.deleteTask(
+        'deleted-unsynced',
+      ); // soft delete sets isSynced=false
+
+      final unsynced = await dao.getUnsyncedTasks();
+      expect(unsynced, hasLength(1));
+      expect(unsynced.first.id, 'deleted-unsynced');
+      expect(unsynced.first.deletedAt, isNotNull);
     });
 
     test('markSynced sets isSynced to true', () async {

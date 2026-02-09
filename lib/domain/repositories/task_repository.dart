@@ -12,6 +12,7 @@ abstract class TaskRepository {
   Future<TaskEntity?> getTaskById(String id);
   Future<void> createTask(TaskEntity task);
   Future<void> updateTask(TaskEntity task);
+  Future<void> upsertTask(TaskEntity task);
   Future<void> deleteTask(String id);
   Future<void> setTagsForTask(String taskId, List<String> tagIds);
   Future<List<TagEntity>> getTagsForTask(String taskId);

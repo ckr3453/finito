@@ -27,6 +27,7 @@ class LocalTaskRepository implements TaskRepository {
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
       isSynced: item.isSynced,
+      deletedAt: item.deletedAt,
     );
   }
 
@@ -47,6 +48,7 @@ class LocalTaskRepository implements TaskRepository {
       createdAt: Value(entity.createdAt),
       updatedAt: Value(entity.updatedAt),
       isSynced: Value(entity.isSynced),
+      deletedAt: Value(entity.deletedAt),
     );
   }
 
@@ -112,6 +114,11 @@ class LocalTaskRepository implements TaskRepository {
   Future<void> updateTask(TaskEntity task) async {
     await _db.taskDao.updateTask(_toCompanion(task));
     await _db.taskDao.setTagsForTask(task.id, task.tagIds);
+  }
+
+  @override
+  Future<void> upsertTask(TaskEntity task) async {
+    await _db.taskDao.upsertTask(_toCompanion(task));
   }
 
   @override

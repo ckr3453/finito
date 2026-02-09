@@ -106,12 +106,59 @@ void main() {
   });
 
   group('deleteTask', () {
-    test('removes task', () async {
+    test('soft-deletes task so getTaskById returns null', () async {
       await repo.createTask(makeTask());
       await repo.deleteTask('task-1');
 
       final result = await repo.getTaskById('task-1');
       expect(result, isNull);
+    });
+  });
+
+  group('deletedAt mapping', () {
+    test('round-trips deletedAt through entity → companion → entity', () async {
+      final deletedTime = DateTime(2026, 1, 15, 10, 30);
+      final task = TaskEntity(
+        id: 'del-task',
+        title: 'Deleted Task',
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: deletedTime,
+      );
+      await repo.createTask(task);
+
+      // Read raw from DB to verify deletedAt was persisted
+      final raw = await (db.select(
+        db.taskItems,
+      )..where((t) => t.id.equals('del-task'))).getSingleOrNull();
+      expect(raw, isNotNull);
+      expect(raw!.deletedAt, isNotNull);
+      // DateTime precision: compare to second
+      expect(
+        raw.deletedAt!.difference(deletedTime).inSeconds.abs(),
+        lessThan(2),
+      );
+    });
+  });
+
+  group('upsertTask', () {
+    test('inserts a new task via repository', () async {
+      final task = makeTask(id: 'upsert-new', title: 'Upserted New');
+      await repo.upsertTask(task);
+
+      final result = await repo.getTaskById('upsert-new');
+      expect(result, isNotNull);
+      expect(result!.title, 'Upserted New');
+    });
+
+    test('updates existing task on conflict via repository', () async {
+      await repo.createTask(makeTask(id: 'upsert-exist', title: 'Original'));
+      final updated = makeTask(id: 'upsert-exist', title: 'Upserted Updated');
+      await repo.upsertTask(updated);
+
+      final result = await repo.getTaskById('upsert-exist');
+      expect(result, isNotNull);
+      expect(result!.title, 'Upserted Updated');
     });
   });
 
