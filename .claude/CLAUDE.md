@@ -34,10 +34,10 @@ lib/
 ```
 
 ## Git Branching Strategy
-- **GitHub Flow**: `main` is always deployable
-- Branch from `main`, work, PR, merge back to `main`, delete branch
+- **GitHub Flow**: `master` is always deployable
+- Branch from `master`, work, PR, merge back to `master`, delete branch
 - Branch naming: `<type>/<short-description>` (e.g., `feat/google-auth`, `fix/task-crash`)
-- Never commit directly to `main` — always use feature branches + PR
+- Never commit directly to `master` — always use feature branches + PR
 
 ## Git Commit Convention
 - Follow [Conventional Commits](https://www.conventionalcommits.org/)

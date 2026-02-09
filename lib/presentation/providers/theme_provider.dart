@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'theme_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class ThemeMode_ extends _$ThemeMode_ {
+class AppThemeMode extends _$AppThemeMode {
   static const _key = 'theme_mode';
 
   @override

@@ -6,7 +6,7 @@ part of 'task_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$taskListHash() => r'9bb8f928b05f9e7328bde524011fad78ff863bd4';
+String _$taskListHash() => r'89a0a1a2de3e8b4a4124693acd4ffd65e3ad24bd';
 
 /// See also [taskList].
 @ProviderFor(taskList)
@@ -23,7 +23,7 @@ final taskListProvider = AutoDisposeStreamProvider<List<TaskEntity>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef TaskListRef = AutoDisposeStreamProviderRef<List<TaskEntity>>;
-String _$taskDetailHash() => r'56b09c36af0e88ac3b4b2a2049cb78ee80122a78';
+String _$taskDetailHash() => r'184582b378bcedd34846514f97435dbc4053bec9';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -163,7 +163,7 @@ class _TaskDetailProviderElement
   String get taskId => (origin as TaskDetailProvider).taskId;
 }
 
-String _$taskTagsHash() => r'67aab72247b82c815b03ed156908034fe9c44594';
+String _$taskTagsHash() => r'c6c8bf84d8448bf2a98fd79f03d1e50722359634';
 
 /// See also [taskTags].
 @ProviderFor(taskTags)

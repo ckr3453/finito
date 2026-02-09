@@ -9,14 +9,14 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentThemeMode = ref.watch(themeMode_Provider);
+    final currentThemeMode = ref.watch(appThemeModeProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('설정')),
       body: ListView(
         children: [
           // Appearance section
-          _SectionHeader(title: '외관'),
+          const _SectionHeader(title: '외관'),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
@@ -45,7 +45,7 @@ class SettingsScreen extends ConsumerWidget {
                   selected: {currentThemeMode},
                   onSelectionChanged: (selected) {
                     ref
-                        .read(themeMode_Provider.notifier)
+                        .read(appThemeModeProvider.notifier)
                         .setThemeMode(selected.first);
                   },
                 ),
@@ -56,7 +56,7 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(height: 32),
 
           // Sync section (placeholder)
-          _SectionHeader(title: '동기화'),
+          const _SectionHeader(title: '동기화'),
           const ListTile(
             leading: Icon(Icons.sync),
             title: Text('동기화 설정'),
@@ -67,7 +67,7 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(height: 32),
 
           // Account section
-          _SectionHeader(title: '계정'),
+          const _SectionHeader(title: '계정'),
           _AccountSection(),
         ],
       ),

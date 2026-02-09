@@ -2,7 +2,7 @@ name: PR Checks
 
 on:
   pull_request:
-    branches: [main, master, develop]
+    branches: [master]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -49,5 +49,25 @@ jobs:
       - name: Analyze
         run: flutter analyze --fatal-warnings --no-fatal-infos
 
-      - name: Run tests
-        run: flutter test
+      - name: Run tests with coverage
+        run: flutter test --coverage
+
+      - name: Check coverage threshold
+        run: |
+          if [ ! -f coverage/lcov.info ]; then
+            echo "No coverage data found"
+            exit 1
+          fi
+          # Calculate line coverage percentage
+          TOTAL=$(grep -c "^DA:" coverage/lcov.info || true)
+          HIT=$(grep "^DA:" coverage/lcov.info | grep -v ",0$" | wc -l || true)
+          if [ "$TOTAL" -eq 0 ]; then
+            echo "No coverage lines found"
+            exit 0
+          fi
+          PCT=$((HIT * 100 / TOTAL))
+          echo "Coverage: $HIT/$TOTAL lines ($PCT%)"
+          if [ "$PCT" -lt 60 ]; then
+            echo "Coverage $PCT% is below 60% threshold"
+            exit 1
+          fi

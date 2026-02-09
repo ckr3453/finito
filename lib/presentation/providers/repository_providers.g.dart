@@ -6,7 +6,7 @@ part of 'repository_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$taskRepositoryHash() => r'44615f8024ed94891a695e792c244d071e3df94f';
+String _$taskRepositoryHash() => r'a8d783cba349046ad4991b72ca14a2a952c591f7';
 
 /// See also [taskRepository].
 @ProviderFor(taskRepository)
@@ -24,7 +24,7 @@ final taskRepositoryProvider = Provider<TaskRepository>.internal(
 // ignore: unused_element
 typedef TaskRepositoryRef = ProviderRef<TaskRepository>;
 String _$categoryRepositoryHash() =>
-    r'eb32c8744032a9d4efc496c8b42952399f00113d';
+    r'7b2ea09f88e7994139f3c7c6529739574ca78fa3';
 
 /// See also [categoryRepository].
 @ProviderFor(categoryRepository)
@@ -41,7 +41,7 @@ final categoryRepositoryProvider = Provider<CategoryRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CategoryRepositoryRef = ProviderRef<CategoryRepository>;
-String _$tagRepositoryHash() => r'55bc23776ff5b5f51b4dc4c0665e441e87d2ada0';
+String _$tagRepositoryHash() => r'c43cf16eea35f270627a6e6ef4ee0bb5d71ed4f4';
 
 /// See also [tagRepository].
 @ProviderFor(tagRepository)

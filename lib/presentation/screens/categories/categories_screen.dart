@@ -5,7 +5,7 @@ import 'package:todo_app/domain/entities/entities.dart';
 import 'package:todo_app/presentation/providers/category_providers.dart';
 import 'package:todo_app/presentation/providers/filter_providers.dart';
 import 'package:todo_app/presentation/providers/repository_providers.dart';
-import 'category_editor_dialog.dart';
+import 'package:todo_app/presentation/screens/categories/category_editor_dialog.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   const CategoriesScreen({super.key});

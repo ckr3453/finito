@@ -1,5 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'connectivity_service.dart';
+import 'package:todo_app/services/connectivity_service.dart';
 
 class ConnectivityServiceImpl implements ConnectivityService {
   final Connectivity _connectivity;
@@ -14,9 +14,7 @@ class ConnectivityServiceImpl implements ConnectivityService {
 
   @override
   Stream<bool> get onConnectivityChanged {
-    return _connectivity.onConnectivityChanged.map(
-      (results) => _hasConnection(results),
-    );
+    return _connectivity.onConnectivityChanged.map(_hasConnection);
   }
 
   bool _hasConnection(List<ConnectivityResult> results) {

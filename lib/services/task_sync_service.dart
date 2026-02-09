@@ -21,8 +21,8 @@ class TaskSyncService {
   final _statusController = StreamController<SyncStatus>.broadcast();
   final _unsyncedCountController = StreamController<int>.broadcast();
 
-  StreamSubscription? _remoteSub;
-  StreamSubscription? _connectivitySub;
+  StreamSubscription<List<TaskFirestoreDto>>? _remoteSub;
+  StreamSubscription<bool>? _connectivitySub;
 
   TaskSyncService({
     required TaskRepository repository,

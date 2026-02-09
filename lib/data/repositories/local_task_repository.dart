@@ -71,7 +71,7 @@ class LocalTaskRepository implements TaskRepository {
   @override
   Stream<List<TaskEntity>> watchAllTasks() {
     return _db.taskDao.watchAllTasks().map(
-      (items) => items.map((item) => _toEntity(item)).toList(),
+      (items) => items.map(_toEntity).toList(),
     );
   }
 
@@ -89,7 +89,7 @@ class LocalTaskRepository implements TaskRepository {
           categoryId: categoryId,
           searchQuery: searchQuery,
         )
-        .map((items) => items.map((item) => _toEntity(item)).toList());
+        .map((items) => items.map(_toEntity).toList());
   }
 
   @override
@@ -140,7 +140,7 @@ class LocalTaskRepository implements TaskRepository {
   @override
   Future<List<TaskEntity>> getUnsyncedTasks() async {
     final items = await _db.taskDao.getUnsyncedTasks();
-    return items.map((item) => _toEntity(item)).toList();
+    return items.map(_toEntity).toList();
   }
 
   @override
