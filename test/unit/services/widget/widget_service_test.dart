@@ -23,18 +23,18 @@ void main() {
   setUp(() {
     mockClient = MockHomeWidgetClient();
     mockRepository = MockTaskRepository();
-    service = WidgetServiceImpl(
-      client: mockClient,
-      repository: mockRepository,
-    );
+    service = WidgetServiceImpl(client: mockClient, repository: mockRepository);
 
-    when(() => mockClient.saveWidgetData(any(), any<String>()))
-        .thenAnswer((_) async => true);
-    when(() => mockClient.updateWidget(
-          androidName: any(named: 'androidName'),
-          iOSName: any(named: 'iOSName'),
-          qualifiedAndroidName: any(named: 'qualifiedAndroidName'),
-        )).thenAnswer((_) async => true);
+    when(
+      () => mockClient.saveWidgetData(any(), any<String>()),
+    ).thenAnswer((_) async => true);
+    when(
+      () => mockClient.updateWidget(
+        androidName: any(named: 'androidName'),
+        iOSName: any(named: 'iOSName'),
+        qualifiedAndroidName: any(named: 'qualifiedAndroidName'),
+      ),
+    ).thenAnswer((_) async => true);
   });
 
   TaskEntity _makeTask({
@@ -60,21 +60,26 @@ void main() {
 
       await service.updateWidgetData(tasks);
 
-      verify(() => mockClient.saveWidgetData('widget_data', any<String>()))
-          .called(1);
+      verify(
+        () => mockClient.saveWidgetData('widget_data', any<String>()),
+      ).called(1);
     });
 
     test('저장 후 위젯 갱신을 트리거한다', () async {
       await service.updateWidgetData([]);
 
-      verify(() => mockClient.updateWidget(
-            androidName: 'TodoSmallWidgetReceiver',
-            iOSName: 'TodoWidget',
-          )).called(1);
-      verify(() => mockClient.updateWidget(
-            androidName: 'TodoListWidgetReceiver',
-            iOSName: 'TodoWidget',
-          )).called(1);
+      verify(
+        () => mockClient.updateWidget(
+          androidName: 'TodoSmallWidgetReceiver',
+          iOSName: 'TodoWidget',
+        ),
+      ).called(1);
+      verify(
+        () => mockClient.updateWidget(
+          androidName: 'TodoListWidgetReceiver',
+          iOSName: 'TodoWidget',
+        ),
+      ).called(1);
     });
   });
 
@@ -82,32 +87,38 @@ void main() {
     test('Android Small + List 위젯, iOS 위젯 갱신을 요청한다', () async {
       await service.refreshWidget();
 
-      verify(() => mockClient.updateWidget(
-            androidName: 'TodoSmallWidgetReceiver',
-            iOSName: 'TodoWidget',
-          )).called(1);
-      verify(() => mockClient.updateWidget(
-            androidName: 'TodoListWidgetReceiver',
-            iOSName: 'TodoWidget',
-          )).called(1);
+      verify(
+        () => mockClient.updateWidget(
+          androidName: 'TodoSmallWidgetReceiver',
+          iOSName: 'TodoWidget',
+        ),
+      ).called(1);
+      verify(
+        () => mockClient.updateWidget(
+          androidName: 'TodoListWidgetReceiver',
+          iOSName: 'TodoWidget',
+        ),
+      ).called(1);
     });
   });
 
   group('handleWidgetAction', () {
     test('toggle_complete 액션으로 pending → completed 전환한다', () async {
       final task = _makeTask(id: 'task-1', title: 'Test');
-      when(() => mockRepository.getTaskById('task-1'))
-          .thenAnswer((_) async => task);
-      when(() => mockRepository.updateTask(any()))
-          .thenAnswer((_) async {});
-      when(() => mockRepository.watchAllTasks())
-          .thenAnswer((_) => Stream.value([]));
+      when(
+        () => mockRepository.getTaskById('task-1'),
+      ).thenAnswer((_) async => task);
+      when(() => mockRepository.updateTask(any())).thenAnswer((_) async {});
+      when(
+        () => mockRepository.watchAllTasks(),
+      ).thenAnswer((_) => Stream.value([]));
 
       final uri = Uri.parse('todoapp://toggle_complete?id=task-1');
       await service.handleWidgetAction(uri);
 
-      final captured =
-          verify(() => mockRepository.updateTask(captureAny())).captured;
+      final captured = verify(
+        () => mockRepository.updateTask(captureAny()),
+      ).captured;
       final updated = captured.first as TaskEntity;
       expect(updated.status, TaskStatus.completed);
       expect(updated.completedAt, isNotNull);
@@ -119,18 +130,20 @@ void main() {
         title: 'Test',
         status: TaskStatus.completed,
       );
-      when(() => mockRepository.getTaskById('task-1'))
-          .thenAnswer((_) async => task);
-      when(() => mockRepository.updateTask(any()))
-          .thenAnswer((_) async {});
-      when(() => mockRepository.watchAllTasks())
-          .thenAnswer((_) => Stream.value([]));
+      when(
+        () => mockRepository.getTaskById('task-1'),
+      ).thenAnswer((_) async => task);
+      when(() => mockRepository.updateTask(any())).thenAnswer((_) async {});
+      when(
+        () => mockRepository.watchAllTasks(),
+      ).thenAnswer((_) => Stream.value([]));
 
       final uri = Uri.parse('todoapp://toggle_complete?id=task-1');
       await service.handleWidgetAction(uri);
 
-      final captured =
-          verify(() => mockRepository.updateTask(captureAny())).captured;
+      final captured = verify(
+        () => mockRepository.updateTask(captureAny()),
+      ).captured;
       final updated = captured.first as TaskEntity;
       expect(updated.status, TaskStatus.pending);
       expect(updated.completedAt, isNull);
@@ -151,8 +164,9 @@ void main() {
     });
 
     test('존재하지 않는 태스크는 무시한다', () async {
-      when(() => mockRepository.getTaskById('not-found'))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockRepository.getTaskById('not-found'),
+      ).thenAnswer((_) async => null);
 
       final uri = Uri.parse('todoapp://toggle_complete?id=not-found');
       await service.handleWidgetAction(uri);
@@ -162,18 +176,20 @@ void main() {
 
     test('토글 후 위젯 데이터를 갱신한다', () async {
       final task = _makeTask(id: 'task-1', title: 'Test');
-      when(() => mockRepository.getTaskById('task-1'))
-          .thenAnswer((_) async => task);
-      when(() => mockRepository.updateTask(any()))
-          .thenAnswer((_) async {});
-      when(() => mockRepository.watchAllTasks())
-          .thenAnswer((_) => Stream.value([task]));
+      when(
+        () => mockRepository.getTaskById('task-1'),
+      ).thenAnswer((_) async => task);
+      when(() => mockRepository.updateTask(any())).thenAnswer((_) async {});
+      when(
+        () => mockRepository.watchAllTasks(),
+      ).thenAnswer((_) => Stream.value([task]));
 
       final uri = Uri.parse('todoapp://toggle_complete?id=task-1');
       await service.handleWidgetAction(uri);
 
-      verify(() => mockClient.saveWidgetData('widget_data', any<String>()))
-          .called(1);
+      verify(
+        () => mockClient.saveWidgetData('widget_data', any<String>()),
+      ).called(1);
     });
   });
 }

@@ -25,18 +25,18 @@ void main() {
   setUp(() {
     mockClient = MockHomeWidgetClient();
     mockRepository = MockTaskRepository();
-    service = WidgetServiceImpl(
-      client: mockClient,
-      repository: mockRepository,
-    );
+    service = WidgetServiceImpl(client: mockClient, repository: mockRepository);
 
-    when(() => mockClient.saveWidgetData(any(), any<String>()))
-        .thenAnswer((_) async => true);
-    when(() => mockClient.updateWidget(
-          androidName: any(named: 'androidName'),
-          iOSName: any(named: 'iOSName'),
-          qualifiedAndroidName: any(named: 'qualifiedAndroidName'),
-        )).thenAnswer((_) async => true);
+    when(
+      () => mockClient.saveWidgetData(any(), any<String>()),
+    ).thenAnswer((_) async => true);
+    when(
+      () => mockClient.updateWidget(
+        androidName: any(named: 'androidName'),
+        iOSName: any(named: 'iOSName'),
+        qualifiedAndroidName: any(named: 'qualifiedAndroidName'),
+      ),
+    ).thenAnswer((_) async => true);
   });
 
   TaskEntity _makeTask({
@@ -69,18 +69,14 @@ void main() {
         ),
         _makeTask(id: '2', title: 'Medium task', priority: Priority.medium),
         _makeTask(id: '3', title: 'Low task', priority: Priority.low),
-        _makeTask(
-          id: '4',
-          title: 'Completed',
-          status: TaskStatus.completed,
-        ),
+        _makeTask(id: '4', title: 'Completed', status: TaskStatus.completed),
       ];
 
       await service.updateWidgetData(tasks);
 
-      final captured =
-          verify(() => mockClient.saveWidgetData<String>('widget_data', captureAny()))
-              .captured;
+      final captured = verify(
+        () => mockClient.saveWidgetData<String>('widget_data', captureAny()),
+      ).captured;
       final jsonString = captured.first as String;
 
       expect(jsonString, contains('"todayCount":1'));
@@ -93,17 +89,18 @@ void main() {
     test('위젯 체크박스 토글 → DB 업데이트 → 위젯 갱신 전체 흐름', () async {
       final task = _makeTask(id: 'task-1', title: 'Do something');
 
-      when(() => mockRepository.getTaskById('task-1'))
-          .thenAnswer((_) async => task);
-      when(() => mockRepository.updateTask(any()))
-          .thenAnswer((_) async {});
-      when(() => mockRepository.watchAllTasks())
-          .thenAnswer((_) => Stream.value([
-                task.copyWith(
-                  status: TaskStatus.completed,
-                  completedAt: DateTime.now(),
-                ),
-              ]));
+      when(
+        () => mockRepository.getTaskById('task-1'),
+      ).thenAnswer((_) async => task);
+      when(() => mockRepository.updateTask(any())).thenAnswer((_) async {});
+      when(() => mockRepository.watchAllTasks()).thenAnswer(
+        (_) => Stream.value([
+          task.copyWith(
+            status: TaskStatus.completed,
+            completedAt: DateTime.now(),
+          ),
+        ]),
+      );
 
       // 1. 위젯에서 토글 액션 수신
       await service.handleWidgetAction(
@@ -117,14 +114,17 @@ void main() {
       expect(updatedTask.status, TaskStatus.completed);
 
       // 3. 위젯 데이터 갱신 호출 확인
-      verify(() => mockClient.saveWidgetData('widget_data', any<String>()))
-          .called(1);
+      verify(
+        () => mockClient.saveWidgetData('widget_data', any<String>()),
+      ).called(1);
 
       // 4. 위젯 UI 갱신 트리거 확인
-      verify(() => mockClient.updateWidget(
-            androidName: 'TodoSmallWidgetReceiver',
-            iOSName: 'TodoWidget',
-          )).called(1);
+      verify(
+        () => mockClient.updateWidget(
+          androidName: 'TodoSmallWidgetReceiver',
+          iOSName: 'TodoWidget',
+        ),
+      ).called(1);
     });
 
     test('WidgetDataConverter 변환 결과가 위젯 JSON 스펙과 일치한다', () {

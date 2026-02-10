@@ -19,9 +19,9 @@ class WidgetServiceImpl implements WidgetService {
     required HomeWidgetClient client,
     WidgetDataConverter? converter,
     TaskRepository? repository,
-  })  : _client = client,
-        _converter = converter ?? WidgetDataConverter(),
-        _repository = repository;
+  }) : _client = client,
+       _converter = converter ?? WidgetDataConverter(),
+       _repository = repository;
 
   @override
   Future<void> updateWidgetData(List<TaskEntity> tasks) async {
@@ -45,9 +45,7 @@ class WidgetServiceImpl implements WidgetService {
       status: task.status == TaskStatus.completed
           ? TaskStatus.pending
           : TaskStatus.completed,
-      completedAt: task.status == TaskStatus.completed
-          ? null
-          : DateTime.now(),
+      completedAt: task.status == TaskStatus.completed ? null : DateTime.now(),
       updatedAt: DateTime.now(),
     );
     await _repository.updateTask(toggled);

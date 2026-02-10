@@ -14,10 +14,7 @@ Future<void> widgetBackgroundCallback(Uri? uri) async {
   final database = AppDatabase();
   final repository = LocalTaskRepository(database);
   final client = HomeWidgetClientImpl();
-  final service = WidgetServiceImpl(
-    client: client,
-    repository: repository,
-  );
+  final service = WidgetServiceImpl(client: client, repository: repository);
 
   await service.handleWidgetAction(uri);
 

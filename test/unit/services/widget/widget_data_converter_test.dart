@@ -68,11 +68,7 @@ void main() {
       final tasks = [
         _makeTask(id: '1', title: 'Today 1', dueDate: today),
         _makeTask(id: '2', title: 'Today 2', dueDate: today),
-        _makeTask(
-          id: '3',
-          title: 'Tomorrow',
-          dueDate: DateTime(2026, 2, 11),
-        ),
+        _makeTask(id: '3', title: 'Tomorrow', dueDate: DateTime(2026, 2, 11)),
         _makeTask(id: '4', title: 'No due'),
       ];
 
@@ -138,12 +134,7 @@ void main() {
     test('deletedAt이 설정된 태스크는 제외된다', () {
       final now = DateTime(2026, 2, 10);
       final tasks = [
-        TaskEntity(
-          id: '1',
-          title: 'Active',
-          createdAt: now,
-          updatedAt: now,
-        ),
+        TaskEntity(id: '1', title: 'Active', createdAt: now, updatedAt: now),
         TaskEntity(
           id: '2',
           title: 'Deleted',
