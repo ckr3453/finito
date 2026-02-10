@@ -563,6 +563,17 @@ class $TaskItemsTable extends TaskItems
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _reminderTimeMeta = const VerificationMeta(
+    'reminderTime',
+  );
+  @override
+  late final GeneratedColumn<DateTime> reminderTime = GeneratedColumn<DateTime>(
+    'reminder_time',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _sortOrderMeta = const VerificationMeta(
     'sortOrder',
   );
@@ -633,6 +644,7 @@ class $TaskItemsTable extends TaskItems
     categoryId,
     dueDate,
     completedAt,
+    reminderTime,
     sortOrder,
     createdAt,
     updatedAt,
@@ -707,6 +719,15 @@ class $TaskItemsTable extends TaskItems
         completedAt.isAcceptableOrUnknown(
           data['completed_at']!,
           _completedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reminder_time')) {
+      context.handle(
+        _reminderTimeMeta,
+        reminderTime.isAcceptableOrUnknown(
+          data['reminder_time']!,
+          _reminderTimeMeta,
         ),
       );
     }
@@ -785,6 +806,10 @@ class $TaskItemsTable extends TaskItems
         DriftSqlType.dateTime,
         data['${effectivePrefix}completed_at'],
       ),
+      reminderTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}reminder_time'],
+      ),
       sortOrder: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
@@ -823,6 +848,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
   final String? categoryId;
   final DateTime? dueDate;
   final DateTime? completedAt;
+  final DateTime? reminderTime;
   final int sortOrder;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -837,6 +863,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
     this.categoryId,
     this.dueDate,
     this.completedAt,
+    this.reminderTime,
     required this.sortOrder,
     required this.createdAt,
     required this.updatedAt,
@@ -859,6 +886,9 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
     }
     if (!nullToAbsent || completedAt != null) {
       map['completed_at'] = Variable<DateTime>(completedAt);
+    }
+    if (!nullToAbsent || reminderTime != null) {
+      map['reminder_time'] = Variable<DateTime>(reminderTime);
     }
     map['sort_order'] = Variable<int>(sortOrder);
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -886,6 +916,9 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
       completedAt: completedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(completedAt),
+      reminderTime: reminderTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reminderTime),
       sortOrder: Value(sortOrder),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -910,6 +943,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
       categoryId: serializer.fromJson<String?>(json['categoryId']),
       dueDate: serializer.fromJson<DateTime?>(json['dueDate']),
       completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
+      reminderTime: serializer.fromJson<DateTime?>(json['reminderTime']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -929,6 +963,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
       'categoryId': serializer.toJson<String?>(categoryId),
       'dueDate': serializer.toJson<DateTime?>(dueDate),
       'completedAt': serializer.toJson<DateTime?>(completedAt),
+      'reminderTime': serializer.toJson<DateTime?>(reminderTime),
       'sortOrder': serializer.toJson<int>(sortOrder),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -946,6 +981,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
     Value<String?> categoryId = const Value.absent(),
     Value<DateTime?> dueDate = const Value.absent(),
     Value<DateTime?> completedAt = const Value.absent(),
+    Value<DateTime?> reminderTime = const Value.absent(),
     int? sortOrder,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -960,6 +996,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
     categoryId: categoryId.present ? categoryId.value : this.categoryId,
     dueDate: dueDate.present ? dueDate.value : this.dueDate,
     completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    reminderTime: reminderTime.present ? reminderTime.value : this.reminderTime,
     sortOrder: sortOrder ?? this.sortOrder,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -982,6 +1019,9 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
       completedAt: data.completedAt.present
           ? data.completedAt.value
           : this.completedAt,
+      reminderTime: data.reminderTime.present
+          ? data.reminderTime.value
+          : this.reminderTime,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -1001,6 +1041,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
           ..write('categoryId: $categoryId, ')
           ..write('dueDate: $dueDate, ')
           ..write('completedAt: $completedAt, ')
+          ..write('reminderTime: $reminderTime, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -1020,6 +1061,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
     categoryId,
     dueDate,
     completedAt,
+    reminderTime,
     sortOrder,
     createdAt,
     updatedAt,
@@ -1038,6 +1080,7 @@ class TaskItem extends DataClass implements Insertable<TaskItem> {
           other.categoryId == this.categoryId &&
           other.dueDate == this.dueDate &&
           other.completedAt == this.completedAt &&
+          other.reminderTime == this.reminderTime &&
           other.sortOrder == this.sortOrder &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
@@ -1054,6 +1097,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
   final Value<String?> categoryId;
   final Value<DateTime?> dueDate;
   final Value<DateTime?> completedAt;
+  final Value<DateTime?> reminderTime;
   final Value<int> sortOrder;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
@@ -1069,6 +1113,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
     this.categoryId = const Value.absent(),
     this.dueDate = const Value.absent(),
     this.completedAt = const Value.absent(),
+    this.reminderTime = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -1085,6 +1130,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
     this.categoryId = const Value.absent(),
     this.dueDate = const Value.absent(),
     this.completedAt = const Value.absent(),
+    this.reminderTime = const Value.absent(),
     this.sortOrder = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
@@ -1106,6 +1152,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
     Expression<String>? categoryId,
     Expression<DateTime>? dueDate,
     Expression<DateTime>? completedAt,
+    Expression<DateTime>? reminderTime,
     Expression<int>? sortOrder,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -1122,6 +1169,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
       if (categoryId != null) 'category_id': categoryId,
       if (dueDate != null) 'due_date': dueDate,
       if (completedAt != null) 'completed_at': completedAt,
+      if (reminderTime != null) 'reminder_time': reminderTime,
       if (sortOrder != null) 'sort_order': sortOrder,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -1140,6 +1188,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
     Value<String?>? categoryId,
     Value<DateTime?>? dueDate,
     Value<DateTime?>? completedAt,
+    Value<DateTime?>? reminderTime,
     Value<int>? sortOrder,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
@@ -1156,6 +1205,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
       categoryId: categoryId ?? this.categoryId,
       dueDate: dueDate ?? this.dueDate,
       completedAt: completedAt ?? this.completedAt,
+      reminderTime: reminderTime ?? this.reminderTime,
       sortOrder: sortOrder ?? this.sortOrder,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -1192,6 +1242,9 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
     if (completedAt.present) {
       map['completed_at'] = Variable<DateTime>(completedAt.value);
     }
+    if (reminderTime.present) {
+      map['reminder_time'] = Variable<DateTime>(reminderTime.value);
+    }
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
     }
@@ -1224,6 +1277,7 @@ class TaskItemsCompanion extends UpdateCompanion<TaskItem> {
           ..write('categoryId: $categoryId, ')
           ..write('dueDate: $dueDate, ')
           ..write('completedAt: $completedAt, ')
+          ..write('reminderTime: $reminderTime, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -2134,6 +2188,7 @@ typedef $$TaskItemsTableCreateCompanionBuilder =
       Value<String?> categoryId,
       Value<DateTime?> dueDate,
       Value<DateTime?> completedAt,
+      Value<DateTime?> reminderTime,
       Value<int> sortOrder,
       required DateTime createdAt,
       required DateTime updatedAt,
@@ -2151,6 +2206,7 @@ typedef $$TaskItemsTableUpdateCompanionBuilder =
       Value<String?> categoryId,
       Value<DateTime?> dueDate,
       Value<DateTime?> completedAt,
+      Value<DateTime?> reminderTime,
       Value<int> sortOrder,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
@@ -2243,6 +2299,11 @@ class $$TaskItemsTableFilterComposer
 
   ColumnFilters<DateTime> get completedAt => $composableBuilder(
     column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get reminderTime => $composableBuilder(
+    column: $table.reminderTime,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2364,6 +2425,11 @@ class $$TaskItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get reminderTime => $composableBuilder(
+    column: $table.reminderTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
     builder: (column) => ColumnOrderings(column),
@@ -2444,6 +2510,11 @@ class $$TaskItemsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get completedAt => $composableBuilder(
     column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get reminderTime => $composableBuilder(
+    column: $table.reminderTime,
     builder: (column) => column,
   );
 
@@ -2547,6 +2618,7 @@ class $$TaskItemsTableTableManager
                 Value<String?> categoryId = const Value.absent(),
                 Value<DateTime?> dueDate = const Value.absent(),
                 Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime?> reminderTime = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
@@ -2562,6 +2634,7 @@ class $$TaskItemsTableTableManager
                 categoryId: categoryId,
                 dueDate: dueDate,
                 completedAt: completedAt,
+                reminderTime: reminderTime,
                 sortOrder: sortOrder,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -2579,6 +2652,7 @@ class $$TaskItemsTableTableManager
                 Value<String?> categoryId = const Value.absent(),
                 Value<DateTime?> dueDate = const Value.absent(),
                 Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime?> reminderTime = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
@@ -2594,6 +2668,7 @@ class $$TaskItemsTableTableManager
                 categoryId: categoryId,
                 dueDate: dueDate,
                 completedAt: completedAt,
+                reminderTime: reminderTime,
                 sortOrder: sortOrder,
                 createdAt: createdAt,
                 updatedAt: updatedAt,

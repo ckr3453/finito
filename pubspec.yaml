@@ -38,6 +38,11 @@ dependencies:
   # Widget Bridge
   home_widget: ^0.7.0
 
+  # Notifications
+  flutter_local_notifications: ^18.0.1
+  firebase_messaging: ^16.1.1
+  timezone: ^0.10.0
+
   # Utilities
   uuid: ^4.5.1
   intl: ^0.20.2

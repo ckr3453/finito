@@ -28,6 +28,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
   String? _categoryId;
   List<String> _selectedTagIds = [];
   DateTime? _dueDate;
+  DateTime? _reminderTime;
 
   bool _isLoading = false;
   bool _initialized = false;
@@ -50,6 +51,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
     _categoryId = task.categoryId;
     _selectedTagIds = List.from(task.tagIds);
     _dueDate = task.dueDate;
+    _reminderTime = task.reminderTime;
   }
 
   @override
@@ -209,6 +211,26 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                   ),
                   const Divider(),
 
+                  // Reminder time picker
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.notifications_active),
+                    title: Text(
+                      _reminderTime != null
+                          ? '리마인더: ${_reminderTime!.toFormattedDateTime()}'
+                          : '리마인더 설정',
+                    ),
+                    trailing: _reminderTime != null
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () =>
+                                setState(() => _reminderTime = null),
+                          )
+                        : null,
+                    onTap: _pickReminderTime,
+                  ),
+                  const Divider(),
+
                   // Tag multi-select
                   const SizedBox(height: 8),
                   Text('태그', style: Theme.of(context).textTheme.titleSmall),
@@ -272,6 +294,35 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
     }
   }
 
+  Future<void> _pickReminderTime() async {
+    final now = DateTime.now();
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _reminderTime ?? now,
+      firstDate: now,
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate == null || !mounted) return;
+
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: _reminderTime != null
+          ? TimeOfDay.fromDateTime(_reminderTime!)
+          : TimeOfDay.now(),
+    );
+    if (pickedTime == null) return;
+
+    setState(() {
+      _reminderTime = DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+    });
+  }
+
   Future<void> _saveTask() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -295,6 +346,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
           categoryId: _categoryId,
           tagIds: _selectedTagIds,
           dueDate: _dueDate,
+          reminderTime: _reminderTime,
           updatedAt: now,
         );
         await repo.updateTask(updated);
@@ -310,6 +362,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
           categoryId: _categoryId,
           tagIds: _selectedTagIds,
           dueDate: _dueDate,
+          reminderTime: _reminderTime,
           createdAt: now,
           updatedAt: now,
         );
