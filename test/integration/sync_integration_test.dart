@@ -110,18 +110,14 @@ void main() {
   }
 
   void stubRemoteEmpty() {
-    when(
-      () => mockRemote.fetchAllTasks(any()),
-    ).thenAnswer((_) async => []);
+    when(() => mockRemote.fetchAllTasks(any())).thenAnswer((_) async => []);
     when(
       () => mockRemote.watchTasks(any()),
     ).thenAnswer((_) => watchController.stream);
   }
 
   void stubRemotePush() {
-    when(
-      () => mockRemote.batchSetTasks(any(), any()),
-    ).thenAnswer((_) async {});
+    when(() => mockRemote.batchSetTasks(any(), any())).thenAnswer((_) async {});
   }
 
   // ==========================================================================
@@ -145,8 +141,9 @@ void main() {
       await syncService.start(userId);
 
       // Assert: remote에 push 호출됨
-      final captured =
-          verify(() => mockRemote.batchSetTasks(userId, captureAny())).captured;
+      final captured = verify(
+        () => mockRemote.batchSetTasks(userId, captureAny()),
+      ).captured;
       final pushedDtos = captured.first as List<TaskFirestoreDto>;
       expect(pushedDtos, hasLength(2));
       expect(pushedDtos.map((d) => d.id).toSet(), {'local-1', 'local-2'});
@@ -410,9 +407,7 @@ void main() {
       await localRepo.createTask(makeEntity(id: 'retry-1'));
 
       stubOnline();
-      when(
-        () => mockRemote.fetchAllTasks(any()),
-      ).thenAnswer((_) async => []);
+      when(() => mockRemote.fetchAllTasks(any())).thenAnswer((_) async => []);
       when(
         () => mockRemote.watchTasks(any()),
       ).thenAnswer((_) => watchController.stream);
@@ -451,9 +446,7 @@ void main() {
 
       stubOnline();
       stubRemotePush();
-      when(
-        () => mockRemote.fetchAllTasks(any()),
-      ).thenAnswer((_) async => []);
+      when(() => mockRemote.fetchAllTasks(any())).thenAnswer((_) async => []);
       when(
         () => mockRemote.watchTasks(any()),
       ).thenAnswer((_) => watchController.stream);
@@ -513,8 +506,9 @@ void main() {
       await syncService.start(userId);
 
       // Assert: push에 soft-deleted 태스크가 포함됨
-      final captured =
-          verify(() => mockRemote.batchSetTasks(userId, captureAny())).captured;
+      final captured = verify(
+        () => mockRemote.batchSetTasks(userId, captureAny()),
+      ).captured;
       final pushedDtos = captured.first as List<TaskFirestoreDto>;
       expect(pushedDtos, hasLength(1));
       expect(pushedDtos.first.id, 'soft-del-1');
