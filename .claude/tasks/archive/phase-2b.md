@@ -1,0 +1,15 @@
+# Phase 2B: Firestore 동기화 (12 tasks, 2026-02-10)
+
+## Completed Tasks
+- ~~Drift schema v2 (deletedAt)~~ (2026-02-09)
+- ~~TaskEntity deletedAt 필드~~ (2026-02-09)
+- ~~TaskDao soft delete~~ (2026-02-09)
+- ~~LocalTaskRepository 업데이트~~ (2026-02-09)
+- ~~ConnectivityService~~ (2026-02-09)
+- ~~Provider 변경 (조건부 Synced/Local)~~ (2026-02-10)
+- ~~TaskFirestoreDto~~ (2026-02-10)
+- ~~FirestoreTaskDataSource~~ (2026-02-10)
+- ~~TaskSyncService~~ (2026-02-10)
+- ~~SyncedTaskRepository~~ (2026-02-10)
+- ~~설정 화면 동기화 섹션 UI~~ (2026-02-10)
+- ~~동기화 통합 테스트~~ (2026-02-10)

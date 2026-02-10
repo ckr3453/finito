@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todo_app/presentation/providers/auth_provider.dart';
+import 'package:todo_app/presentation/providers/sync_providers.dart';
 import 'package:todo_app/presentation/providers/theme_provider.dart';
+import 'package:todo_app/services/task_sync_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -55,14 +57,9 @@ class SettingsScreen extends ConsumerWidget {
 
           const Divider(height: 32),
 
-          // Sync section (placeholder)
+          // Sync section
           const _SectionHeader(title: '동기화'),
-          const ListTile(
-            leading: Icon(Icons.sync),
-            title: Text('동기화 설정'),
-            subtitle: Text('준비 중입니다'),
-            enabled: false,
-          ),
+          const _SyncSection(),
 
           const Divider(height: 32),
 
@@ -121,6 +118,77 @@ class _AccountSection extends ConsumerWidget {
         child: const Text('로그아웃'),
       ),
     );
+  }
+}
+
+class _SyncSection extends ConsumerWidget {
+  const _SyncSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(isAuthenticatedProvider);
+
+    if (!isLoggedIn) {
+      return const ListTile(
+        leading: Icon(Icons.sync_disabled),
+        title: Text('동기화'),
+        subtitle: Text('로그인하면 동기화를 사용할 수 있습니다'),
+        enabled: false,
+      );
+    }
+
+    final statusAsync = ref.watch(syncStatusProvider);
+    final unsyncedAsync = ref.watch(unsyncedCountProvider);
+
+    final status =
+        statusAsync.valueOrNull ??
+        ref.read(taskSyncServiceProvider).currentStatus;
+    final unsyncedCount =
+        unsyncedAsync.valueOrNull ??
+        ref.read(taskSyncServiceProvider).currentUnsyncedCount;
+
+    final isSyncing = status == SyncStatus.syncing;
+
+    return Column(
+      children: [
+        ListTile(
+          leading: Icon(_iconForStatus(status)),
+          title: const Text('동기화 상태'),
+          subtitle: Text(_labelForStatus(status)),
+          trailing: TextButton.icon(
+            onPressed: isSyncing
+                ? null
+                : () => ref.read(taskSyncServiceProvider).syncNow(),
+            icon: const Icon(Icons.sync, size: 18),
+            label: const Text('지금 동기화'),
+          ),
+        ),
+        if (unsyncedCount > 0)
+          ListTile(
+            leading: const Icon(Icons.assignment_late),
+            title: const Text('동기화 대기'),
+            subtitle: Text('$unsyncedCount개 항목이 동기화되지 않았습니다'),
+          ),
+      ],
+    );
+  }
+
+  IconData _iconForStatus(SyncStatus status) {
+    return switch (status) {
+      SyncStatus.idle => Icons.cloud_done,
+      SyncStatus.syncing => Icons.sync,
+      SyncStatus.error => Icons.cloud_off,
+      SyncStatus.offline => Icons.wifi_off,
+    };
+  }
+
+  String _labelForStatus(SyncStatus status) {
+    return switch (status) {
+      SyncStatus.idle => '동기화 완료',
+      SyncStatus.syncing => '동기화 중...',
+      SyncStatus.error => '동기화 오류',
+      SyncStatus.offline => '오프라인',
+    };
   }
 }
 
