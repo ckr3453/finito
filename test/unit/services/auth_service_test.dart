@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:todo_app/services/auth_service.dart';
 
@@ -9,13 +10,28 @@ class MockUser extends Mock implements User {}
 
 class MockUserCredential extends Mock implements UserCredential {}
 
+class MockGoogleSignIn extends Mock implements GoogleSignIn {}
+
+class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
+
+class MockGoogleSignInAuthentication extends Mock
+    implements GoogleSignInAuthentication {}
+
+class FakeAuthCredential extends Fake implements AuthCredential {}
+
 void main() {
   late MockFirebaseAuth mockAuth;
+  late MockGoogleSignIn mockGoogleSignIn;
   late AuthService authService;
+
+  setUpAll(() {
+    registerFallbackValue(FakeAuthCredential());
+  });
 
   setUp(() {
     mockAuth = MockFirebaseAuth();
-    authService = AuthService(auth: mockAuth);
+    mockGoogleSignIn = MockGoogleSignIn();
+    authService = AuthService(auth: mockAuth, googleSignIn: mockGoogleSignIn);
   });
 
   group('AuthService', () {
@@ -130,15 +146,18 @@ void main() {
       );
     });
 
-    test('signOut delegates to FirebaseAuth', () async {
+    test('signOut delegates to FirebaseAuth and GoogleSignIn', () async {
+      when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async => null);
       when(() => mockAuth.signOut()).thenAnswer((_) async {});
 
       await authService.signOut();
 
+      verify(() => mockGoogleSignIn.signOut()).called(1);
       verify(() => mockAuth.signOut()).called(1);
     });
 
     test('signOut propagates exception', () async {
+      when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async => null);
       when(() => mockAuth.signOut()).thenThrow(Exception('sign out failed'));
 
       expect(() => authService.signOut(), throwsA(isA<Exception>()));
@@ -164,6 +183,56 @@ void main() {
         () => authService.resetPassword(email: 'noone@example.com'),
         throwsA(isA<FirebaseAuthException>()),
       );
+    });
+
+    group('signInWithGoogle', () {
+      test('delegates to GoogleSignIn and FirebaseAuth', () async {
+        final mockAccount = MockGoogleSignInAccount();
+        final mockAuthentication = MockGoogleSignInAuthentication();
+        final mockCredential = MockUserCredential();
+
+        when(
+          () => mockGoogleSignIn.signIn(),
+        ).thenAnswer((_) async => mockAccount);
+        when(
+          () => mockAccount.authentication,
+        ).thenAnswer((_) async => mockAuthentication);
+        when(() => mockAuthentication.accessToken).thenReturn('access-token');
+        when(() => mockAuthentication.idToken).thenReturn('id-token');
+        when(
+          () => mockAuth.signInWithCredential(any()),
+        ).thenAnswer((_) async => mockCredential);
+
+        final result = await authService.signInWithGoogle();
+
+        expect(result, equals(mockCredential));
+        verify(() => mockGoogleSignIn.signIn()).called(1);
+        verify(() => mockAccount.authentication).called(1);
+        verify(() => mockAuth.signInWithCredential(any())).called(1);
+      });
+
+      test('throws when user cancels', () async {
+        when(() => mockGoogleSignIn.signIn()).thenAnswer((_) async => null);
+
+        expect(
+          () => authService.signInWithGoogle(),
+          throwsA(
+            isA<FirebaseAuthException>().having(
+              (e) => e.code,
+              'code',
+              'sign-in-cancelled',
+            ),
+          ),
+        );
+      });
+
+      test('propagates GoogleSignIn exception', () async {
+        when(
+          () => mockGoogleSignIn.signIn(),
+        ).thenThrow(Exception('network error'));
+
+        expect(() => authService.signInWithGoogle(), throwsA(isA<Exception>()));
+      });
     });
   });
 }

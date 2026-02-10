@@ -30,7 +30,7 @@
 - 단위 테스트 12개
 - Firebase 설정 파일 .gitignore 처리
 
-## Phase 2B: Firestore 동기화 ⬜
+## Phase 2B: Firestore 동기화 ✅
 
 Local-First + Cloud-Synced 아키텍처 완성.
 
@@ -43,14 +43,15 @@ Local-First + Cloud-Synced 아키텍처 완성.
 - 설정 화면 "동기화" 섹션 활성화
 - 오프라인 → 온라인 전환 시 자동 동기화
 
-## Phase 3: 소셜 로그인 ⬜
+## Phase 3: 소셜 로그인 ✅
 
 Google OAuth 로그인 추가.
 
 - Google Sign-In 패키지 통합
-- AuthService에 Google 로그인 메서드 추가
-- 로그인 화면에 Google 버튼 추가
-- 기존 이메일 계정과 연동 처리
+- AuthService에 Google 로그인 메서드 추가 (DI 패턴)
+- 로그인/회원가입 화면에 Google 버튼 추가
+- signOut 시 Google 세션 정리
+- 단위 테스트 15개 (Google 관련 4개 추가)
 
 ## Phase 4: Native Widget Bridge ⬜
 
