@@ -30,3 +30,15 @@ TaskSyncService taskSyncService(Ref ref) {
   ref.onDispose(service.stop);
   return service;
 }
+
+@riverpod
+Stream<SyncStatus> syncStatus(Ref ref) {
+  final service = ref.watch(taskSyncServiceProvider);
+  return service.statusStream;
+}
+
+@riverpod
+Stream<int> unsyncedCount(Ref ref) {
+  final service = ref.watch(taskSyncServiceProvider);
+  return service.unsyncedCountStream;
+}

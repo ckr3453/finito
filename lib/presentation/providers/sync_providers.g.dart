@@ -60,5 +60,39 @@ final taskSyncServiceProvider = Provider<TaskSyncService>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef TaskSyncServiceRef = ProviderRef<TaskSyncService>;
+String _$syncStatusHash() => r'ff8bbe21872d199016b0d4a21861d07aa6a9d3a5';
+
+/// See also [syncStatus].
+@ProviderFor(syncStatus)
+final syncStatusProvider = AutoDisposeStreamProvider<SyncStatus>.internal(
+  syncStatus,
+  name: r'syncStatusProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$syncStatusHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SyncStatusRef = AutoDisposeStreamProviderRef<SyncStatus>;
+String _$unsyncedCountHash() => r'1266e9caec5e1aba776e401cb0a3aba65f7599c0';
+
+/// See also [unsyncedCount].
+@ProviderFor(unsyncedCount)
+final unsyncedCountProvider = AutoDisposeStreamProvider<int>.internal(
+  unsyncedCount,
+  name: r'unsyncedCountProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$unsyncedCountHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef UnsyncedCountRef = AutoDisposeStreamProviderRef<int>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
