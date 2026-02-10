@@ -6,8 +6,6 @@
 - [Infra](../archive/infra.md) — CI, lefthook, tests, git conventions (4 tasks)
 
 ## Queue (Phase 2B: Firestore 동기화)
-9. (M) SyncedTaskRepository 작성 — blocked by: 8
-10. (M) Provider 변경 (조건부 Synced/Local) — blocked by: 9
 11. (S) 설정 화면 동기화 섹션 UI — blocked by: 10
 12. (M) 동기화 통합 테스트 — blocked by: 10
 
@@ -30,3 +28,5 @@
 - ~~TaskFirestoreDto~~ (2026-02-10)
 - ~~FirestoreTaskDataSource~~ (2026-02-10)
 - ~~TaskSyncService~~ (2026-02-10)
+- ~~SyncedTaskRepository~~ (2026-02-10)
+- ~~Provider 변경 (조건부 Synced/Local)~~ (2026-02-10)
