@@ -10,8 +10,11 @@ class MockNotificationService extends Mock implements NotificationService {}
 void main() {
   testWidgets('App renders home screen', (WidgetTester tester) async {
     final mockNotifSvc = MockNotificationService();
-    when(() => mockNotifSvc.initialize(onNotificationTap: any(named: 'onNotificationTap')))
-        .thenAnswer((_) async {});
+    when(
+      () => mockNotifSvc.initialize(
+        onNotificationTap: any(named: 'onNotificationTap'),
+      ),
+    ).thenAnswer((_) async {});
 
     await tester.pumpWidget(
       ProviderScope(
