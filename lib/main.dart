@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -14,7 +15,8 @@ import 'package:todo_app/services/widget/widget_background_callback.dart';
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   try {
     await Firebase.initializeApp(
@@ -28,6 +30,7 @@ Future<void> main() async {
   tz.initializeTimeZones();
   registerWidgetCallback();
 
+  FlutterNativeSplash.remove();
   runApp(const ProviderScope(child: TodoApp()));
 }
 
