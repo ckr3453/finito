@@ -37,7 +37,7 @@ void main() {
     ).thenAnswer((_) async => true);
   });
 
-  TaskEntity _makeTask({
+  TaskEntity makeTask({
     required String id,
     required String title,
     TaskStatus status = TaskStatus.pending,
@@ -56,7 +56,7 @@ void main() {
 
   group('updateWidgetData', () {
     test('공유 저장소에 JSON 데이터를 저장한다', () async {
-      final tasks = [_makeTask(id: '1', title: 'Test')];
+      final tasks = [makeTask(id: '1', title: 'Test')];
 
       await service.updateWidgetData(tasks);
 
@@ -104,7 +104,7 @@ void main() {
 
   group('handleWidgetAction', () {
     test('toggle_complete 액션으로 pending → completed 전환한다', () async {
-      final task = _makeTask(id: 'task-1', title: 'Test');
+      final task = makeTask(id: 'task-1', title: 'Test');
       when(
         () => mockRepository.getTaskById('task-1'),
       ).thenAnswer((_) async => task);
@@ -125,7 +125,7 @@ void main() {
     });
 
     test('toggle_complete 액션으로 completed → pending 전환한다', () async {
-      final task = _makeTask(
+      final task = makeTask(
         id: 'task-1',
         title: 'Test',
         status: TaskStatus.completed,
@@ -175,7 +175,7 @@ void main() {
     });
 
     test('토글 후 위젯 데이터를 갱신한다', () async {
-      final task = _makeTask(id: 'task-1', title: 'Test');
+      final task = makeTask(id: 'task-1', title: 'Test');
       when(
         () => mockRepository.getTaskById('task-1'),
       ).thenAnswer((_) async => task);

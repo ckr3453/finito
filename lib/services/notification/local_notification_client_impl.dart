@@ -28,7 +28,7 @@ class LocalNotificationClientImpl implements LocalNotificationClient {
       requestSoundPermission: false,
     );
 
-    final settings = InitializationSettings(
+    const settings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
       macOS: macosSettings,
@@ -58,7 +58,7 @@ class LocalNotificationClientImpl implements LocalNotificationClient {
       importance: Importance.high,
       priority: Priority.high,
     );
-    final iosDetails = DarwinNotificationDetails();
+    const iosDetails = DarwinNotificationDetails();
     final details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,

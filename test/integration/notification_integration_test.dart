@@ -57,7 +57,7 @@ void main() {
     await db.close();
   });
 
-  TaskEntity _makeTask({
+  TaskEntity makeTask({
     required String id,
     required String title,
     DateTime? reminderTime,
@@ -77,7 +77,7 @@ void main() {
   group('E2E: Task CRUD → Notification 스케줄링 흐름', () {
     test('태스크 생성 후 리마인더가 스케줄된다', () async {
       final futureTime = DateTime.now().add(const Duration(hours: 2));
-      final task = _makeTask(
+      final task = makeTask(
         id: 'task-1',
         title: '회의 준비',
         reminderTime: futureTime,
@@ -102,7 +102,7 @@ void main() {
 
     test('태스크 완료 시 리마인더가 취소된다', () async {
       final futureTime = DateTime.now().add(const Duration(hours: 2));
-      final task = _makeTask(
+      final task = makeTask(
         id: 'task-2',
         title: '보고서 작성',
         reminderTime: futureTime,
@@ -127,23 +127,23 @@ void main() {
       final futureTime = DateTime.now().add(const Duration(hours: 3));
       final pastTime = DateTime.now().subtract(const Duration(hours: 1));
 
-      final task1 = _makeTask(
+      final task1 = makeTask(
         id: 'task-a',
         title: '미래 태스크',
         reminderTime: futureTime,
       );
-      final task2 = _makeTask(
+      final task2 = makeTask(
         id: 'task-b',
         title: '과거 태스크',
         reminderTime: pastTime,
       );
-      final task3 = _makeTask(
+      final task3 = makeTask(
         id: 'task-c',
         title: '완료 태스크',
         reminderTime: futureTime,
         status: TaskStatus.completed,
       );
-      final task4 = _makeTask(id: 'task-d', title: '리마인더 없음');
+      final task4 = makeTask(id: 'task-d', title: '리마인더 없음');
 
       await repo.createTask(task1);
       await repo.createTask(task2);
@@ -172,7 +172,7 @@ void main() {
     test('리마인더 시간 수정 시 기존 알림 취소 후 새로 스케줄', () async {
       final time1 = DateTime.now().add(const Duration(hours: 1));
       final time2 = DateTime.now().add(const Duration(hours: 5));
-      final task = _makeTask(
+      final task = makeTask(
         id: 'task-edit',
         title: '수정 태스크',
         reminderTime: time1,
@@ -209,7 +209,7 @@ void main() {
 
     test('reminderTime 필드가 DB에 올바르게 저장/조회된다', () async {
       final reminderTime = DateTime(2026, 3, 15, 14, 30);
-      final task = _makeTask(
+      final task = makeTask(
         id: 'task-db',
         title: 'DB 테스트',
         reminderTime: reminderTime,
@@ -228,7 +228,7 @@ void main() {
     });
 
     test('reminderTime이 null인 태스크도 정상 저장/조회', () async {
-      final task = _makeTask(id: 'task-null', title: '리마인더 없는 태스크');
+      final task = makeTask(id: 'task-null', title: '리마인더 없는 태스크');
 
       await repo.createTask(task);
       final fetched = await repo.getTaskById('task-null');

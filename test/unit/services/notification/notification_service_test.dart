@@ -1,4 +1,3 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -34,7 +33,7 @@ void main() {
     ).thenAnswer((_) async {});
   });
 
-  TaskEntity _makeTask({
+  TaskEntity makeTask({
     String id = 'task-1',
     String title = 'Test Task',
     DateTime? reminderTime,
@@ -67,7 +66,7 @@ void main() {
     group('scheduleReminder', () {
       test('should schedule notification for task with reminderTime', () async {
         final futureTime = DateTime.now().add(const Duration(hours: 1));
-        final task = _makeTask(reminderTime: futureTime);
+        final task = makeTask(reminderTime: futureTime);
 
         when(
           () => mockClient.zonedSchedule(
@@ -99,7 +98,7 @@ void main() {
       });
 
       test('should not schedule when reminderTime is null', () async {
-        final task = _makeTask(reminderTime: null);
+        final task = makeTask(reminderTime: null);
 
         await service.scheduleReminder(task);
 
@@ -119,7 +118,7 @@ void main() {
 
       test('should not schedule when reminderTime is in the past', () async {
         final pastTime = DateTime.now().subtract(const Duration(hours: 1));
-        final task = _makeTask(reminderTime: pastTime);
+        final task = makeTask(reminderTime: pastTime);
 
         await service.scheduleReminder(task);
 
@@ -154,9 +153,9 @@ void main() {
         final pastTime = DateTime.now().subtract(const Duration(hours: 1));
 
         final tasks = [
-          _makeTask(id: 'task-1', title: 'Future', reminderTime: futureTime),
-          _makeTask(id: 'task-2', title: 'Past', reminderTime: pastTime),
-          _makeTask(id: 'task-3', title: 'No Reminder'),
+          makeTask(id: 'task-1', title: 'Future', reminderTime: futureTime),
+          makeTask(id: 'task-2', title: 'Past', reminderTime: pastTime),
+          makeTask(id: 'task-3', title: 'No Reminder'),
         ];
 
         when(() => mockClient.cancelAll()).thenAnswer((_) async {});
