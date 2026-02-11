@@ -1,11 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:todo_app/core/theme.dart';
 import 'package:todo_app/firebase_options.dart';
+import 'package:todo_app/l10n/app_localizations.dart';
+import 'package:todo_app/presentation/providers/locale_provider.dart';
 import 'package:todo_app/presentation/providers/notification_provider.dart';
 import 'package:todo_app/presentation/providers/widget_provider.dart';
 import 'package:todo_app/routing/app_router.dart';
@@ -48,6 +51,7 @@ class _TodoAppState extends ConsumerState<TodoApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _handleWidgetDeepLink();
     _initNotifications();
+    ref.read(appLocaleProvider.notifier).loadSavedLocale();
   }
 
   Future<void> _initNotifications() async {
@@ -99,6 +103,7 @@ class _TodoAppState extends ConsumerState<TodoApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
+    final locale = ref.watch(appLocaleProvider);
     ref.watch(widgetAutoUpdateProvider);
     ref.watch(reminderAutoRescheduleProvider);
 
@@ -108,6 +113,14 @@ class _TodoAppState extends ConsumerState<TodoApp> with WidgetsBindingObserver {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
+      locale: locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       routerConfig: appRouter,
     );
   }

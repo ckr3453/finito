@@ -1,0 +1,206 @@
+{
+  "@@locale": "ko",
+
+  "appTitle": "TODO",
+
+  "filterAll": "전체",
+  "filterInProgress": "진행중",
+  "filterCompleted": "완료",
+
+  "emptyTaskMessage": "할 일을 추가해보세요!",
+  "emptyTaskAction": "새 할 일 추가",
+  "errorOccurred": "오류가 발생했습니다: {error}",
+  "@errorOccurred": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "deleteTask": "할 일 삭제",
+  "deleteTaskConfirm": "\"{title}\" 을(를) 삭제하시겠습니까?",
+  "@deleteTaskConfirm": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "cancel": "취소",
+  "delete": "삭제",
+
+  "searchHint": "할 일 검색...",
+  "searchPrompt": "검색어를 입력하세요",
+  "searchNoResults": "검색 결과가 없습니다",
+
+  "categories": "카테고리",
+  "emptyCategoryMessage": "카테고리가 없습니다",
+  "emptyCategoryHint": "+ 버튼을 눌러 카테고리를 추가하세요",
+  "edit": "편집",
+  "deleteCategoryTitle": "카테고리 삭제",
+  "deleteCategoryConfirm": "\"{name}\" 카테고리를 삭제하시겠습니까?",
+  "@deleteCategoryConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "editCategory": "카테고리 편집",
+  "addCategory": "카테고리 추가",
+  "categoryName": "이름",
+  "categoryNameHint": "카테고리 이름을 입력하세요",
+  "color": "색상",
+  "icon": "아이콘",
+  "save": "저장",
+
+  "taskDetail": "할 일 상세",
+  "editTooltip": "수정",
+  "deleteTooltip": "삭제",
+  "taskNotFound": "할 일을 찾을 수 없습니다.",
+  "priority": "우선순위",
+  "priorityHigh": "높음",
+  "priorityMedium": "보통",
+  "priorityLow": "낮음",
+  "description": "설명",
+  "category": "카테고리",
+  "tags": "태그",
+  "dueDate": "마감일",
+  "reminder": "리마인더",
+  "createdAt": "생성일",
+  "updatedAt": "수정일",
+  "markAsIncomplete": "미완료로 변경",
+  "markAsComplete": "완료로 변경",
+  "deleteTaskDialogContent": "이 할 일을 삭제하시겠습니까?",
+
+  "statusPending": "진행중",
+  "statusCompleted": "완료",
+  "statusArchived": "보관",
+
+  "editTask": "할 일 수정",
+  "newTask": "새 할 일",
+  "title": "제목",
+  "titleHint": "할 일을 입력하세요",
+  "titleRequired": "제목을 입력해주세요",
+  "descriptionHint": "설명을 입력하세요 (선택)",
+  "none": "없음",
+  "categoryLoadFailed": "카테고리 로딩 실패: {error}",
+  "@categoryLoadFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "dueDateLabel": "마감일: {date}",
+  "@dueDateLabel": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "setDueDate": "마감일 설정",
+  "reminderLabel": "리마인더: {dateTime}",
+  "@reminderLabel": {
+    "placeholders": {
+      "dateTime": { "type": "String" }
+    }
+  },
+  "setReminder": "리마인더 설정",
+  "noTags": "태그가 없습니다",
+  "tagLoadFailed": "태그 로딩 실패: {error}",
+  "@tagLoadFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "saveFailed": "저장 실패: {error}",
+  "@saveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "login": "로그인",
+  "email": "이메일",
+  "password": "비밀번호",
+  "emailRequired": "이메일을 입력해주세요.",
+  "passwordRequired": "비밀번호를 입력해주세요.",
+  "forgotPassword": "비밀번호를 잊으셨나요?",
+  "or": "또는",
+  "signInWithGoogle": "Google로 로그인",
+  "noAccount": "계정이 없으신가요?",
+  "signUp": "회원가입",
+  "resetPassword": "비밀번호 재설정",
+  "resetEmailHint": "가입한 이메일을 입력하세요",
+  "send": "전송",
+  "resetEmailSent": "비밀번호 재설정 이메일을 전송했습니다.",
+  "loginFailed": "로그인에 실패했습니다. 다시 시도해주세요.",
+  "googleLoginFailed": "Google 로그인에 실패했습니다. 다시 시도해주세요.",
+
+  "firebaseUserNotFound": "등록되지 않은 이메일입니다.",
+  "firebaseWrongPassword": "비밀번호가 올바르지 않습니다.",
+  "firebaseInvalidEmail": "유효하지 않은 이메일 형식입니다.",
+  "firebaseUserDisabled": "비활성화된 계정입니다.",
+  "firebaseTooManyRequests": "너무 많은 요청이 발생했습니다. 잠시 후 다시 시도해주세요.",
+  "firebaseInvalidCredential": "이메일 또는 비밀번호가 올바르지 않습니다.",
+  "firebaseNetworkError": "네트워크 연결을 확인해주세요.",
+
+  "createAccount": "새 계정 만들기",
+  "confirmPassword": "비밀번호 확인",
+  "confirmPasswordRequired": "비밀번호를 다시 입력해주세요.",
+  "passwordTooShort": "비밀번호는 6자 이상이어야 합니다.",
+  "passwordMismatch": "비밀번호가 일치하지 않습니다.",
+  "continueWithGoogle": "Google로 계속하기",
+  "hasAccount": "이미 계정이 있으신가요?",
+  "signUpFailed": "회원가입에 실패했습니다. 다시 시도해주세요.",
+  "googleSignUpFailed": "Google 로그인에 실패했습니다. 다시 시도해주세요.",
+
+  "firebaseEmailInUse": "이미 사용 중인 이메일입니다.",
+  "firebaseWeakPassword": "비밀번호가 너무 약합니다. 6자 이상 입력해주세요.",
+  "firebaseOperationNotAllowed": "이메일/비밀번호 가입이 비활성화되어 있습니다.",
+
+  "settings": "설정",
+  "appearance": "외관",
+  "theme": "테마",
+  "themeSystem": "시스템",
+  "themeLight": "라이트",
+  "themeDark": "다크",
+
+  "language": "언어",
+  "languageSystem": "시스템",
+  "languageKorean": "한국어",
+  "languageEnglish": "English",
+
+  "notifications": "알림",
+  "notificationPermission": "알림 권한",
+  "notificationPermissionDesc": "리마인더 알림을 받으려면 권한이 필요합니다",
+  "requestPermission": "권한 요청",
+  "permissionGranted": "알림 권한이 허용되었습니다",
+  "permissionDenied": "알림 권한이 거부되었습니다",
+
+  "sync": "동기화",
+  "syncDisabledMessage": "로그인하면 동기화를 사용할 수 있습니다",
+  "syncStatus": "동기화 상태",
+  "syncNow": "지금 동기화",
+  "syncPending": "동기화 대기",
+  "syncPendingCount": "{count}개 항목이 동기화되지 않았습니다",
+  "@syncPendingCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "syncIdle": "동기화 완료",
+  "syncing": "동기화 중...",
+  "syncError": "동기화 오류",
+  "syncOffline": "오프라인",
+
+  "account": "계정",
+  "loginPrompt": "로그인하여 데이터를 동기화하세요",
+  "user": "사용자",
+  "loggedIn": "로그인됨",
+  "logout": "로그아웃",
+  "logoutConfirm": "로그아웃 하시겠습니까?",
+
+  "relativeToday": "오늘",
+  "relativeYesterday": "어제",
+  "relativeDaysAgo": "{days}일 전",
+  "@relativeDaysAgo": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  }
+}
