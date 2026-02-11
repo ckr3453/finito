@@ -11,4 +11,4 @@
 - 드래그앤드롭 정렬 개선
 - ✅ 다국어 지원 (i18n) (completed: 2026-02-11)
 - ✅ 앱 아이콘 + 스플래시 스크린 (completed: 2026-02-11)
-- 스토어 배포 (Google Play, App Store)
+- ⏸️ 스토어 배포 (Google Play, App Store) — 보류: 개인 사용 목적, 로컬 빌드로 운용
