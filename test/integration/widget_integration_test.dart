@@ -60,12 +60,13 @@ void main() {
 
   group('E2E: Task CRUD → Widget 갱신 흐름', () {
     test('태스크 리스트 업데이트 시 위젯 데이터가 올바르게 변환되어 저장된다', () async {
+      final today = DateTime.now();
       final tasks = [
         makeTask(
           id: '1',
           title: 'High task',
           priority: Priority.high,
-          dueDate: DateTime(2026, 2, 10),
+          dueDate: DateTime(today.year, today.month, today.day),
         ),
         makeTask(id: '2', title: 'Medium task', priority: Priority.medium),
         makeTask(id: '3', title: 'Low task', priority: Priority.low),
