@@ -24,6 +24,6 @@ class HomeWidgetClientImpl implements HomeWidgetClient {
   Future<void> registerInteractivityCallback(
     Future<void> Function(Uri?) callback,
   ) async {
-    HomeWidget.registerInteractivityCallback(callback);
+    await HomeWidget.registerInteractivityCallback(callback);
   }
 }

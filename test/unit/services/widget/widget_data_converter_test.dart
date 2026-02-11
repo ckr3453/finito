@@ -10,7 +10,7 @@ void main() {
     converter = WidgetDataConverter();
   });
 
-  TaskEntity _makeTask({
+  TaskEntity makeTask({
     required String id,
     required String title,
     TaskStatus status = TaskStatus.pending,
@@ -40,8 +40,8 @@ void main() {
 
     test('completed 태스크는 제외된다', () {
       final tasks = [
-        _makeTask(id: '1', title: 'Pending', status: TaskStatus.pending),
-        _makeTask(id: '2', title: 'Done', status: TaskStatus.completed),
+        makeTask(id: '1', title: 'Pending', status: TaskStatus.pending),
+        makeTask(id: '2', title: 'Done', status: TaskStatus.completed),
       ];
 
       final result = converter.convert(tasks, DateTime(2026, 2, 10));
@@ -53,8 +53,8 @@ void main() {
 
     test('archived 태스크는 제외된다', () {
       final tasks = [
-        _makeTask(id: '1', title: 'Pending'),
-        _makeTask(id: '2', title: 'Archived', status: TaskStatus.archived),
+        makeTask(id: '1', title: 'Pending'),
+        makeTask(id: '2', title: 'Archived', status: TaskStatus.archived),
       ];
 
       final result = converter.convert(tasks, DateTime(2026, 2, 10));
@@ -66,10 +66,10 @@ void main() {
     test('오늘 마감 pending 태스크만 todayCount에 집계된다', () {
       final today = DateTime(2026, 2, 10);
       final tasks = [
-        _makeTask(id: '1', title: 'Today 1', dueDate: today),
-        _makeTask(id: '2', title: 'Today 2', dueDate: today),
-        _makeTask(id: '3', title: 'Tomorrow', dueDate: DateTime(2026, 2, 11)),
-        _makeTask(id: '4', title: 'No due'),
+        makeTask(id: '1', title: 'Today 1', dueDate: today),
+        makeTask(id: '2', title: 'Today 2', dueDate: today),
+        makeTask(id: '3', title: 'Tomorrow', dueDate: DateTime(2026, 2, 11)),
+        makeTask(id: '4', title: 'No due'),
       ];
 
       final result = converter.convert(tasks, today);
@@ -79,9 +79,9 @@ void main() {
 
     test('우선순위 순으로 정렬된다 (high > medium > low)', () {
       final tasks = [
-        _makeTask(id: '1', title: 'Low', priority: Priority.low),
-        _makeTask(id: '2', title: 'High', priority: Priority.high),
-        _makeTask(id: '3', title: 'Medium', priority: Priority.medium),
+        makeTask(id: '1', title: 'Low', priority: Priority.low),
+        makeTask(id: '2', title: 'High', priority: Priority.high),
+        makeTask(id: '3', title: 'Medium', priority: Priority.medium),
       ];
 
       final result = converter.convert(tasks, DateTime(2026, 2, 10));
@@ -95,7 +95,7 @@ void main() {
     test('최대 5개까지만 반환된다', () {
       final tasks = List.generate(
         8,
-        (i) => _makeTask(id: '$i', title: 'Task $i'),
+        (i) => makeTask(id: '$i', title: 'Task $i'),
       );
 
       final result = converter.convert(tasks, DateTime(2026, 2, 10));
@@ -106,7 +106,7 @@ void main() {
 
     test('각 태스크에 id, title, priority, dueDate, completed 필드가 포함된다', () {
       final tasks = [
-        _makeTask(
+        makeTask(
           id: 'uuid-1',
           title: 'Test',
           priority: Priority.high,

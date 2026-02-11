@@ -34,7 +34,7 @@ class WidgetDataConverter {
 
     return {
       'todayCount': todayCount,
-      'tasks': top.map((t) => _taskToMap(t)).toList(),
+      'tasks': top.map(_taskToMap).toList(),
       'lastUpdated': now.toIso8601String(),
     };
   }

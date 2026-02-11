@@ -1,9 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:todo_app/core/theme.dart';
 import 'package:todo_app/firebase_options.dart';
+import 'package:todo_app/presentation/providers/notification_provider.dart';
 import 'package:todo_app/presentation/providers/widget_provider.dart';
 import 'package:todo_app/routing/app_router.dart';
 import 'package:todo_app/services/widget/widget_background_callback.dart';
@@ -12,7 +15,8 @@ import 'package:todo_app/services/widget/widget_background_callback.dart';
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   try {
     await Firebase.initializeApp(
@@ -23,8 +27,10 @@ Future<void> main() async {
     debugPrint('Running in local-only mode.');
   }
 
+  tz.initializeTimeZones();
   registerWidgetCallback();
 
+  FlutterNativeSplash.remove();
   runApp(const ProviderScope(child: TodoApp()));
 }
 
@@ -41,6 +47,18 @@ class _TodoAppState extends ConsumerState<TodoApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _handleWidgetDeepLink();
+    _initNotifications();
+  }
+
+  Future<void> _initNotifications() async {
+    final notifSvc = ref.read(notificationServiceProvider);
+    await notifSvc.initialize(
+      onNotificationTap: (payload) {
+        if (payload != null) {
+          appRouter.push('/task/$payload');
+        }
+      },
+    );
   }
 
   @override
@@ -82,6 +100,7 @@ class _TodoAppState extends ConsumerState<TodoApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     ref.watch(widgetAutoUpdateProvider);
+    ref.watch(reminderAutoRescheduleProvider);
 
     return MaterialApp.router(
       title: 'Finito',

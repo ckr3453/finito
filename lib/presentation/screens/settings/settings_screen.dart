@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todo_app/presentation/providers/auth_provider.dart';
+import 'package:todo_app/presentation/providers/notification_provider.dart';
 import 'package:todo_app/presentation/providers/sync_providers.dart';
 import 'package:todo_app/presentation/providers/theme_provider.dart';
 import 'package:todo_app/services/task_sync_service.dart';
@@ -54,6 +55,12 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
           ),
+
+          const Divider(height: 32),
+
+          // Notification section
+          const _SectionHeader(title: '알림'),
+          const _NotificationSection(),
 
           const Divider(height: 32),
 
@@ -189,6 +196,33 @@ class _SyncSection extends ConsumerWidget {
       SyncStatus.error => '동기화 오류',
       SyncStatus.offline => '오프라인',
     };
+  }
+}
+
+class _NotificationSection extends ConsumerWidget {
+  const _NotificationSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ListTile(
+      leading: const Icon(Icons.notifications),
+      title: const Text('알림 권한'),
+      subtitle: const Text('리마인더 알림을 받으려면 권한이 필요합니다'),
+      trailing: FilledButton.tonal(
+        onPressed: () async {
+          final notifSvc = ref.read(notificationServiceProvider);
+          final granted = await notifSvc.requestPermission();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(granted ? '알림 권한이 허용되었습니다' : '알림 권한이 거부되었습니다'),
+              ),
+            );
+          }
+        },
+        child: const Text('권한 요청'),
+      ),
+    );
   }
 }
 

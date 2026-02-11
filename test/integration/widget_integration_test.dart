@@ -39,7 +39,7 @@ void main() {
     ).thenAnswer((_) async => true);
   });
 
-  TaskEntity _makeTask({
+  TaskEntity makeTask({
     required String id,
     required String title,
     TaskStatus status = TaskStatus.pending,
@@ -60,16 +60,17 @@ void main() {
 
   group('E2E: Task CRUD → Widget 갱신 흐름', () {
     test('태스크 리스트 업데이트 시 위젯 데이터가 올바르게 변환되어 저장된다', () async {
+      final today = DateTime.now();
       final tasks = [
-        _makeTask(
+        makeTask(
           id: '1',
           title: 'High task',
           priority: Priority.high,
-          dueDate: DateTime(2026, 2, 10),
+          dueDate: DateTime(today.year, today.month, today.day),
         ),
-        _makeTask(id: '2', title: 'Medium task', priority: Priority.medium),
-        _makeTask(id: '3', title: 'Low task', priority: Priority.low),
-        _makeTask(id: '4', title: 'Completed', status: TaskStatus.completed),
+        makeTask(id: '2', title: 'Medium task', priority: Priority.medium),
+        makeTask(id: '3', title: 'Low task', priority: Priority.low),
+        makeTask(id: '4', title: 'Completed', status: TaskStatus.completed),
       ];
 
       await service.updateWidgetData(tasks);
@@ -87,7 +88,7 @@ void main() {
     });
 
     test('위젯 체크박스 토글 → DB 업데이트 → 위젯 갱신 전체 흐름', () async {
-      final task = _makeTask(id: 'task-1', title: 'Do something');
+      final task = makeTask(id: 'task-1', title: 'Do something');
 
       when(
         () => mockRepository.getTaskById('task-1'),
@@ -131,13 +132,13 @@ void main() {
       final converter = WidgetDataConverter();
       final now = DateTime(2026, 2, 10, 14, 30);
       final tasks = [
-        _makeTask(
+        makeTask(
           id: 'uuid-1',
           title: '프로젝트 보고서 작성',
           priority: Priority.high,
           dueDate: DateTime(2026, 2, 10),
         ),
-        _makeTask(
+        makeTask(
           id: 'uuid-2',
           title: '팀 미팅 준비',
           priority: Priority.medium,

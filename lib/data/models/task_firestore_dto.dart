@@ -12,6 +12,7 @@ class TaskFirestoreDto {
   final List<String> tagIds;
   final DateTime? dueDate;
   final DateTime? completedAt;
+  final DateTime? reminderTime;
   final DateTime? deletedAt;
   final int sortOrder;
   final DateTime createdAt;
@@ -27,6 +28,7 @@ class TaskFirestoreDto {
     required this.tagIds,
     this.dueDate,
     this.completedAt,
+    this.reminderTime,
     this.deletedAt,
     required this.sortOrder,
     required this.createdAt,
@@ -48,6 +50,7 @@ class TaskFirestoreDto {
           [],
       dueDate: (data['dueDate'] as Timestamp?)?.toDate(),
       completedAt: (data['completedAt'] as Timestamp?)?.toDate(),
+      reminderTime: (data['reminderTime'] as Timestamp?)?.toDate(),
       deletedAt: (data['deletedAt'] as Timestamp?)?.toDate(),
       sortOrder: data['sortOrder'] as int,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
@@ -66,6 +69,7 @@ class TaskFirestoreDto {
       tagIds: entity.tagIds,
       dueDate: entity.dueDate,
       completedAt: entity.completedAt,
+      reminderTime: entity.reminderTime,
       deletedAt: entity.deletedAt,
       sortOrder: entity.sortOrder,
       createdAt: entity.createdAt,
@@ -86,6 +90,9 @@ class TaskFirestoreDto {
       'completedAt': completedAt != null
           ? Timestamp.fromDate(completedAt!)
           : null,
+      'reminderTime': reminderTime != null
+          ? Timestamp.fromDate(reminderTime!)
+          : null,
       'deletedAt': deletedAt != null ? Timestamp.fromDate(deletedAt!) : null,
       'sortOrder': sortOrder,
       'createdAt': Timestamp.fromDate(createdAt),
@@ -104,6 +111,7 @@ class TaskFirestoreDto {
       tagIds: tagIds,
       dueDate: dueDate,
       completedAt: completedAt,
+      reminderTime: reminderTime,
       deletedAt: deletedAt,
       sortOrder: sortOrder,
       createdAt: createdAt,

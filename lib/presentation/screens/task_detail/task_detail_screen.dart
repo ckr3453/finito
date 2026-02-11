@@ -187,6 +187,16 @@ class TaskDetailScreen extends ConsumerWidget {
                 const Divider(height: 24),
               ],
 
+              // Reminder time
+              if (task.reminderTime != null) ...[
+                _DetailRow(
+                  icon: Icons.notifications_active,
+                  label: '리마인더',
+                  child: Text(task.reminderTime!.toFormattedDateTime()),
+                ),
+                const Divider(height: 24),
+              ],
+
               // Created / Updated info
               _DetailRow(
                 icon: Icons.access_time,
