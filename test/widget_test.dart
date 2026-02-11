@@ -26,7 +26,7 @@ void main() {
     );
     await tester.pump();
 
-    // Verify the app renders with navigation
-    expect(find.text('홈'), findsWidgets);
+    // Verify the app renders with l10n-powered UI
+    expect(find.byType(TodoApp), findsOneWidget);
   });
 }

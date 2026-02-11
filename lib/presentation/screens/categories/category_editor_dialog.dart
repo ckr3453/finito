@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:todo_app/core/constants.dart';
+import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/domain/entities/entities.dart';
 import 'package:todo_app/presentation/providers/repository_providers.dart';
 import 'package:todo_app/presentation/shared_widgets/color_picker_grid.dart';
@@ -55,8 +56,9 @@ class _CategoryEditorDialogState extends ConsumerState<CategoryEditorDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AlertDialog(
-      title: Text(_isEditing ? '카테고리 편집' : '카테고리 추가'),
+      title: Text(_isEditing ? l10n.editCategory : l10n.addCategory),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -64,15 +66,15 @@ class _CategoryEditorDialogState extends ConsumerState<CategoryEditorDialog> {
           children: [
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: '이름',
-                hintText: '카테고리 이름을 입력하세요',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.categoryName,
+                hintText: l10n.categoryNameHint,
+                border: const OutlineInputBorder(),
               ),
               autofocus: !_isEditing,
             ),
             const SizedBox(height: 16),
-            Text('색상', style: Theme.of(context).textTheme.titleSmall),
+            Text(l10n.color, style: Theme.of(context).textTheme.titleSmall),
             const SizedBox(height: 8),
             ColorPickerGrid(
               selectedColor: _selectedColor,
@@ -81,7 +83,7 @@ class _CategoryEditorDialogState extends ConsumerState<CategoryEditorDialog> {
               },
             ),
             const SizedBox(height: 16),
-            Text('아이콘', style: Theme.of(context).textTheme.titleSmall),
+            Text(l10n.icon, style: Theme.of(context).textTheme.titleSmall),
             const SizedBox(height: 8),
             _buildIconSelector(),
           ],
@@ -90,9 +92,9 @@ class _CategoryEditorDialogState extends ConsumerState<CategoryEditorDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('취소'),
+          child: Text(l10n.cancel),
         ),
-        FilledButton(onPressed: _save, child: const Text('저장')),
+        FilledButton(onPressed: _save, child: Text(l10n.save)),
       ],
     );
   }

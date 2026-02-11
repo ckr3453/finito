@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/domain/enums/enums.dart';
+import 'package:todo_app/l10n/app_localizations.dart';
 
 class PriorityIndicator extends StatelessWidget {
   final Priority priority;
@@ -21,11 +22,11 @@ class PriorityIndicator extends StatelessWidget {
     };
   }
 
-  static String labelFor(Priority priority) {
+  static String labelFor(Priority priority, AppLocalizations l10n) {
     return switch (priority) {
-      Priority.high => '높음',
-      Priority.medium => '보통',
-      Priority.low => '낮음',
+      Priority.high => l10n.priorityHigh,
+      Priority.medium => l10n.priorityMedium,
+      Priority.low => l10n.priorityLow,
     };
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todo_app/core/extensions.dart';
+import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/domain/entities/entities.dart';
 import 'package:todo_app/domain/enums/enums.dart';
 import 'package:todo_app/presentation/providers/repository_providers.dart';
@@ -135,19 +136,20 @@ class TaskListTile extends ConsumerWidget {
   }
 
   Future<bool?> _confirmDelete(BuildContext context) {
+    final l10n = context.l10n;
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('할 일 삭제'),
-        content: Text('"${task.title}" 을(를) 삭제하시겠습니까?'),
+        title: Text(l10n.deleteTask),
+        content: Text(l10n.deleteTaskConfirm(task.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('취소'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('삭제', style: TextStyle(color: Colors.red)),
+            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/domain/entities/entities.dart';
 import 'package:todo_app/presentation/providers/category_providers.dart';
 import 'package:todo_app/presentation/providers/filter_providers.dart';
@@ -13,26 +14,27 @@ class CategoriesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categoriesAsync = ref.watch(categoryListProvider);
+    final l10n = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('카테고리')),
+      appBar: AppBar(title: Text(l10n.categories)),
       body: categoriesAsync.when(
         data: (categories) {
           if (categories.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.folder_off, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
+                  const Icon(Icons.folder_off, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
                   Text(
-                    '카테고리가 없습니다',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    l10n.emptyCategoryMessage,
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    '+ 버튼을 눌러 카테고리를 추가하세요',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    l10n.emptyCategoryHint,
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ],
               ),
@@ -49,7 +51,8 @@ class CategoriesScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('오류가 발생했습니다: $error')),
+        error: (error, stack) =>
+            Center(child: Text(l10n.errorOccurred(error.toString()))),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showEditorDialog(context),
@@ -104,6 +107,7 @@ class _CategoryTile extends ConsumerWidget {
   }
 
   void _showOptions(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -113,7 +117,7 @@ class _CategoryTile extends ConsumerWidget {
             children: [
               ListTile(
                 leading: const Icon(Icons.edit),
-                title: const Text('편집'),
+                title: Text(l10n.edit),
                 onTap: () {
                   Navigator.pop(context);
                   showDialog(
@@ -125,7 +129,10 @@ class _CategoryTile extends ConsumerWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('삭제', style: TextStyle(color: Colors.red)),
+                title: Text(
+                  l10n.delete,
+                  style: const TextStyle(color: Colors.red),
+                ),
                 onTap: () {
                   Navigator.pop(context);
                   _confirmDelete(context, ref);
@@ -139,15 +146,16 @@ class _CategoryTile extends ConsumerWidget {
   }
 
   void _confirmDelete(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('카테고리 삭제'),
-        content: Text('"${category.name}" 카테고리를 삭제하시겠습니까?'),
+        title: Text(l10n.deleteCategoryTitle),
+        content: Text(l10n.deleteCategoryConfirm(category.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -155,7 +163,7 @@ class _CategoryTile extends ConsumerWidget {
               Navigator.pop(context);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('삭제'),
+            child: Text(l10n.delete),
           ),
         ],
       ),

@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todo_app/core/l10n_extension.dart';
+import 'package:todo_app/l10n/app_localizations.dart';
 import 'package:todo_app/presentation/providers/auth_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -29,15 +31,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     super.dispose();
   }
 
-  String _mapFirebaseError(String code) {
+  String _mapFirebaseError(String code, AppLocalizations l10n) {
     return switch (code) {
-      'email-already-in-use' => '이미 사용 중인 이메일입니다.',
-      'invalid-email' => '유효하지 않은 이메일 형식입니다.',
-      'weak-password' => '비밀번호가 너무 약합니다. 6자 이상 입력해주세요.',
-      'operation-not-allowed' => '이메일/비밀번호 가입이 비활성화되어 있습니다.',
-      'network-request-failed' => '네트워크 연결을 확인해주세요.',
+      'email-already-in-use' => l10n.firebaseEmailInUse,
+      'invalid-email' => l10n.firebaseInvalidEmail,
+      'weak-password' => l10n.firebaseWeakPassword,
+      'operation-not-allowed' => l10n.firebaseOperationNotAllowed,
+      'network-request-failed' => l10n.firebaseNetworkError,
       'sign-in-cancelled' => '',
-      _ => '회원가입에 실패했습니다. 다시 시도해주세요.',
+      _ => l10n.signUpFailed,
     };
   }
 
@@ -51,14 +53,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (mounted) context.go('/');
     } on FirebaseAuthException catch (e) {
       if (mounted && e.code != 'sign-in-cancelled') {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(_mapFirebaseError(e.code))));
+        final l10n = context.l10n;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_mapFirebaseError(e.code, l10n))),
+        );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Google 로그인에 실패했습니다. 다시 시도해주세요.')),
+          SnackBar(content: Text(context.l10n.googleSignUpFailed)),
         );
       }
     } finally {
@@ -81,15 +84,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (mounted) context.go('/');
     } on FirebaseAuthException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(_mapFirebaseError(e.code))));
+        final l10n = context.l10n;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_mapFirebaseError(e.code, l10n))),
+        );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('회원가입에 실패했습니다. 다시 시도해주세요.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.signUpFailed)));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -98,8 +102,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: const Text('회원가입')),
+      appBar: AppBar(title: Text(l10n.signUp)),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -118,7 +123,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    '새 계정 만들기',
+                    l10n.createAccount,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -127,15 +132,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   const SizedBox(height: 32),
                   TextFormField(
                     controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: '이메일',
-                      prefixIcon: Icon(Icons.email_outlined),
+                    decoration: InputDecoration(
+                      labelText: l10n.email,
+                      prefixIcon: const Icon(Icons.email_outlined),
                     ),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return '이메일을 입력해주세요.';
+                        return l10n.emailRequired;
                       }
                       return null;
                     },
@@ -144,7 +149,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(
-                      labelText: '비밀번호',
+                      labelText: l10n.password,
                       prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -161,10 +166,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return '비밀번호를 입력해주세요.';
+                        return l10n.passwordRequired;
                       }
                       if (value.length < 6) {
-                        return '비밀번호는 6자 이상이어야 합니다.';
+                        return l10n.passwordTooShort;
                       }
                       return null;
                     },
@@ -173,7 +178,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   TextFormField(
                     controller: _confirmPasswordController,
                     decoration: InputDecoration(
-                      labelText: '비밀번호 확인',
+                      labelText: l10n.confirmPassword,
                       prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -194,10 +199,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     onFieldSubmitted: (_) => _signUp(),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return '비밀번호를 다시 입력해주세요.';
+                        return l10n.confirmPasswordRequired;
                       }
                       if (value != _passwordController.text) {
-                        return '비밀번호가 일치하지 않습니다.';
+                        return l10n.passwordMismatch;
                       }
                       return null;
                     },
@@ -211,7 +216,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('회원가입'),
+                        : Text(l10n.signUp),
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -220,7 +225,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          '또는',
+                          l10n.or,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ),
@@ -243,16 +248,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               fontSize: 18,
                             ),
                           ),
-                    label: const Text('Google로 계속하기'),
+                    label: Text(l10n.continueWithGoogle),
                   ),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('이미 계정이 있으신가요?'),
+                      Text(l10n.hasAccount),
                       TextButton(
                         onPressed: () => context.go('/login'),
-                        child: const Text('로그인'),
+                        child: Text(l10n.login),
                       ),
                     ],
                   ),
