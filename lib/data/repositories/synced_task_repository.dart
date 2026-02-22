@@ -80,4 +80,9 @@ class SyncedTaskRepository implements TaskRepository {
   Future<void> markSynced(String id) {
     return _local.markSynced(id);
   }
+
+  @override
+  Future<void> reorderTasks(Map<String, int> sortOrders) {
+    return _local.reorderTasks(sortOrders);
+  }
 }

@@ -380,4 +380,46 @@ void main() {
       expect(task!.isSynced, isTrue);
     });
   });
+
+  group('updateSortOrders', () {
+    test('updates sort orders for multiple tasks', () async {
+      await dao.insertTask(makeTask(id: 'a', title: 'A'));
+      await dao.insertTask(makeTask(id: 'b', title: 'B'));
+      await dao.insertTask(makeTask(id: 'c', title: 'C'));
+
+      await dao.updateSortOrders({'a': 2, 'b': 0, 'c': 1});
+
+      final a = await dao.getTaskById('a');
+      final b = await dao.getTaskById('b');
+      final c = await dao.getTaskById('c');
+
+      expect(a!.sortOrder, 2);
+      expect(b!.sortOrder, 0);
+      expect(c!.sortOrder, 1);
+    });
+
+    test('marks updated tasks as unsynced', () async {
+      await dao.insertTask(makeTask(id: 'a', isSynced: true));
+      await dao.insertTask(makeTask(id: 'b', isSynced: true));
+
+      await dao.updateSortOrders({'a': 1, 'b': 0});
+
+      final a = await dao.getTaskById('a');
+      final b = await dao.getTaskById('b');
+
+      expect(a!.isSynced, isFalse);
+      expect(b!.isSynced, isFalse);
+    });
+
+    test('updates updatedAt timestamp', () async {
+      await dao.insertTask(makeTask(id: 'a'));
+      final before = (await dao.getTaskById('a'))!.updatedAt;
+
+      await Future.delayed(const Duration(seconds: 1));
+      await dao.updateSortOrders({'a': 5});
+
+      final after = (await dao.getTaskById('a'))!.updatedAt;
+      expect(after.isAfter(before), isTrue);
+    });
+  });
 }
