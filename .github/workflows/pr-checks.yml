@@ -58,8 +58,12 @@ jobs:
             echo "No coverage data found"
             exit 1
           fi
-          # Remove generated files from coverage data
-          grep -v -E '\.(g|freezed)\.dart$' coverage/lcov.info > coverage/filtered.info || true
+          # Remove entire lcov blocks for generated files (.g.dart, .freezed.dart)
+          awk '
+            /^SF:.*\.(g|freezed)\.dart$/ { skip=1; next }
+            /^end_of_record/ { if (skip) { skip=0; next } }
+            !skip { print }
+          ' coverage/lcov.info > coverage/filtered.info
           mv coverage/filtered.info coverage/lcov.info
 
       - name: Check coverage threshold
