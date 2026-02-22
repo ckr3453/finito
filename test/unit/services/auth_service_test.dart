@@ -398,5 +398,89 @@ void main() {
         );
       });
     });
+
+    group('account deletion', () {
+      test('reauthenticateWithEmail delegates to User', () async {
+        final mockUser = MockUser();
+        final mockCredential = MockUserCredential();
+        when(() => mockAuth.currentUser).thenReturn(mockUser);
+        when(
+          () => mockUser.reauthenticateWithCredential(any()),
+        ).thenAnswer((_) async => mockCredential);
+
+        final result = await authService.reauthenticateWithEmail(
+          email: 'test@example.com',
+          password: 'pass123',
+        );
+
+        expect(result, equals(mockCredential));
+        verify(() => mockUser.reauthenticateWithCredential(any())).called(1);
+      });
+
+      test('reauthenticateWithEmail throws when no user', () {
+        when(() => mockAuth.currentUser).thenReturn(null);
+
+        expect(
+          () => authService.reauthenticateWithEmail(
+            email: 'test@example.com',
+            password: 'pass123',
+          ),
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
+
+      test('reauthenticateWithGoogle delegates to User', () async {
+        final mockUser = MockUser();
+        final mockAccount = MockGoogleSignInAccount();
+        final mockAuthentication = MockGoogleSignInAuthentication();
+        final mockCredential = MockUserCredential();
+
+        when(() => mockAuth.currentUser).thenReturn(mockUser);
+        when(
+          () => mockGoogleSignIn.signIn(),
+        ).thenAnswer((_) async => mockAccount);
+        when(
+          () => mockAccount.authentication,
+        ).thenAnswer((_) async => mockAuthentication);
+        when(() => mockAuthentication.accessToken).thenReturn('access-token');
+        when(() => mockAuthentication.idToken).thenReturn('id-token');
+        when(
+          () => mockUser.reauthenticateWithCredential(any()),
+        ).thenAnswer((_) async => mockCredential);
+
+        final result = await authService.reauthenticateWithGoogle();
+
+        expect(result, equals(mockCredential));
+        verify(() => mockUser.reauthenticateWithCredential(any())).called(1);
+      });
+
+      test('reauthenticateWithGoogle throws when no user', () {
+        when(() => mockAuth.currentUser).thenReturn(null);
+
+        expect(
+          authService.reauthenticateWithGoogle,
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
+
+      test('deleteAccount delegates to User.delete', () async {
+        final mockUser = MockUser();
+        when(() => mockAuth.currentUser).thenReturn(mockUser);
+        when(mockUser.delete).thenAnswer((_) async {});
+
+        await authService.deleteAccount();
+
+        verify(mockUser.delete).called(1);
+      });
+
+      test('deleteAccount throws when no user', () {
+        when(() => mockAuth.currentUser).thenReturn(null);
+
+        expect(
+          authService.deleteAccount,
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
+    });
   });
 }
