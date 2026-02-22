@@ -52,12 +52,18 @@ jobs:
       - name: Run tests with coverage
         run: flutter test --coverage
 
-      - name: Check coverage threshold
+      - name: Filter coverage (exclude generated files)
         run: |
           if [ ! -f coverage/lcov.info ]; then
             echo "No coverage data found"
             exit 1
           fi
+          # Remove generated files from coverage data
+          grep -v -E '\.(g|freezed)\.dart$' coverage/lcov.info > coverage/filtered.info || true
+          mv coverage/filtered.info coverage/lcov.info
+
+      - name: Check coverage threshold
+        run: |
           # Calculate line coverage percentage
           TOTAL=$(grep -c "^DA:" coverage/lcov.info || true)
           HIT=$(grep "^DA:" coverage/lcov.info | grep -v ",0$" | wc -l || true)
