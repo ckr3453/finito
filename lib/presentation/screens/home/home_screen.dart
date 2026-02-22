@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/domain/enums/enums.dart';
 import 'package:todo_app/presentation/providers/task_providers.dart';
 import 'package:todo_app/presentation/providers/filter_providers.dart';
@@ -16,6 +17,7 @@ class HomeScreen extends ConsumerWidget {
     final taskListAsync = ref.watch(taskListProvider);
     final filter = ref.watch(taskFilterProvider);
     final categoriesAsync = ref.watch(categoryListProvider);
+    final l10n = context.l10n;
 
     // Build a map of categoryId -> CategoryEntity for quick lookup
     final categoryMap = categoriesAsync.whenData((categories) {
@@ -23,7 +25,7 @@ class HomeScreen extends ConsumerWidget {
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('TODO')),
+      appBar: AppBar(title: Text(l10n.appTitle)),
       body: Column(
         children: [
           // Filter chips
@@ -32,7 +34,7 @@ class HomeScreen extends ConsumerWidget {
             child: Row(
               children: [
                 _FilterChip(
-                  label: '전체',
+                  label: l10n.filterAll,
                   selected: filter.status == null,
                   onSelected: (_) {
                     ref.read(taskFilterProvider.notifier).setStatus(null);
@@ -40,7 +42,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 _FilterChip(
-                  label: '진행중',
+                  label: l10n.filterInProgress,
                   selected: filter.status == TaskStatus.pending,
                   onSelected: (_) {
                     ref
@@ -50,7 +52,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 _FilterChip(
-                  label: '완료',
+                  label: l10n.filterCompleted,
                   selected: filter.status == TaskStatus.completed,
                   onSelected: (_) {
                     ref
@@ -68,8 +70,8 @@ class HomeScreen extends ConsumerWidget {
                 if (tasks.isEmpty) {
                   return EmptyState(
                     icon: Icons.check_circle_outline,
-                    message: '할 일을 추가해보세요!',
-                    actionLabel: '새 할 일 추가',
+                    message: l10n.emptyTaskMessage,
+                    actionLabel: l10n.emptyTaskAction,
                     onAction: () => context.pushNamed('taskEditor'),
                   );
                 }
@@ -100,7 +102,7 @@ class HomeScreen extends ConsumerWidget {
                       color: Colors.red,
                     ),
                     const SizedBox(height: 8),
-                    Text('오류가 발생했습니다: $error'),
+                    Text(l10n.errorOccurred(error.toString())),
                   ],
                 ),
               ),

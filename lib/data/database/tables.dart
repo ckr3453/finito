@@ -9,6 +9,7 @@ class TaskItems extends Table {
   TextColumn get categoryId => text().nullable().references(Categories, #id)();
   DateTimeColumn get dueDate => dateTime().nullable()();
   DateTimeColumn get completedAt => dateTime().nullable()();
+  DateTimeColumn get reminderTime => dateTime().nullable()();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();

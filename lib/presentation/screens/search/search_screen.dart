@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todo_app/core/extensions.dart';
+import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/domain/entities/entities.dart';
 import 'package:todo_app/domain/enums/enums.dart';
 import 'package:todo_app/presentation/providers/filter_providers.dart';
@@ -40,6 +41,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final tasksAsync = ref.watch(taskListProvider);
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +49,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           controller: _searchController,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: '할 일 검색...',
+            hintText: l10n.searchHint,
             border: InputBorder.none,
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
@@ -74,17 +76,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   Widget _buildBody(AsyncValue<List<TaskEntity>> tasksAsync) {
     final query = _searchController.text.trim();
+    final l10n = context.l10n;
 
     if (query.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            const Icon(Icons.search, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
             Text(
-              '검색어를 입력하세요',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              l10n.searchPrompt,
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
             ),
           ],
         ),
@@ -94,15 +97,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     return tasksAsync.when(
       data: (tasks) {
         if (tasks.isEmpty) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.search_off, size: 64, color: Colors.grey),
-                SizedBox(height: 16),
+                const Icon(Icons.search_off, size: 64, color: Colors.grey),
+                const SizedBox(height: 16),
                 Text(
-                  '검색 결과가 없습니다',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  l10n.searchNoResults,
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               ],
             ),
@@ -119,7 +122,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('오류가 발생했습니다: $error')),
+      error: (error, stack) =>
+          Center(child: Text(l10n.errorOccurred(error.toString()))),
     );
   }
 }

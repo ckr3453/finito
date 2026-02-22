@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_app/l10n/app_localizations.dart';
 
 extension DateTimeX on DateTime {
   String toFormattedDate() => DateFormat('yyyy-MM-dd').format(this);
   String toFormattedDateTime() => DateFormat('yyyy-MM-dd HH:mm').format(this);
-  String toRelative() {
+  String toRelative(AppLocalizations l10n) {
     final now = DateTime.now();
     final diff = now.difference(this);
-    if (diff.inDays == 0) return '오늘';
-    if (diff.inDays == 1) return '어제';
-    if (diff.inDays < 7) return '${diff.inDays}일 전';
+    if (diff.inDays == 0) return l10n.relativeToday;
+    if (diff.inDays == 1) return l10n.relativeYesterday;
+    if (diff.inDays < 7) return l10n.relativeDaysAgo(diff.inDays);
     return toFormattedDate();
   }
 

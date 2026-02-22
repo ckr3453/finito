@@ -6,7 +6,25 @@ part of 'repository_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$taskRepositoryHash() => r'a8d783cba349046ad4991b72ca14a2a952c591f7';
+String _$localTaskRepositoryHash() =>
+    r'4a0c11e64acfee7512108600137c1e0c423e162a';
+
+/// See also [localTaskRepository].
+@ProviderFor(localTaskRepository)
+final localTaskRepositoryProvider = Provider<LocalTaskRepository>.internal(
+  localTaskRepository,
+  name: r'localTaskRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$localTaskRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef LocalTaskRepositoryRef = ProviderRef<LocalTaskRepository>;
+String _$taskRepositoryHash() => r'41c3bd85ec37496af654b02cb987d245cdd8acc8';
 
 /// See also [taskRepository].
 @ProviderFor(taskRepository)
@@ -24,7 +42,7 @@ final taskRepositoryProvider = Provider<TaskRepository>.internal(
 // ignore: unused_element
 typedef TaskRepositoryRef = ProviderRef<TaskRepository>;
 String _$categoryRepositoryHash() =>
-    r'7b2ea09f88e7994139f3c7c6529739574ca78fa3';
+    r'ba81784e422c239e207f81519dc790e6348f23c9';
 
 /// See also [categoryRepository].
 @ProviderFor(categoryRepository)
@@ -41,7 +59,7 @@ final categoryRepositoryProvider = Provider<CategoryRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CategoryRepositoryRef = ProviderRef<CategoryRepository>;
-String _$tagRepositoryHash() => r'c43cf16eea35f270627a6e6ef4ee0bb5d71ed4f4';
+String _$tagRepositoryHash() => r'4097f314d6080a4d697149df27aebf7e4f1116ab';
 
 /// See also [tagRepository].
 @ProviderFor(tagRepository)

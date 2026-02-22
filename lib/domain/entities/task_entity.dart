@@ -16,6 +16,7 @@ abstract class TaskEntity with _$TaskEntity {
     @Default([]) List<String> tagIds,
     DateTime? dueDate,
     DateTime? completedAt,
+    DateTime? reminderTime,
     @Default(0) int sortOrder,
     required DateTime createdAt,
     required DateTime updatedAt,

@@ -26,6 +26,9 @@ _TaskEntity _$TaskEntityFromJson(Map<String, dynamic> json) => _TaskEntity(
   completedAt: json['completedAt'] == null
       ? null
       : DateTime.parse(json['completedAt'] as String),
+  reminderTime: json['reminderTime'] == null
+      ? null
+      : DateTime.parse(json['reminderTime'] as String),
   sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
   createdAt: DateTime.parse(json['createdAt'] as String),
   updatedAt: DateTime.parse(json['updatedAt'] as String),
@@ -46,6 +49,7 @@ Map<String, dynamic> _$TaskEntityToJson(_TaskEntity instance) =>
       'tagIds': instance.tagIds,
       'dueDate': instance.dueDate?.toIso8601String(),
       'completedAt': instance.completedAt?.toIso8601String(),
+      'reminderTime': instance.reminderTime?.toIso8601String(),
       'sortOrder': instance.sortOrder,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),

@@ -358,3 +358,56 @@ Future<void> widgetBackgroundCallback(Uri? uri) async {
   - Android: Glance의 `@Preview` 어노테이션
 - 실제 기기에서 위젯 추가/갱신/액션 동작을 수동 테스트한다.
 - 공유 저장소의 데이터 읽기/쓰기를 통합 테스트한다.
+
+---
+
+## 11. 제외 범위
+
+다음 항목은 Phase 4에서 구현하지 않는다.
+
+- 위젯 설정/커스터마이징 UI (필터, 테마 선택 등)
+- 카테고리/태그별 위젯 변형
+- iOS 잠금 화면 위젯 (`.accessoryRectangular` 등)
+- Large 위젯 크기
+- Watch/Wearable 위젯
+- 위젯 사용 분석/텔레메트리
+- 위젯 액션 실패 시 재시도 큐
+- Windows 위젯: best-effort (막히면 스킵)
+- 다국어 위젯 텍스트 (현재 한국어 고정)
+
+---
+
+## 12. 검증 체크리스트
+
+### 12.1 자동 검증 (Dart)
+
+- [ ] `fvm flutter test` — 전체 Dart 단위 테스트 통과
+- [ ] `fvm dart run build_runner build --delete-conflicting-outputs` — 코드 생성 정상
+- [ ] `fvm flutter build apk --debug` — Android 빌드 성공
+- [ ] `fvm flutter build ios --debug --no-codesign` — iOS 빌드 성공
+
+### 12.2 수동 검증 (플랫폼별)
+
+**Android:**
+- [ ] 홈 화면에서 Small 위젯 추가 → 오늘 할 일 개수 + 상위 3개 제목 표시
+- [ ] 홈 화면에서 Medium 위젯 추가 → 태스크 리스트 최대 5개 표시
+- [ ] 앱에서 Task CRUD → 위젯 자동 업데이트
+- [ ] Medium 위젯 체크박스 → 완료 토글 동작
+- [ ] Small 위젯 탭 → 앱 홈 화면 이동
+- [ ] Medium 위젯 태스크 탭 → 태스크 상세 화면 딥링크
+
+**iOS:**
+- [ ] 홈 화면에서 Small 위젯 추가 → 정상 렌더링
+- [ ] 홈 화면에서 Medium 위젯 추가 → 정상 렌더링
+- [ ] 앱에서 Task CRUD → 위젯 자동 업데이트
+- [ ] Medium 위젯 체크박스 → 완료 토글 동작
+- [ ] 위젯 탭 → 올바른 화면으로 딥링크
+
+**macOS:**
+- [ ] 위젯 갤러리에서 Small/Medium 위젯 추가 → 정상 렌더링
+- [ ] 앱에서 Task CRUD → 위젯 자동 업데이트
+- [ ] 위젯 탭 → 앱으로 이동
+
+**공통:**
+- [ ] 앱 프로세스 종료 후 위젯에 캐시 데이터 표시
+- [ ] 앱 포그라운드 진입 시 위젯 갱신

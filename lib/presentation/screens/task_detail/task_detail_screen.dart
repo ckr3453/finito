@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todo_app/core/extensions.dart';
+import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/domain/entities/entities.dart';
 import 'package:todo_app/domain/enums/enums.dart';
 import 'package:todo_app/presentation/providers/task_providers.dart';
@@ -19,14 +20,15 @@ class TaskDetailScreen extends ConsumerWidget {
     final tagsAsync = ref.watch(taskTagsProvider(taskId));
     final categoriesAsync = ref.watch(categoryListProvider);
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('할 일 상세'),
+        title: Text(l10n.taskDetail),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            tooltip: '수정',
+            tooltip: l10n.editTooltip,
             onPressed: () {
               context.pushNamed(
                 'taskEditor',
@@ -36,7 +38,7 @@ class TaskDetailScreen extends ConsumerWidget {
           ),
           IconButton(
             icon: const Icon(Icons.delete),
-            tooltip: '삭제',
+            tooltip: l10n.deleteTooltip,
             onPressed: () => _confirmDelete(context, ref),
           ),
         ],
@@ -44,7 +46,7 @@ class TaskDetailScreen extends ConsumerWidget {
       body: taskAsync.when(
         data: (task) {
           if (task == null) {
-            return const Center(child: Text('할 일을 찾을 수 없습니다.'));
+            return Center(child: Text(l10n.taskNotFound));
           }
 
           final isCompleted = task.status == TaskStatus.completed;
@@ -87,7 +89,7 @@ class TaskDetailScreen extends ConsumerWidget {
               // Priority
               _DetailRow(
                 icon: Icons.flag,
-                label: '우선순위',
+                label: l10n.priority,
                 child: Row(
                   children: [
                     Container(
@@ -99,7 +101,7 @@ class TaskDetailScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(PriorityIndicator.labelFor(task.priority)),
+                    Text(PriorityIndicator.labelFor(task.priority, l10n)),
                   ],
                 ),
               ),
@@ -109,7 +111,7 @@ class TaskDetailScreen extends ConsumerWidget {
               if (task.description.isNotEmpty) ...[
                 _DetailRow(
                   icon: Icons.description,
-                  label: '설명',
+                  label: l10n.description,
                   child: Text(task.description),
                 ),
                 const Divider(height: 24),
@@ -123,7 +125,7 @@ class TaskDetailScreen extends ConsumerWidget {
                     children: [
                       _DetailRow(
                         icon: Icons.folder,
-                        label: '카테고리',
+                        label: l10n.category,
                         child: Chip(
                           label: Text(cat.name),
                           backgroundColor: Color(
@@ -148,7 +150,7 @@ class TaskDetailScreen extends ConsumerWidget {
                     children: [
                       _DetailRow(
                         icon: Icons.label,
-                        label: '태그',
+                        label: l10n.tags,
                         child: Wrap(
                           spacing: 8,
                           runSpacing: 4,
@@ -175,7 +177,7 @@ class TaskDetailScreen extends ConsumerWidget {
               if (task.dueDate != null) ...[
                 _DetailRow(
                   icon: Icons.calendar_today,
-                  label: '마감일',
+                  label: l10n.dueDate,
                   child: Text(
                     task.dueDate!.toFormattedDate(),
                     style: TextStyle(
@@ -187,16 +189,26 @@ class TaskDetailScreen extends ConsumerWidget {
                 const Divider(height: 24),
               ],
 
+              // Reminder time
+              if (task.reminderTime != null) ...[
+                _DetailRow(
+                  icon: Icons.notifications_active,
+                  label: l10n.reminder,
+                  child: Text(task.reminderTime!.toFormattedDateTime()),
+                ),
+                const Divider(height: 24),
+              ],
+
               // Created / Updated info
               _DetailRow(
                 icon: Icons.access_time,
-                label: '생성일',
+                label: l10n.createdAt,
                 child: Text(task.createdAt.toFormattedDateTime()),
               ),
               const SizedBox(height: 8),
               _DetailRow(
                 icon: Icons.update,
-                label: '수정일',
+                label: l10n.updatedAt,
                 child: Text(task.updatedAt.toFormattedDateTime()),
               ),
               const SizedBox(height: 32),
@@ -207,7 +219,9 @@ class TaskDetailScreen extends ConsumerWidget {
                 child: FilledButton.icon(
                   onPressed: () => _toggleCompletion(ref, task),
                   icon: Icon(isCompleted ? Icons.undo : Icons.check_circle),
-                  label: Text(isCompleted ? '미완료로 변경' : '완료로 변경'),
+                  label: Text(
+                    isCompleted ? l10n.markAsIncomplete : l10n.markAsComplete,
+                  ),
                   style: FilledButton.styleFrom(
                     backgroundColor: isCompleted
                         ? Colors.grey
@@ -219,7 +233,8 @@ class TaskDetailScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('오류가 발생했습니다: $error')),
+        error: (error, _) =>
+            Center(child: Text(l10n.errorOccurred(error.toString()))),
       ),
     );
   }
@@ -236,19 +251,20 @@ class TaskDetailScreen extends ConsumerWidget {
   }
 
   Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('할 일 삭제'),
-        content: const Text('이 할 일을 삭제하시겠습니까?'),
+        title: Text(l10n.deleteTask),
+        content: Text(l10n.deleteTaskDialogContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('취소'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('삭제', style: TextStyle(color: Colors.red)),
+            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -269,10 +285,11 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final (label, color) = switch (status) {
-      TaskStatus.pending => ('진행중', Colors.blue),
-      TaskStatus.completed => ('완료', Colors.green),
-      TaskStatus.archived => ('보관', Colors.grey),
+      TaskStatus.pending => (l10n.statusPending, Colors.blue),
+      TaskStatus.completed => (l10n.statusCompleted, Colors.green),
+      TaskStatus.archived => (l10n.statusArchived, Colors.grey),
     };
 
     return Container(

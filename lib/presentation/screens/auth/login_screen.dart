@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todo_app/core/l10n_extension.dart';
+import 'package:todo_app/l10n/app_localizations.dart';
 import 'package:todo_app/presentation/providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -16,6 +18,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
   bool _obscurePassword = true;
 
   @override
@@ -25,16 +28,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-  String _mapFirebaseError(String code) {
+  String _mapFirebaseError(String code, AppLocalizations l10n) {
     return switch (code) {
-      'user-not-found' => '등록되지 않은 이메일입니다.',
-      'wrong-password' => '비밀번호가 올바르지 않습니다.',
-      'invalid-email' => '유효하지 않은 이메일 형식입니다.',
-      'user-disabled' => '비활성화된 계정입니다.',
-      'too-many-requests' => '너무 많은 요청이 발생했습니다. 잠시 후 다시 시도해주세요.',
-      'invalid-credential' => '이메일 또는 비밀번호가 올바르지 않습니다.',
-      'network-request-failed' => '네트워크 연결을 확인해주세요.',
-      _ => '로그인에 실패했습니다. 다시 시도해주세요.',
+      'user-not-found' => l10n.firebaseUserNotFound,
+      'wrong-password' => l10n.firebaseWrongPassword,
+      'invalid-email' => l10n.firebaseInvalidEmail,
+      'user-disabled' => l10n.firebaseUserDisabled,
+      'too-many-requests' => l10n.firebaseTooManyRequests,
+      'invalid-credential' => l10n.firebaseInvalidCredential,
+      'network-request-failed' => l10n.firebaseNetworkError,
+      'sign-in-cancelled' => '',
+      _ => l10n.loginFailed,
     };
   }
 
@@ -53,32 +57,60 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (mounted) context.go('/');
     } on FirebaseAuthException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(_mapFirebaseError(e.code))));
+        final l10n = context.l10n;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_mapFirebaseError(e.code, l10n))),
+        );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('로그인에 실패했습니다. 다시 시도해주세요.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.loginFailed)));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
+  Future<void> _signInWithGoogle() async {
+    setState(() => _isGoogleLoading = true);
+
+    try {
+      final authService = ref.read(authServiceProvider);
+      await authService.signInWithGoogle();
+
+      if (mounted) context.go('/');
+    } on FirebaseAuthException catch (e) {
+      if (mounted && e.code != 'sign-in-cancelled') {
+        final l10n = context.l10n;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_mapFirebaseError(e.code, l10n))),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.googleLoginFailed)));
+      }
+    } finally {
+      if (mounted) setState(() => _isGoogleLoading = false);
+    }
+  }
+
   Future<void> _showResetPasswordDialog() async {
+    final l10n = context.l10n;
     final resetEmailController = TextEditingController();
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('비밀번호 재설정'),
+        title: Text(l10n.resetPassword),
         content: TextField(
           controller: resetEmailController,
-          decoration: const InputDecoration(
-            labelText: '이메일',
-            hintText: '가입한 이메일을 입력하세요',
+          decoration: InputDecoration(
+            labelText: l10n.email,
+            hintText: l10n.resetEmailHint,
           ),
           keyboardType: TextInputType.emailAddress,
           autofocus: true,
@@ -86,11 +118,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('취소'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('전송'),
+            child: Text(l10n.send),
           ),
         ],
       ),
@@ -103,15 +135,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           email: resetEmailController.text.trim(),
         );
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('비밀번호 재설정 이메일을 전송했습니다.')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.resetEmailSent)));
         }
       } on FirebaseAuthException catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(_mapFirebaseError(e.code))));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(_mapFirebaseError(e.code, l10n))),
+          );
         }
       }
     }
@@ -121,8 +153,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: const Text('로그인')),
+      appBar: AppBar(title: Text(l10n.login)),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -150,15 +183,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 32),
                   TextFormField(
                     controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: '이메일',
-                      prefixIcon: Icon(Icons.email_outlined),
+                    decoration: InputDecoration(
+                      labelText: l10n.email,
+                      prefixIcon: const Icon(Icons.email_outlined),
                     ),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return '이메일을 입력해주세요.';
+                        return l10n.emailRequired;
                       }
                       return null;
                     },
@@ -167,7 +200,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(
-                      labelText: '비밀번호',
+                      labelText: l10n.password,
                       prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -185,7 +218,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onFieldSubmitted: (_) => _signIn(),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return '비밀번호를 입력해주세요.';
+                        return l10n.passwordRequired;
                       }
                       return null;
                     },
@@ -194,7 +227,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: _showResetPasswordDialog,
-                      child: const Text('비밀번호를 잊으셨나요?'),
+                      child: Text(l10n.forgotPassword),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -206,16 +239,48 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('로그인'),
+                        : Text(l10n.login),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          l10n.or,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton.icon(
+                    onPressed: _isGoogleLoading ? null : _signInWithGoogle,
+                    icon: _isGoogleLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text(
+                            'G',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                    label: Text(l10n.signInWithGoogle),
                   ),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('계정이 없으신가요?'),
+                      Text(l10n.noAccount),
                       TextButton(
                         onPressed: () => context.go('/register'),
-                        child: const Text('회원가입'),
+                        child: Text(l10n.signUp),
                       ),
                     ],
                   ),

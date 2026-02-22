@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   cupertino_icons: ^1.0.8
 
@@ -32,8 +34,16 @@ dependencies:
   firebase_auth: ^6.1.4
   cloud_firestore: ^6.1.2
 
+  # Auth
+  google_sign_in: ^6.2.2
+
   # Widget Bridge
   home_widget: ^0.7.0
+
+  # Notifications
+  flutter_local_notifications: ^18.0.1
+  firebase_messaging: ^16.1.1
+  timezone: ^0.10.0
 
   # Utilities
   uuid: ^4.5.1
@@ -43,6 +53,7 @@ dependencies:
   path: ^1.9.1
   collection: ^1.19.1
   shared_preferences: ^2.5.3
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +71,30 @@ dev_dependencies:
   riverpod_generator: ^2.6.5
   drift_dev: ^2.27.1
   fake_cloud_firestore: ^4.0.1
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  macos:
+    generate: true
+    image_path: "assets/icon/app_icon.png"
+  windows:
+    generate: true
+    image_path: "assets/icon/app_icon.png"
+    icon_size: 48
+  image_path: "assets/icon/app_icon.png"
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: "assets/icon/app_icon.png"
+  image_dark: "assets/icon/app_icon.png"
+  color_dark: "#1B5E20"
+  android: true
+  ios: true
+  web: false
 
 flutter:
+  generate: true
   uses-material-design: true

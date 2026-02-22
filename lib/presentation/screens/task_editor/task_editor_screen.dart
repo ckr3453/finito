@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
+import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/domain/entities/entities.dart';
 import 'package:todo_app/domain/enums/enums.dart';
 import 'package:todo_app/presentation/providers/repository_providers.dart';
@@ -28,6 +29,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
   String? _categoryId;
   List<String> _selectedTagIds = [];
   DateTime? _dueDate;
+  DateTime? _reminderTime;
 
   bool _isLoading = false;
   bool _initialized = false;
@@ -50,12 +52,14 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
     _categoryId = task.categoryId;
     _selectedTagIds = List.from(task.tagIds);
     _dueDate = task.dueDate;
+    _reminderTime = task.reminderTime;
   }
 
   @override
   Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(categoryListProvider);
     final tagsAsync = ref.watch(tagListProvider);
+    final l10n = context.l10n;
 
     // If editing, load existing task
     if (_isEditing) {
@@ -67,11 +71,11 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? '할 일 수정' : '새 할 일'),
+        title: Text(_isEditing ? l10n.editTask : l10n.newTask),
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _saveTask,
-            child: const Text('저장'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -85,14 +89,14 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                   // Title
                   TextFormField(
                     controller: _titleController,
-                    decoration: const InputDecoration(
-                      labelText: '제목',
-                      hintText: '할 일을 입력하세요',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.title,
+                      hintText: l10n.titleHint,
+                      border: const OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return '제목을 입력해주세요';
+                        return l10n.titleRequired;
                       }
                       return null;
                     },
@@ -103,10 +107,10 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                   // Description
                   TextFormField(
                     controller: _descriptionController,
-                    decoration: const InputDecoration(
-                      labelText: '설명',
-                      hintText: '설명을 입력하세요 (선택)',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.description,
+                      hintText: l10n.descriptionHint,
+                      border: const OutlineInputBorder(),
                     ),
                     maxLines: 3,
                   ),
@@ -115,9 +119,9 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                   // Priority dropdown
                   DropdownButtonFormField<Priority>(
                     initialValue: _priority,
-                    decoration: const InputDecoration(
-                      labelText: '우선순위',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.priority,
+                      border: const OutlineInputBorder(),
                     ),
                     items: Priority.values.map((p) {
                       return DropdownMenuItem(
@@ -133,7 +137,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Text(PriorityIndicator.labelFor(p)),
+                            Text(PriorityIndicator.labelFor(p, l10n)),
                           ],
                         ),
                       );
@@ -151,15 +155,12 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                     data: (categories) {
                       return DropdownButtonFormField<String?>(
                         initialValue: _categoryId,
-                        decoration: const InputDecoration(
-                          labelText: '카테고리',
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.category,
+                          border: const OutlineInputBorder(),
                         ),
                         items: [
-                          const DropdownMenuItem(
-                            value: null,
-                            child: Text('없음'),
-                          ),
+                          DropdownMenuItem(value: null, child: Text(l10n.none)),
                           ...categories.map((c) {
                             return DropdownMenuItem(
                               value: c.id,
@@ -186,7 +187,8 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                       );
                     },
                     loading: () => const LinearProgressIndicator(),
-                    error: (e, _) => Text('카테고리 로딩 실패: $e'),
+                    error: (e, _) =>
+                        Text(l10n.categoryLoadFailed(e.toString())),
                   ),
                   const SizedBox(height: 16),
 
@@ -196,8 +198,8 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                     leading: const Icon(Icons.calendar_today),
                     title: Text(
                       _dueDate != null
-                          ? '마감일: ${_dueDate!.toFormattedDate()}'
-                          : '마감일 설정',
+                          ? l10n.dueDateLabel(_dueDate!.toFormattedDate())
+                          : l10n.setDueDate,
                     ),
                     trailing: _dueDate != null
                         ? IconButton(
@@ -209,15 +211,40 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                   ),
                   const Divider(),
 
+                  // Reminder time picker
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.notifications_active),
+                    title: Text(
+                      _reminderTime != null
+                          ? l10n.reminderLabel(
+                              _reminderTime!.toFormattedDateTime(),
+                            )
+                          : l10n.setReminder,
+                    ),
+                    trailing: _reminderTime != null
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () =>
+                                setState(() => _reminderTime = null),
+                          )
+                        : null,
+                    onTap: _pickReminderTime,
+                  ),
+                  const Divider(),
+
                   // Tag multi-select
                   const SizedBox(height: 8),
-                  Text('태그', style: Theme.of(context).textTheme.titleSmall),
+                  Text(
+                    l10n.tags,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
                   const SizedBox(height: 8),
                   tagsAsync.when(
                     data: (tags) {
                       if (tags.isEmpty) {
                         return Text(
-                          '태그가 없습니다',
+                          l10n.noTags,
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(
@@ -251,7 +278,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                       );
                     },
                     loading: () => const LinearProgressIndicator(),
-                    error: (e, _) => Text('태그 로딩 실패: $e'),
+                    error: (e, _) => Text(l10n.tagLoadFailed(e.toString())),
                   ),
                 ],
               ),
@@ -270,6 +297,35 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
     if (picked != null) {
       setState(() => _dueDate = picked);
     }
+  }
+
+  Future<void> _pickReminderTime() async {
+    final now = DateTime.now();
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _reminderTime ?? now,
+      firstDate: now,
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate == null || !mounted) return;
+
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: _reminderTime != null
+          ? TimeOfDay.fromDateTime(_reminderTime!)
+          : TimeOfDay.now(),
+    );
+    if (pickedTime == null) return;
+
+    setState(() {
+      _reminderTime = DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+    });
   }
 
   Future<void> _saveTask() async {
@@ -295,6 +351,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
           categoryId: _categoryId,
           tagIds: _selectedTagIds,
           dueDate: _dueDate,
+          reminderTime: _reminderTime,
           updatedAt: now,
         );
         await repo.updateTask(updated);
@@ -310,6 +367,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
           categoryId: _categoryId,
           tagIds: _selectedTagIds,
           dueDate: _dueDate,
+          reminderTime: _reminderTime,
           createdAt: now,
           updatedAt: now,
         );
@@ -322,9 +380,9 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('저장 실패: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.saveFailed(e.toString()))),
+        );
       }
     } finally {
       if (mounted) {

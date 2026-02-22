@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/presentation/providers/auth_provider.dart';
+import 'package:todo_app/presentation/providers/locale_provider.dart';
+import 'package:todo_app/presentation/providers/notification_provider.dart';
+import 'package:todo_app/presentation/providers/sync_providers.dart';
 import 'package:todo_app/presentation/providers/theme_provider.dart';
+import 'package:todo_app/services/task_sync_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -10,36 +15,38 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentThemeMode = ref.watch(appThemeModeProvider);
+    final currentLocale = ref.watch(appLocaleProvider);
+    final l10n = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('설정')),
+      appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         children: [
           // Appearance section
-          const _SectionHeader(title: '외관'),
+          _SectionHeader(title: l10n.appearance),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('테마', style: Theme.of(context).textTheme.titleSmall),
+                Text(l10n.theme, style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
                 SegmentedButton<ThemeMode>(
-                  segments: const [
+                  segments: [
                     ButtonSegment(
                       value: ThemeMode.system,
-                      label: Text('시스템'),
-                      icon: Icon(Icons.settings_suggest),
+                      label: Text(l10n.themeSystem),
+                      icon: const Icon(Icons.settings_suggest),
                     ),
                     ButtonSegment(
                       value: ThemeMode.light,
-                      label: Text('라이트'),
-                      icon: Icon(Icons.light_mode),
+                      label: Text(l10n.themeLight),
+                      icon: const Icon(Icons.light_mode),
                     ),
                     ButtonSegment(
                       value: ThemeMode.dark,
-                      label: Text('다크'),
-                      icon: Icon(Icons.dark_mode),
+                      label: Text(l10n.themeDark),
+                      icon: const Icon(Icons.dark_mode),
                     ),
                   ],
                   selected: {currentThemeMode},
@@ -53,21 +60,60 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
 
-          const Divider(height: 32),
-
-          // Sync section (placeholder)
-          const _SectionHeader(title: '동기화'),
-          const ListTile(
-            leading: Icon(Icons.sync),
-            title: Text('동기화 설정'),
-            subtitle: Text('준비 중입니다'),
-            enabled: false,
+          // Language section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.language,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(height: 8),
+                SegmentedButton<Locale?>(
+                  segments: [
+                    ButtonSegment(
+                      value: null,
+                      label: Text(l10n.languageSystem),
+                      icon: const Icon(Icons.settings_suggest),
+                    ),
+                    ButtonSegment(
+                      value: const Locale('ko'),
+                      label: Text(l10n.languageKorean),
+                    ),
+                    ButtonSegment(
+                      value: const Locale('en'),
+                      label: Text(l10n.languageEnglish),
+                    ),
+                  ],
+                  selected: {currentLocale},
+                  onSelectionChanged: (selected) {
+                    ref
+                        .read(appLocaleProvider.notifier)
+                        .setLocale(selected.first);
+                  },
+                ),
+              ],
+            ),
           ),
 
           const Divider(height: 32),
 
+          // Notification section
+          _SectionHeader(title: l10n.notifications),
+          const _NotificationSection(),
+
+          const Divider(height: 32),
+
+          // Sync section
+          _SectionHeader(title: l10n.sync),
+          const _SyncSection(),
+
+          const Divider(height: 32),
+
           // Account section
-          const _SectionHeader(title: '계정'),
+          _SectionHeader(title: l10n.account),
           _AccountSection(),
         ],
       ),
@@ -79,12 +125,13 @@ class _AccountSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
+    final l10n = context.l10n;
 
     if (user == null) {
       return ListTile(
         leading: const Icon(Icons.login),
-        title: const Text('로그인'),
-        subtitle: const Text('로그인하여 데이터를 동기화하세요'),
+        title: Text(l10n.login),
+        subtitle: Text(l10n.loginPrompt),
         trailing: const Icon(Icons.chevron_right),
         onTap: () => context.go('/login'),
       );
@@ -92,23 +139,23 @@ class _AccountSection extends ConsumerWidget {
 
     return ListTile(
       leading: const Icon(Icons.person),
-      title: Text(user.email ?? '사용자'),
-      subtitle: const Text('로그인됨'),
+      title: Text(user.email ?? l10n.user),
+      subtitle: Text(l10n.loggedIn),
       trailing: TextButton(
         onPressed: () async {
           final confirmed = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('로그아웃'),
-              content: const Text('로그아웃 하시겠습니까?'),
+              title: Text(l10n.logout),
+              content: Text(l10n.logoutConfirm),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('취소'),
+                  child: Text(l10n.cancel),
                 ),
                 FilledButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text('로그아웃'),
+                  child: Text(l10n.logout),
                 ),
               ],
             ),
@@ -118,7 +165,110 @@ class _AccountSection extends ConsumerWidget {
             await ref.read(authServiceProvider).signOut();
           }
         },
-        child: const Text('로그아웃'),
+        child: Text(l10n.logout),
+      ),
+    );
+  }
+}
+
+class _SyncSection extends ConsumerWidget {
+  const _SyncSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(isAuthenticatedProvider);
+    final l10n = context.l10n;
+
+    if (!isLoggedIn) {
+      return ListTile(
+        leading: const Icon(Icons.sync_disabled),
+        title: Text(l10n.sync),
+        subtitle: Text(l10n.syncDisabledMessage),
+        enabled: false,
+      );
+    }
+
+    final statusAsync = ref.watch(syncStatusProvider);
+    final unsyncedAsync = ref.watch(unsyncedCountProvider);
+
+    final status =
+        statusAsync.valueOrNull ??
+        ref.read(taskSyncServiceProvider).currentStatus;
+    final unsyncedCount =
+        unsyncedAsync.valueOrNull ??
+        ref.read(taskSyncServiceProvider).currentUnsyncedCount;
+
+    final isSyncing = status == SyncStatus.syncing;
+
+    return Column(
+      children: [
+        ListTile(
+          leading: Icon(_iconForStatus(status)),
+          title: Text(l10n.syncStatus),
+          subtitle: Text(_labelForStatus(status, l10n)),
+          trailing: TextButton.icon(
+            onPressed: isSyncing
+                ? null
+                : () => ref.read(taskSyncServiceProvider).syncNow(),
+            icon: const Icon(Icons.sync, size: 18),
+            label: Text(l10n.syncNow),
+          ),
+        ),
+        if (unsyncedCount > 0)
+          ListTile(
+            leading: const Icon(Icons.assignment_late),
+            title: Text(l10n.syncPending),
+            subtitle: Text(l10n.syncPendingCount(unsyncedCount)),
+          ),
+      ],
+    );
+  }
+
+  IconData _iconForStatus(SyncStatus status) {
+    return switch (status) {
+      SyncStatus.idle => Icons.cloud_done,
+      SyncStatus.syncing => Icons.sync,
+      SyncStatus.error => Icons.cloud_off,
+      SyncStatus.offline => Icons.wifi_off,
+    };
+  }
+
+  String _labelForStatus(SyncStatus status, dynamic l10n) {
+    return switch (status) {
+      SyncStatus.idle => l10n.syncIdle as String,
+      SyncStatus.syncing => l10n.syncing as String,
+      SyncStatus.error => l10n.syncError as String,
+      SyncStatus.offline => l10n.syncOffline as String,
+    };
+  }
+}
+
+class _NotificationSection extends ConsumerWidget {
+  const _NotificationSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+
+    return ListTile(
+      leading: const Icon(Icons.notifications),
+      title: Text(l10n.notificationPermission),
+      subtitle: Text(l10n.notificationPermissionDesc),
+      trailing: FilledButton.tonal(
+        onPressed: () async {
+          final notifSvc = ref.read(notificationServiceProvider);
+          final granted = await notifSvc.requestPermission();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  granted ? l10n.permissionGranted : l10n.permissionDenied,
+                ),
+              ),
+            );
+          }
+        },
+        child: Text(l10n.requestPermission),
       ),
     );
   }

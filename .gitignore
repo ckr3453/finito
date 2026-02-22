@@ -52,3 +52,6 @@ macos/Runner/GoogleService-Info.plist
 
 # Lefthook
 .lefthook-local.yml
+
+# FVM Version Cache
+.fvm/nul
