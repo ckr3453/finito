@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -126,6 +127,7 @@ class _AccountSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
     final isVerified = ref.watch(isEmailVerifiedProvider);
+    final isAnonymous = ref.watch(isAnonymousProvider);
     final l10n = context.l10n;
 
     if (user == null) {
@@ -135,6 +137,19 @@ class _AccountSection extends ConsumerWidget {
         subtitle: Text(l10n.loginPrompt),
         trailing: const Icon(Icons.chevron_right),
         onTap: () => context.go('/login'),
+      );
+    }
+
+    if (isAnonymous) {
+      return Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.person_outline),
+            title: Text(l10n.anonymousUser),
+            subtitle: Text(l10n.anonymousDesc),
+          ),
+          _UpgradeAccountSection(),
+        ],
       );
     }
 
@@ -268,6 +283,158 @@ class _EmailVerificationBanner extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+class _UpgradeAccountSection extends ConsumerWidget {
+  String _mapLinkError(String code, dynamic l10n) {
+    return switch (code) {
+      'credential-already-in-use' => l10n.firebaseCredentialInUse as String,
+      'provider-already-linked' => l10n.firebaseProviderAlreadyLinked as String,
+      'invalid-email' => l10n.firebaseInvalidEmail as String,
+      'weak-password' => l10n.firebaseWeakPassword as String,
+      _ => l10n.accountLinkFailed as String,
+    };
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.upgradeAccount,
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(l10n.upgradeAccountDesc),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.tonal(
+                    onPressed: () => _showLinkEmailDialog(context, ref),
+                    child: Text(l10n.linkEmail),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => _linkWithGoogle(context, ref),
+                    child: Text(l10n.linkGoogle),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showLinkEmailDialog(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.linkEmailTitle),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: emailController,
+                decoration: InputDecoration(labelText: l10n.email),
+                keyboardType: TextInputType.emailAddress,
+                validator: (v) =>
+                    v == null || v.trim().isEmpty ? l10n.emailRequired : null,
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: passwordController,
+                decoration: InputDecoration(labelText: l10n.password),
+                obscureText: true,
+                validator: (v) {
+                  if (v == null || v.isEmpty) return l10n.passwordRequired;
+                  if (v.length < 6) return l10n.passwordTooShort;
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                Navigator.pop(context, true);
+              }
+            },
+            child: Text(l10n.save),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      try {
+        await ref
+            .read(authServiceProvider)
+            .linkWithEmail(
+              email: emailController.text.trim(),
+              password: passwordController.text,
+            );
+        if (context.mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.accountLinked)));
+        }
+      } on FirebaseAuthException catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(_mapLinkError(e.code, l10n))));
+        }
+      }
+    }
+
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
+  Future<void> _linkWithGoogle(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
+    try {
+      await ref.read(authServiceProvider).linkWithGoogle();
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.accountLinked)));
+      }
+    } on FirebaseAuthException catch (e) {
+      if (context.mounted && e.code != 'sign-in-cancelled') {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(_mapLinkError(e.code, l10n))));
+      }
+    }
   }
 }
 

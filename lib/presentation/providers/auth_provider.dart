@@ -31,3 +31,9 @@ bool isEmailVerified(Ref ref) {
   final user = ref.watch(currentUserProvider);
   return user?.emailVerified ?? false;
 }
+
+@riverpod
+bool isAnonymous(Ref ref) {
+  final user = ref.watch(currentUserProvider);
+  return user?.isAnonymous ?? false;
+}

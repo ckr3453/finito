@@ -158,6 +158,19 @@
   "emailVerified": "Email verified",
   "emailNotYetVerified": "Email not yet verified. Check your inbox.",
 
+  "continueWithoutAccount": "Continue without account",
+  "anonymousUser": "Anonymous User",
+  "anonymousDesc": "Sign in to sync your data across devices",
+  "upgradeAccount": "Upgrade Account",
+  "upgradeAccountDesc": "Link an email or Google account to keep your data",
+  "linkEmail": "Link Email Account",
+  "linkGoogle": "Link Google Account",
+  "linkEmailTitle": "Link Email Account",
+  "accountLinked": "Account linked successfully!",
+  "accountLinkFailed": "Failed to link account. Please try again.",
+  "firebaseCredentialInUse": "This credential is already linked to another account.",
+  "firebaseProviderAlreadyLinked": "This provider is already linked.",
+
   "relativeToday": "Today",
   "relativeYesterday": "Yesterday",
   "relativeDaysAgo": "{days} days ago"

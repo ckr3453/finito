@@ -91,5 +91,22 @@ final isEmailVerifiedProvider = AutoDisposeProvider<bool>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef IsEmailVerifiedRef = AutoDisposeProviderRef<bool>;
+String _$isAnonymousHash() => r'6bff18107315c11da25c99c3f987a8979f03863b';
+
+/// See also [isAnonymous].
+@ProviderFor(isAnonymous)
+final isAnonymousProvider = AutoDisposeProvider<bool>.internal(
+  isAnonymous,
+  name: r'isAnonymousProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$isAnonymousHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef IsAnonymousRef = AutoDisposeProviderRef<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

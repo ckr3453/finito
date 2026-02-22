@@ -443,6 +443,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emailNotYetVerified => 'Email not yet verified. Check your inbox.';
 
   @override
+  String get continueWithoutAccount => 'Continue without account';
+
+  @override
+  String get anonymousUser => 'Anonymous User';
+
+  @override
+  String get anonymousDesc => 'Sign in to sync your data across devices';
+
+  @override
+  String get upgradeAccount => 'Upgrade Account';
+
+  @override
+  String get upgradeAccountDesc =>
+      'Link an email or Google account to keep your data';
+
+  @override
+  String get linkEmail => 'Link Email Account';
+
+  @override
+  String get linkGoogle => 'Link Google Account';
+
+  @override
+  String get linkEmailTitle => 'Link Email Account';
+
+  @override
+  String get accountLinked => 'Account linked successfully!';
+
+  @override
+  String get accountLinkFailed => 'Failed to link account. Please try again.';
+
+  @override
+  String get firebaseCredentialInUse =>
+      'This credential is already linked to another account.';
+
+  @override
+  String get firebaseProviderAlreadyLinked =>
+      'This provider is already linked.';
+
+  @override
   String get relativeToday => 'Today';
 
   @override

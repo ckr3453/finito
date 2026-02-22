@@ -296,5 +296,107 @@ void main() {
         );
       });
     });
+
+    group('anonymous auth', () {
+      test('signInAnonymously delegates to FirebaseAuth', () async {
+        final mockCredential = MockUserCredential();
+        when(
+          mockAuth.signInAnonymously,
+        ).thenAnswer((_) async => mockCredential);
+
+        final result = await authService.signInAnonymously();
+
+        expect(result, equals(mockCredential));
+        verify(mockAuth.signInAnonymously).called(1);
+      });
+
+      test('signInAnonymously propagates exception', () async {
+        when(
+          mockAuth.signInAnonymously,
+        ).thenThrow(FirebaseAuthException(code: 'operation-not-allowed'));
+
+        expect(
+          authService.signInAnonymously,
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
+
+      test('linkWithEmail links anonymous user to email credential', () async {
+        final mockUser = MockUser();
+        final mockCredential = MockUserCredential();
+        when(() => mockAuth.currentUser).thenReturn(mockUser);
+        when(
+          () => mockUser.linkWithCredential(any()),
+        ).thenAnswer((_) async => mockCredential);
+
+        final result = await authService.linkWithEmail(
+          email: 'test@example.com',
+          password: 'pass123',
+        );
+
+        expect(result, equals(mockCredential));
+        verify(() => mockUser.linkWithCredential(any())).called(1);
+      });
+
+      test('linkWithEmail throws when no user is signed in', () {
+        when(() => mockAuth.currentUser).thenReturn(null);
+
+        expect(
+          () => authService.linkWithEmail(
+            email: 'test@example.com',
+            password: 'pass123',
+          ),
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
+
+      test(
+        'linkWithGoogle links anonymous user to Google credential',
+        () async {
+          final mockUser = MockUser();
+          final mockAccount = MockGoogleSignInAccount();
+          final mockAuthentication = MockGoogleSignInAuthentication();
+          final mockCredential = MockUserCredential();
+
+          when(() => mockAuth.currentUser).thenReturn(mockUser);
+          when(
+            () => mockGoogleSignIn.signIn(),
+          ).thenAnswer((_) async => mockAccount);
+          when(
+            () => mockAccount.authentication,
+          ).thenAnswer((_) async => mockAuthentication);
+          when(() => mockAuthentication.accessToken).thenReturn('access-token');
+          when(() => mockAuthentication.idToken).thenReturn('id-token');
+          when(
+            () => mockUser.linkWithCredential(any()),
+          ).thenAnswer((_) async => mockCredential);
+
+          final result = await authService.linkWithGoogle();
+
+          expect(result, equals(mockCredential));
+          verify(() => mockUser.linkWithCredential(any())).called(1);
+        },
+      );
+
+      test('linkWithGoogle throws when user cancels', () async {
+        final mockUser = MockUser();
+        when(() => mockAuth.currentUser).thenReturn(mockUser);
+        when(() => mockGoogleSignIn.signIn()).thenAnswer((_) async => null);
+
+        expect(
+          authService.linkWithGoogle,
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
+
+      test('linkWithGoogle throws when no user is signed in', () {
+        when(() => mockAuth.currentUser).thenReturn(null);
+
+        expect(
+          authService.linkWithGoogle,
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
+    });
   });
 }
