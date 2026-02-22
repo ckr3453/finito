@@ -87,4 +87,4 @@ flutter run
 
 ## License
 
-This project is for personal use.
+MIT License. See [LICENSE](LICENSE) for details.
