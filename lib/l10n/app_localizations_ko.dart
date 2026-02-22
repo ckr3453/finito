@@ -417,6 +417,27 @@ class AppLocalizationsKo extends AppLocalizations {
   String get logoutConfirm => '로그아웃 하시겠습니까?';
 
   @override
+  String get emailNotVerified => '이메일 미인증';
+
+  @override
+  String get emailNotVerifiedDesc => '이메일 주소를 인증해주세요.';
+
+  @override
+  String get sendVerificationEmail => '인증 이메일 발송';
+
+  @override
+  String get verificationEmailSent => '인증 이메일을 발송했습니다. 받은편지함을 확인해주세요.';
+
+  @override
+  String get checkVerification => '인증 상태 확인';
+
+  @override
+  String get emailVerified => '이메일 인증 완료';
+
+  @override
+  String get emailNotYetVerified => '아직 이메일이 인증되지 않았습니다. 받은편지함을 확인해주세요.';
+
+  @override
   String get relativeToday => '오늘';
 
   @override
