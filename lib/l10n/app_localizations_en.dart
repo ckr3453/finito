@@ -482,6 +482,30 @@ class AppLocalizationsEn extends AppLocalizations {
       'This provider is already linked.';
 
   @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get deleteAccountConfirm =>
+      'Are you sure you want to delete your account? This action cannot be undone.';
+
+  @override
+  String get deleteAccountWarning =>
+      'All your data will be permanently deleted.';
+
+  @override
+  String get reauthRequired => 'Please sign in again to confirm.';
+
+  @override
+  String get accountDeleted => 'Account deleted successfully.';
+
+  @override
+  String get deleteAccountFailed =>
+      'Failed to delete account. Please try again.';
+
+  @override
+  String get deleting => 'Deleting...';
+
+  @override
   String get relativeToday => 'Today';
 
   @override

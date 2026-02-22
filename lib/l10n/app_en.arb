@@ -171,6 +171,14 @@
   "firebaseCredentialInUse": "This credential is already linked to another account.",
   "firebaseProviderAlreadyLinked": "This provider is already linked.",
 
+  "deleteAccount": "Delete Account",
+  "deleteAccountConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
+  "deleteAccountWarning": "All your data will be permanently deleted.",
+  "reauthRequired": "Please sign in again to confirm.",
+  "accountDeleted": "Account deleted successfully.",
+  "deleteAccountFailed": "Failed to delete account. Please try again.",
+  "deleting": "Deleting...",
+
   "relativeToday": "Today",
   "relativeYesterday": "Yesterday",
   "relativeDaysAgo": "{days} days ago"

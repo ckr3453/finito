@@ -123,4 +123,56 @@ class AuthService {
     );
     return user.linkWithCredential(credential);
   }
+
+  Future<UserCredential> reauthenticateWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No user is currently signed in',
+      );
+    }
+    final credential = EmailAuthProvider.credential(
+      email: email,
+      password: password,
+    );
+    return user.reauthenticateWithCredential(credential);
+  }
+
+  Future<UserCredential> reauthenticateWithGoogle() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No user is currently signed in',
+      );
+    }
+    final googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      throw FirebaseAuthException(
+        code: 'sign-in-cancelled',
+        message: 'Google sign-in was cancelled',
+      );
+    }
+    final googleAuth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    return user.reauthenticateWithCredential(credential);
+  }
+
+  Future<void> deleteAccount() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No user is currently signed in',
+      );
+    }
+    await user.delete();
+  }
 }

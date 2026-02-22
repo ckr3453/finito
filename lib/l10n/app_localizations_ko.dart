@@ -474,6 +474,27 @@ class AppLocalizationsKo extends AppLocalizations {
   String get firebaseProviderAlreadyLinked => '이 인증 방식은 이미 연결되어 있습니다.';
 
   @override
+  String get deleteAccount => '계정 삭제';
+
+  @override
+  String get deleteAccountConfirm => '정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.';
+
+  @override
+  String get deleteAccountWarning => '모든 데이터가 영구적으로 삭제됩니다.';
+
+  @override
+  String get reauthRequired => '확인을 위해 다시 로그인해주세요.';
+
+  @override
+  String get accountDeleted => '계정이 성공적으로 삭제되었습니다.';
+
+  @override
+  String get deleteAccountFailed => '계정 삭제에 실패했습니다. 다시 시도해주세요.';
+
+  @override
+  String get deleting => '삭제 중...';
+
+  @override
   String get relativeToday => '오늘';
 
   @override

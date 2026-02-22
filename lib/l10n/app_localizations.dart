@@ -992,6 +992,48 @@ abstract class AppLocalizations {
   /// **'이 인증 방식은 이미 연결되어 있습니다.'**
   String get firebaseProviderAlreadyLinked;
 
+  /// No description provided for @deleteAccount.
+  ///
+  /// In ko, this message translates to:
+  /// **'계정 삭제'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In ko, this message translates to:
+  /// **'모든 데이터가 영구적으로 삭제됩니다.'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @reauthRequired.
+  ///
+  /// In ko, this message translates to:
+  /// **'확인을 위해 다시 로그인해주세요.'**
+  String get reauthRequired;
+
+  /// No description provided for @accountDeleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'계정이 성공적으로 삭제되었습니다.'**
+  String get accountDeleted;
+
+  /// No description provided for @deleteAccountFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'계정 삭제에 실패했습니다. 다시 시도해주세요.'**
+  String get deleteAccountFailed;
+
+  /// No description provided for @deleting.
+  ///
+  /// In ko, this message translates to:
+  /// **'삭제 중...'**
+  String get deleting;
+
   /// No description provided for @relativeToday.
   ///
   /// In ko, this message translates to:

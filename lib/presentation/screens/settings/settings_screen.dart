@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/presentation/providers/auth_provider.dart';
+import 'package:todo_app/presentation/providers/database_provider.dart';
 import 'package:todo_app/presentation/providers/locale_provider.dart';
 import 'package:todo_app/presentation/providers/notification_provider.dart';
 import 'package:todo_app/presentation/providers/sync_providers.dart';
@@ -191,6 +192,7 @@ class _AccountSection extends ConsumerWidget {
           ),
         ),
         if (isEmailUser && !isVerified) _EmailVerificationBanner(),
+        _DeleteAccountButton(),
       ],
     );
   }
@@ -283,6 +285,186 @@ class _EmailVerificationBanner extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+class _DeleteAccountButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final user = ref.watch(currentUserProvider);
+
+    if (user == null) return const SizedBox.shrink();
+
+    final isEmailUser = user.providerData.any(
+      (p) => p.providerId == 'password',
+    );
+
+    return ListTile(
+      leading: Icon(
+        Icons.delete_forever,
+        color: Theme.of(context).colorScheme.error,
+      ),
+      title: Text(
+        l10n.deleteAccount,
+        style: TextStyle(color: Theme.of(context).colorScheme.error),
+      ),
+      onTap: () => _handleDelete(context, ref, isEmailUser),
+    );
+  }
+
+  Future<void> _handleDelete(
+    BuildContext context,
+    WidgetRef ref,
+    bool isEmailUser,
+  ) async {
+    final l10n = context.l10n;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.deleteAccount),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.deleteAccountConfirm),
+            const SizedBox(height: 8),
+            Text(
+              l10n.deleteAccountWarning,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    // Reauthenticate
+    try {
+      final authService = ref.read(authServiceProvider);
+      if (isEmailUser) {
+        await _reauthEmail(context, ref);
+      } else {
+        await authService.reauthenticateWithGoogle();
+      }
+    } on FirebaseAuthException catch (e) {
+      if (context.mounted && e.code != 'sign-in-cancelled') {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.deleteAccountFailed)));
+      }
+      return;
+    }
+
+    if (!context.mounted) return;
+
+    // Execute deletion
+    try {
+      final authService = ref.read(authServiceProvider);
+      final db = ref.read(appDatabaseProvider);
+
+      // Stop sync, clear local DB, delete Firebase account
+      await db.clearAllData();
+      await authService.deleteAccount();
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.accountDeleted)));
+        context.go('/login');
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.deleteAccountFailed)));
+      }
+    }
+  }
+
+  Future<void> _reauthEmail(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.reauthRequired),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: emailController,
+                decoration: InputDecoration(labelText: l10n.email),
+                keyboardType: TextInputType.emailAddress,
+                validator: (v) =>
+                    v == null || v.trim().isEmpty ? l10n.emailRequired : null,
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: passwordController,
+                decoration: InputDecoration(labelText: l10n.password),
+                obscureText: true,
+                validator: (v) =>
+                    v == null || v.isEmpty ? l10n.passwordRequired : null,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                Navigator.pop(context, true);
+              }
+            },
+            child: Text(l10n.login),
+          ),
+        ],
+      ),
+    );
+
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+    emailController.dispose();
+    passwordController.dispose();
+
+    if (result != true) {
+      throw FirebaseAuthException(
+        code: 'sign-in-cancelled',
+        message: 'Reauthentication cancelled',
+      );
+    }
+
+    await ref
+        .read(authServiceProvider)
+        .reauthenticateWithEmail(email: email, password: password);
   }
 }
 
