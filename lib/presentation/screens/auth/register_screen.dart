@@ -80,6 +80,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
+      await authService.sendEmailVerification();
 
       if (mounted) context.go('/');
     } on FirebaseAuthException catch (e) {

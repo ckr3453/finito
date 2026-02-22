@@ -878,6 +878,48 @@ abstract class AppLocalizations {
   /// **'로그아웃 하시겠습니까?'**
   String get logoutConfirm;
 
+  /// No description provided for @emailNotVerified.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일 미인증'**
+  String get emailNotVerified;
+
+  /// No description provided for @emailNotVerifiedDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일 주소를 인증해주세요.'**
+  String get emailNotVerifiedDesc;
+
+  /// No description provided for @sendVerificationEmail.
+  ///
+  /// In ko, this message translates to:
+  /// **'인증 이메일 발송'**
+  String get sendVerificationEmail;
+
+  /// No description provided for @verificationEmailSent.
+  ///
+  /// In ko, this message translates to:
+  /// **'인증 이메일을 발송했습니다. 받은편지함을 확인해주세요.'**
+  String get verificationEmailSent;
+
+  /// No description provided for @checkVerification.
+  ///
+  /// In ko, this message translates to:
+  /// **'인증 상태 확인'**
+  String get checkVerification;
+
+  /// No description provided for @emailVerified.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일 인증 완료'**
+  String get emailVerified;
+
+  /// No description provided for @emailNotYetVerified.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 이메일이 인증되지 않았습니다. 받은편지함을 확인해주세요.'**
+  String get emailNotYetVerified;
+
   /// No description provided for @relativeToday.
   ///
   /// In ko, this message translates to:

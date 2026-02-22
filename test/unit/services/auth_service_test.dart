@@ -234,5 +234,67 @@ void main() {
         expect(() => authService.signInWithGoogle(), throwsA(isA<Exception>()));
       });
     });
+
+    group('email verification', () {
+      test('isEmailVerified returns true when user email is verified', () {
+        final mockUser = MockUser();
+        when(() => mockAuth.currentUser).thenReturn(mockUser);
+        when(() => mockUser.emailVerified).thenReturn(true);
+
+        expect(authService.isEmailVerified, isTrue);
+      });
+
+      test('isEmailVerified returns false when user email is not verified', () {
+        final mockUser = MockUser();
+        when(() => mockAuth.currentUser).thenReturn(mockUser);
+        when(() => mockUser.emailVerified).thenReturn(false);
+
+        expect(authService.isEmailVerified, isFalse);
+      });
+
+      test('isEmailVerified returns false when no user is signed in', () {
+        when(() => mockAuth.currentUser).thenReturn(null);
+
+        expect(authService.isEmailVerified, isFalse);
+      });
+
+      test('sendEmailVerification delegates to User', () async {
+        final mockUser = MockUser();
+        when(() => mockAuth.currentUser).thenReturn(mockUser);
+        when(mockUser.sendEmailVerification).thenAnswer((_) async {});
+
+        await authService.sendEmailVerification();
+
+        verify(mockUser.sendEmailVerification).called(1);
+      });
+
+      test('sendEmailVerification throws when no user is signed in', () {
+        when(() => mockAuth.currentUser).thenReturn(null);
+
+        expect(
+          () => authService.sendEmailVerification(),
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
+
+      test('reloadUser delegates to User.reload', () async {
+        final mockUser = MockUser();
+        when(() => mockAuth.currentUser).thenReturn(mockUser);
+        when(mockUser.reload).thenAnswer((_) async {});
+
+        await authService.reloadUser();
+
+        verify(mockUser.reload).called(1);
+      });
+
+      test('reloadUser throws when no user is signed in', () {
+        when(() => mockAuth.currentUser).thenReturn(null);
+
+        expect(
+          () => authService.reloadUser(),
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
+    });
   });
 }

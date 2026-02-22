@@ -125,6 +125,7 @@ class _AccountSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
+    final isVerified = ref.watch(isEmailVerifiedProvider);
     final l10n = context.l10n;
 
     if (user == null) {
@@ -137,35 +138,134 @@ class _AccountSection extends ConsumerWidget {
       );
     }
 
-    return ListTile(
-      leading: const Icon(Icons.person),
-      title: Text(user.email ?? l10n.user),
-      subtitle: Text(l10n.loggedIn),
-      trailing: TextButton(
-        onPressed: () async {
-          final confirmed = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(l10n.logout),
-              content: Text(l10n.logoutConfirm),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text(l10n.cancel),
+    final isEmailUser = user.providerData.any(
+      (p) => p.providerId == 'password',
+    );
+
+    return Column(
+      children: [
+        ListTile(
+          leading: const Icon(Icons.person),
+          title: Text(user.email ?? l10n.user),
+          subtitle: Text(l10n.loggedIn),
+          trailing: TextButton(
+            onPressed: () async {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(l10n.logout),
+                  content: Text(l10n.logoutConfirm),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text(l10n.cancel),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: Text(l10n.logout),
+                    ),
+                  ],
                 ),
-                FilledButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: Text(l10n.logout),
+              );
+
+              if (confirmed == true) {
+                await ref.read(authServiceProvider).signOut();
+              }
+            },
+            child: Text(l10n.logout),
+          ),
+        ),
+        if (isEmailUser && !isVerified) _EmailVerificationBanner(),
+      ],
+    );
+  }
+}
+
+class _EmailVerificationBanner extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+
+    return Card(
+      color: Theme.of(context).colorScheme.errorContainer,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.warning_amber,
+                  color: Theme.of(context).colorScheme.error,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.emailNotVerified,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onErrorContainer,
+                    ),
+                  ),
                 ),
               ],
             ),
-          );
-
-          if (confirmed == true) {
-            await ref.read(authServiceProvider).signOut();
-          }
-        },
-        child: Text(l10n.logout),
+            const SizedBox(height: 4),
+            Text(
+              l10n.emailNotVerifiedDesc,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onErrorContainer,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                FilledButton.tonal(
+                  onPressed: () async {
+                    try {
+                      await ref
+                          .read(authServiceProvider)
+                          .sendEmailVerification();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.verificationEmailSent)),
+                        );
+                      }
+                    } catch (_) {}
+                  },
+                  child: Text(l10n.sendVerificationEmail),
+                ),
+                const SizedBox(width: 8),
+                OutlinedButton(
+                  onPressed: () async {
+                    try {
+                      await ref.read(authServiceProvider).reloadUser();
+                      ref.invalidate(authStateProvider);
+                      if (context.mounted) {
+                        final verified = ref
+                            .read(authServiceProvider)
+                            .isEmailVerified;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              verified
+                                  ? l10n.emailVerified
+                                  : l10n.emailNotYetVerified,
+                            ),
+                          ),
+                        );
+                      }
+                    } catch (_) {}
+                  },
+                  child: Text(l10n.checkVerification),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

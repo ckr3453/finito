@@ -25,3 +25,9 @@ User? currentUser(Ref ref) {
 bool isAuthenticated(Ref ref) {
   return ref.watch(currentUserProvider) != null;
 }
+
+@riverpod
+bool isEmailVerified(Ref ref) {
+  final user = ref.watch(currentUserProvider);
+  return user?.emailVerified ?? false;
+}

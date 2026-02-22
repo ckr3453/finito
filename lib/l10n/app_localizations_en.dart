@@ -421,6 +421,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logoutConfirm => 'Are you sure you want to log out?';
 
   @override
+  String get emailNotVerified => 'Email not verified';
+
+  @override
+  String get emailNotVerifiedDesc => 'Please verify your email address.';
+
+  @override
+  String get sendVerificationEmail => 'Send Verification Email';
+
+  @override
+  String get verificationEmailSent =>
+      'Verification email sent. Check your inbox.';
+
+  @override
+  String get checkVerification => 'Check Verification Status';
+
+  @override
+  String get emailVerified => 'Email verified';
+
+  @override
+  String get emailNotYetVerified => 'Email not yet verified. Check your inbox.';
+
+  @override
   String get relativeToday => 'Today';
 
   @override

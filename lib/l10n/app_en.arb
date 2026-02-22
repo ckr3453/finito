@@ -150,6 +150,14 @@
   "logout": "Logout",
   "logoutConfirm": "Are you sure you want to log out?",
 
+  "emailNotVerified": "Email not verified",
+  "emailNotVerifiedDesc": "Please verify your email address.",
+  "sendVerificationEmail": "Send Verification Email",
+  "verificationEmailSent": "Verification email sent. Check your inbox.",
+  "checkVerification": "Check Verification Status",
+  "emailVerified": "Email verified",
+  "emailNotYetVerified": "Email not yet verified. Check your inbox.",
+
   "relativeToday": "Today",
   "relativeYesterday": "Yesterday",
   "relativeDaysAgo": "{days} days ago"
