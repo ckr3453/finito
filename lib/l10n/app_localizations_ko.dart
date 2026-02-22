@@ -438,6 +438,42 @@ class AppLocalizationsKo extends AppLocalizations {
   String get emailNotYetVerified => '아직 이메일이 인증되지 않았습니다. 받은편지함을 확인해주세요.';
 
   @override
+  String get continueWithoutAccount => '계정 없이 계속하기';
+
+  @override
+  String get anonymousUser => '익명 사용자';
+
+  @override
+  String get anonymousDesc => '다른 기기에서도 데이터를 사용하려면 로그인하세요';
+
+  @override
+  String get upgradeAccount => '계정 업그레이드';
+
+  @override
+  String get upgradeAccountDesc => '이메일 또는 Google 계정을 연결하여 데이터를 보관하세요';
+
+  @override
+  String get linkEmail => '이메일 계정 연결';
+
+  @override
+  String get linkGoogle => 'Google 계정 연결';
+
+  @override
+  String get linkEmailTitle => '이메일 계정 연결';
+
+  @override
+  String get accountLinked => '계정이 성공적으로 연결되었습니다!';
+
+  @override
+  String get accountLinkFailed => '계정 연결에 실패했습니다. 다시 시도해주세요.';
+
+  @override
+  String get firebaseCredentialInUse => '이 자격 증명은 이미 다른 계정에 연결되어 있습니다.';
+
+  @override
+  String get firebaseProviderAlreadyLinked => '이 인증 방식은 이미 연결되어 있습니다.';
+
+  @override
   String get relativeToday => '오늘';
 
   @override

@@ -920,6 +920,78 @@ abstract class AppLocalizations {
   /// **'아직 이메일이 인증되지 않았습니다. 받은편지함을 확인해주세요.'**
   String get emailNotYetVerified;
 
+  /// No description provided for @continueWithoutAccount.
+  ///
+  /// In ko, this message translates to:
+  /// **'계정 없이 계속하기'**
+  String get continueWithoutAccount;
+
+  /// No description provided for @anonymousUser.
+  ///
+  /// In ko, this message translates to:
+  /// **'익명 사용자'**
+  String get anonymousUser;
+
+  /// No description provided for @anonymousDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 기기에서도 데이터를 사용하려면 로그인하세요'**
+  String get anonymousDesc;
+
+  /// No description provided for @upgradeAccount.
+  ///
+  /// In ko, this message translates to:
+  /// **'계정 업그레이드'**
+  String get upgradeAccount;
+
+  /// No description provided for @upgradeAccountDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일 또는 Google 계정을 연결하여 데이터를 보관하세요'**
+  String get upgradeAccountDesc;
+
+  /// No description provided for @linkEmail.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일 계정 연결'**
+  String get linkEmail;
+
+  /// No description provided for @linkGoogle.
+  ///
+  /// In ko, this message translates to:
+  /// **'Google 계정 연결'**
+  String get linkGoogle;
+
+  /// No description provided for @linkEmailTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일 계정 연결'**
+  String get linkEmailTitle;
+
+  /// No description provided for @accountLinked.
+  ///
+  /// In ko, this message translates to:
+  /// **'계정이 성공적으로 연결되었습니다!'**
+  String get accountLinked;
+
+  /// No description provided for @accountLinkFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'계정 연결에 실패했습니다. 다시 시도해주세요.'**
+  String get accountLinkFailed;
+
+  /// No description provided for @firebaseCredentialInUse.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 자격 증명은 이미 다른 계정에 연결되어 있습니다.'**
+  String get firebaseCredentialInUse;
+
+  /// No description provided for @firebaseProviderAlreadyLinked.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 인증 방식은 이미 연결되어 있습니다.'**
+  String get firebaseProviderAlreadyLinked;
+
   /// No description provided for @relativeToday.
   ///
   /// In ko, this message translates to:
