@@ -18,4 +18,5 @@ abstract class TaskRepository {
   Future<List<TagEntity>> getTagsForTask(String taskId);
   Future<List<TaskEntity>> getUnsyncedTasks();
   Future<void> markSynced(String id);
+  Future<void> reorderTasks(Map<String, int> sortOrders);
 }

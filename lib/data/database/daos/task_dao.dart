@@ -111,4 +111,19 @@ class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
       const TaskItemsCompanion(isSynced: Value(true)),
     );
   }
+
+  Future<void> updateSortOrders(Map<String, int> sortOrders) async {
+    await transaction(() async {
+      final now = DateTime.now();
+      for (final entry in sortOrders.entries) {
+        await (update(taskItems)..where((t) => t.id.equals(entry.key))).write(
+          TaskItemsCompanion(
+            sortOrder: Value(entry.value),
+            isSynced: const Value(false),
+            updatedAt: Value(now),
+          ),
+        );
+      }
+    });
+  }
 }

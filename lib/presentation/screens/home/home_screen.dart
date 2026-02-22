@@ -6,6 +6,7 @@ import 'package:todo_app/domain/enums/enums.dart';
 import 'package:todo_app/presentation/providers/task_providers.dart';
 import 'package:todo_app/presentation/providers/filter_providers.dart';
 import 'package:todo_app/presentation/providers/category_providers.dart';
+import 'package:todo_app/presentation/providers/repository_providers.dart';
 import 'package:todo_app/presentation/shared_widgets/task_list_tile.dart';
 import 'package:todo_app/presentation/shared_widgets/empty_state.dart';
 
@@ -75,9 +76,20 @@ class HomeScreen extends ConsumerWidget {
                     onAction: () => context.pushNamed('taskEditor'),
                   );
                 }
-                return ListView.builder(
+                return ReorderableListView.builder(
                   padding: const EdgeInsets.only(bottom: 80),
                   itemCount: tasks.length,
+                  onReorder: (oldIndex, newIndex) {
+                    if (newIndex > oldIndex) newIndex--;
+                    final reordered = List.of(tasks);
+                    final item = reordered.removeAt(oldIndex);
+                    reordered.insert(newIndex, item);
+                    final sortOrders = <String, int>{};
+                    for (var i = 0; i < reordered.length; i++) {
+                      sortOrders[reordered[i].id] = i;
+                    }
+                    ref.read(taskRepositoryProvider).reorderTasks(sortOrders);
+                  },
                   itemBuilder: (context, index) {
                     final task = tasks[index];
                     final category = categoryMap.whenData(
@@ -85,6 +97,7 @@ class HomeScreen extends ConsumerWidget {
                           task.categoryId != null ? map[task.categoryId] : null,
                     );
                     return TaskListTile(
+                      key: ValueKey(task.id),
                       task: task,
                       category: category.valueOrNull,
                     );

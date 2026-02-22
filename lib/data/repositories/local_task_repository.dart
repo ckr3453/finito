@@ -149,4 +149,9 @@ class LocalTaskRepository implements TaskRepository {
   Future<void> markSynced(String id) async {
     await _db.taskDao.markSynced(id);
   }
+
+  @override
+  Future<void> reorderTasks(Map<String, int> sortOrders) async {
+    await _db.taskDao.updateSortOrders(sortOrders);
+  }
 }
