@@ -6,8 +6,7 @@ void main() {
     testWidgets('does not throw when called', (tester) async {
       // In test environment, HomeWidget method channel returns null/empty
       // which is handled gracefully by the implementation.
-      var called = false;
-      handleWidgetDeepLink(onUri: (_) => called = true);
+      handleWidgetDeepLink(onUri: (_) {});
       await tester.pump();
       // onUri may or may not be called depending on method channel mock state
       // The key assertion is that no exception is thrown
