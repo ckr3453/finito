@@ -24,15 +24,11 @@ void main() {
         onNotificationTap: any(named: 'onNotificationTap'),
       ),
     ).thenAnswer((_) async {});
-    when(
-      () => mockNotifSvc.rescheduleAll(any()),
-    ).thenAnswer((_) async {});
+    when(() => mockNotifSvc.rescheduleAll(any())).thenAnswer((_) async {});
 
     final mockWidgetSvc = MockWidgetService();
     when(() => mockWidgetSvc.refreshWidget()).thenAnswer((_) async {});
-    when(
-      () => mockWidgetSvc.updateWidgetData(any()),
-    ).thenAnswer((_) async {});
+    when(() => mockWidgetSvc.updateWidgetData(any())).thenAnswer((_) async {});
 
     final testDb = createTestDatabase();
 
@@ -49,12 +45,8 @@ void main() {
           reminderAutoRescheduleProvider.overrideWith(
             (ref) => const Stream<void>.empty(),
           ),
-          taskListProvider.overrideWith(
-            (ref) => const Stream.empty(),
-          ),
-          categoryListProvider.overrideWith(
-            (ref) => const Stream.empty(),
-          ),
+          taskListProvider.overrideWith((ref) => const Stream.empty()),
+          categoryListProvider.overrideWith((ref) => const Stream.empty()),
         ],
         child: const TodoApp(),
       ),
