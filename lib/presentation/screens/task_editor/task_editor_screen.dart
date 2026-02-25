@@ -342,9 +342,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
             ...presets.map(
               (preset) => ListTile(
                 title: Text(preset.$1),
-                subtitle: Text(
-                  due.subtract(preset.$2).toFormattedDateTime(),
-                ),
+                subtitle: Text(due.subtract(preset.$2).toFormattedDateTime()),
                 onTap: () => Navigator.pop(context, preset.$2),
               ),
             ),

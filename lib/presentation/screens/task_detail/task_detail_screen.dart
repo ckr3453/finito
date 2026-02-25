@@ -239,9 +239,7 @@ class TaskDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _toggleCompletion(
-    BuildContext context, WidgetRef ref, TaskEntity task,
-  ) {
+  void _toggleCompletion(BuildContext context, WidgetRef ref, TaskEntity task) {
     final now = DateTime.now();
     final isCompleted = task.status == TaskStatus.completed;
     final l10n = context.l10n;

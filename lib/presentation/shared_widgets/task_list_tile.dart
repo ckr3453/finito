@@ -113,7 +113,7 @@ class TaskListTile extends ConsumerWidget {
                                     color: isOverdue
                                         ? Colors.red
                                         : theme.colorScheme.onSurface
-                                            .withValues(alpha: 0.5),
+                                              .withValues(alpha: 0.5),
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
@@ -122,7 +122,7 @@ class TaskListTile extends ConsumerWidget {
                                       color: isOverdue
                                           ? Colors.red
                                           : theme.colorScheme.onSurface
-                                              .withValues(alpha: 0.5),
+                                                .withValues(alpha: 0.5),
                                     ),
                                   ),
                                 ],
