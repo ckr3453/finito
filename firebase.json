@@ -1,1 +1,49 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"finito-f95ea","appId":"1:1014105605136:android:b0214b0973b5901774b695","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"finito-f95ea","configurations":{"android":"1:1014105605136:android:b0214b0973b5901774b695","ios":"1:1014105605136:ios:923accdef133279c74b695","macos":"1:1014105605136:ios:923accdef133279c74b695","windows":"1:1014105605136:web:6cb0adf050e97a2974b695"}}}}}}
+{
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      }
+    ]
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "finito-f95ea",
+          "appId": "1:1014105605136:android:b0214b0973b5901774b695",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "finito-f95ea",
+          "configurations": {
+            "android": "1:1014105605136:android:b0214b0973b5901774b695",
+            "ios": "1:1014105605136:ios:923accdef133279c74b695",
+            "macos": "1:1014105605136:ios:923accdef133279c74b695",
+            "windows": "1:1014105605136:web:6cb0adf050e97a2974b695"
+          }
+        }
+      }
+    }
+  }
+}

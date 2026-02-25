@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/domain/enums/enums.dart';
+import 'package:todo_app/presentation/providers/auth_provider.dart';
 import 'package:todo_app/presentation/providers/task_providers.dart';
 import 'package:todo_app/presentation/providers/filter_providers.dart';
 import 'package:todo_app/presentation/providers/category_providers.dart';
@@ -10,14 +11,43 @@ import 'package:todo_app/presentation/providers/repository_providers.dart';
 import 'package:todo_app/presentation/shared_widgets/task_list_tile.dart';
 import 'package:todo_app/presentation/shared_widgets/empty_state.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  bool _loginDialogShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showLoginDialogIfNeeded();
+    });
+  }
+
+  void _showLoginDialogIfNeeded() {
+    if (_loginDialogShown) return;
+    final isAuth = ref.read(isAuthenticatedProvider);
+    if (!isAuth) {
+      _loginDialogShown = true;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const _LoginPromptDialog(),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final taskListAsync = ref.watch(taskListProvider);
     final filter = ref.watch(taskFilterProvider);
     final categoriesAsync = ref.watch(categoryListProvider);
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
     final l10n = context.l10n;
 
     // Build a map of categoryId -> CategoryEntity for quick lookup
@@ -32,6 +62,25 @@ class HomeScreen extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Offline banner
+          if (!isAuthenticated)
+            MaterialBanner(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              leading: Icon(
+                Icons.cloud_off,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              content: Text(
+                l10n.loginPrompt,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => context.pushNamed('login'),
+                  child: Text(l10n.login),
+                ),
+              ],
+            ),
           // Filter chips
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -202,6 +251,119 @@ class _SortChip extends ConsumerWidget {
         avatar: const Icon(Icons.sort, size: 16),
         label: Text(_sortLabel(sortBy, context)),
         onPressed: () {},
+      ),
+    );
+  }
+}
+
+class _LoginPromptDialog extends ConsumerStatefulWidget {
+  const _LoginPromptDialog();
+
+  @override
+  ConsumerState<_LoginPromptDialog> createState() =>
+      _LoginPromptDialogState();
+}
+
+class _LoginPromptDialogState extends ConsumerState<_LoginPromptDialog> {
+  bool _isGoogleLoading = false;
+
+  Future<void> _signInWithGoogle() async {
+    setState(() => _isGoogleLoading = true);
+    try {
+      final authService = ref.read(authServiceProvider);
+      await authService.signInWithGoogle();
+      if (mounted) Navigator.of(context).pop();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.googleLoginFailed)),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isGoogleLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return AlertDialog(
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 360),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Icon(
+              Icons.check_circle_outline,
+              size: 56,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Finito',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.loginPrompt,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _isGoogleLoading ? null : _signInWithGoogle,
+                icon: _isGoogleLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text(
+                        'G',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                label: Text(l10n.signInWithGoogle),
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () => context.pushNamed('login'),
+                child: Text(l10n.login),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const Expanded(child: Divider()),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    l10n.or,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+                const Expanded(child: Divider()),
+              ],
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.continueWithoutAccount),
+            ),
+          ],
+        ),
       ),
     );
   }
