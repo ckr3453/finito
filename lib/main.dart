@@ -26,6 +26,8 @@ Future<void> main() async {
     preserveSplash(widgetsBinding);
   }
 
+  tz.initializeTimeZones();
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -34,8 +36,6 @@ Future<void> main() async {
     debugPrint('Firebase initialization failed: $e');
     debugPrint('Running in local-only mode.');
   }
-
-  tz.initializeTimeZones();
 
   if (!kIsWeb) {
     registerWidgetCallback();

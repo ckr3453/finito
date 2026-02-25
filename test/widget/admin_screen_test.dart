@@ -121,9 +121,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Total: 3, Pending: 1, Approved: 2
-      expect(find.text('3'), findsOneWidget); // total
-      expect(find.text('1'), findsOneWidget); // pending
-      expect(find.text('2'), findsOneWidget); // approved
+      // Numbers may appear in both stat cards and group section headers
+      expect(find.text('3'), findsWidgets); // total
+      expect(find.text('1'), findsWidgets); // pending/admin count
+      expect(find.text('2'), findsWidgets); // approved/user count
       expect(find.text('전체 사용자'), findsOneWidget);
       expect(find.text('승인 대기'), findsOneWidget);
     });

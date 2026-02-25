@@ -10,7 +10,7 @@ class AppLocale extends _$AppLocale {
   static const _key = 'app_locale';
 
   @override
-  Locale? build() => null;
+  Locale? build() => const Locale('ko');
 
   Future<void> setLocale(Locale? locale) async {
     state = locale;

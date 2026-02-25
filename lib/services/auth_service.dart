@@ -34,8 +34,10 @@ class AuthService {
   Future<UserCredential> signInWithGoogle() async {
     if (kIsWeb) {
       final provider = GoogleAuthProvider();
+      provider.setCustomParameters({'prompt': 'select_account'});
       return _auth.signInWithPopup(provider);
     }
+    await _googleSignIn.signOut();
     final googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {
       throw FirebaseAuthException(

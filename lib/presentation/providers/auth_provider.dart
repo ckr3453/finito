@@ -37,7 +37,3 @@ bool isAnonymous(Ref ref) {
   final user = ref.watch(currentUserProvider);
   return user?.isAnonymous ?? false;
 }
-
-/// Tracks whether the user dismissed the login prompt dialog.
-/// keepAlive so it persists across route changes within the session.
-final loginDismissedProvider = StateProvider<bool>((ref) => false);
