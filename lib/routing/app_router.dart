@@ -72,9 +72,7 @@ final appRouter = GoRouter(
         final id = state.pathParameters['id']!;
         final isWide = MediaQuery.of(context).size.width > 600;
         if (isWide) {
-          return DialogPage(
-            builder: (_) => TaskDetailScreen(taskId: id),
-          );
+          return DialogPage(builder: (_) => TaskDetailScreen(taskId: id));
         }
         return MaterialPage(child: TaskDetailScreen(taskId: id));
       },
@@ -87,9 +85,7 @@ final appRouter = GoRouter(
         final taskId = state.uri.queryParameters['taskId'];
         final isWide = MediaQuery.of(context).size.width > 600;
         if (isWide) {
-          return DialogPage(
-            builder: (_) => TaskEditorScreen(taskId: taskId),
-          );
+          return DialogPage(builder: (_) => TaskEditorScreen(taskId: taskId));
         }
         return MaterialPage(child: TaskEditorScreen(taskId: taskId));
       },

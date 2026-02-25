@@ -34,7 +34,7 @@ class UserService {
   final FirebaseFirestore _firestore;
 
   UserService({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   Future<UserProfile?> getUserProfile(String uid) async {
     final doc = await _firestore.doc(FirestorePaths.userDoc(uid)).get();
@@ -66,10 +66,7 @@ class UserService {
       });
     } else {
       // Update email/displayName if changed
-      await docRef.update({
-        'email': email,
-        'displayName': displayName,
-      });
+      await docRef.update({'email': email, 'displayName': displayName});
     }
   }
 
@@ -78,9 +75,11 @@ class UserService {
         .collection(FirestorePaths.usersCol)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => UserProfile.fromFirestore(doc.data(), doc.id))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => UserProfile.fromFirestore(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   Future<void> approveUser(String uid) {

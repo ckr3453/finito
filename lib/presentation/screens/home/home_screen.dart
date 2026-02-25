@@ -216,10 +216,7 @@ class _SortChip extends ConsumerWidget {
   final TaskSortBy sortBy;
   final ValueChanged<TaskSortBy> onSelected;
 
-  const _SortChip({
-    required this.sortBy,
-    required this.onSelected,
-  });
+  const _SortChip({required this.sortBy, required this.onSelected});
 
   String _sortLabel(TaskSortBy sortBy, BuildContext context) {
     final l10n = context.l10n;
@@ -273,10 +270,7 @@ class _LoggedInAction extends ConsumerWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          displayName,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
+        Text(displayName, style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(width: 4),
         IconButton(
           tooltip: l10n.logout,
@@ -313,8 +307,7 @@ class _LoginPromptDialog extends ConsumerStatefulWidget {
   const _LoginPromptDialog();
 
   @override
-  ConsumerState<_LoginPromptDialog> createState() =>
-      _LoginPromptDialogState();
+  ConsumerState<_LoginPromptDialog> createState() => _LoginPromptDialogState();
 }
 
 class _LoginPromptDialogState extends ConsumerState<_LoginPromptDialog> {
@@ -328,9 +321,9 @@ class _LoginPromptDialogState extends ConsumerState<_LoginPromptDialog> {
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.googleLoginFailed)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.googleLoginFailed)));
       }
     } finally {
       if (mounted) setState(() => _isGoogleLoading = false);
@@ -355,17 +348,17 @@ class _LoginPromptDialogState extends ConsumerState<_LoginPromptDialog> {
             const SizedBox(height: 12),
             Text(
               'Finito',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               l10n.loginPrompt,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 24),
             SizedBox(

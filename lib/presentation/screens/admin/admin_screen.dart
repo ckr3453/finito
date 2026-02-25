@@ -13,9 +13,7 @@ class AdminScreen extends ConsumerWidget {
     final l10n = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin'),
-      ),
+      appBar: AppBar(title: const Text('Admin')),
       body: usersAsync.when(
         data: (users) {
           final pending = users.where((u) => !u.approved).length;
@@ -93,9 +91,9 @@ class _StatCard extends StatelessWidget {
               Text(
                 '$count',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
@@ -167,15 +165,19 @@ class _UserTile extends ConsumerWidget {
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'toggle_approve',
-                child: Text(user.approved
-                    ? context.l10n.revokeApproval
-                    : context.l10n.approve),
+                child: Text(
+                  user.approved
+                      ? context.l10n.revokeApproval
+                      : context.l10n.approve,
+                ),
               ),
               PopupMenuItem(
                 value: 'toggle_admin',
-                child: Text(user.isAdmin
-                    ? context.l10n.removeAdmin
-                    : context.l10n.makeAdmin),
+                child: Text(
+                  user.isAdmin
+                      ? context.l10n.removeAdmin
+                      : context.l10n.makeAdmin,
+                ),
               ),
             ],
           ),

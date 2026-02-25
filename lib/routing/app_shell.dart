@@ -26,9 +26,7 @@ class AppShell extends ConsumerWidget {
       final profileAsync = ref.watch(currentUserProfileProvider);
       // Still loading profile
       if (profileAsync.isLoading && !profileAsync.hasValue) {
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       }
       // Error loading profile — let the user through (don't block on Firestore errors)
       if (profileAsync.hasError && !profileAsync.hasValue) {
