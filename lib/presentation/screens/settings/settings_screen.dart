@@ -10,6 +10,7 @@ import 'package:todo_app/presentation/providers/locale_provider.dart';
 import 'package:todo_app/presentation/providers/notification_provider.dart';
 import 'package:todo_app/presentation/providers/sync_providers.dart';
 import 'package:todo_app/presentation/providers/theme_provider.dart';
+import 'package:todo_app/presentation/providers/user_provider.dart';
 import 'package:todo_app/services/task_sync_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -116,6 +117,9 @@ class SettingsScreen extends ConsumerWidget {
           const _SyncSection(),
 
           const Divider(height: 32),
+
+          // Admin section (visible only for admins)
+          const _AdminSection(),
 
           // Account section
           _SectionHeader(title: l10n.account),
@@ -383,8 +387,15 @@ class _DeleteAccountButton extends ConsumerWidget {
     try {
       final authService = ref.read(authServiceProvider);
       final db = ref.read(appDatabaseProvider);
+      final userService = ref.read(userServiceProvider);
+      final uid = ref.read(currentUserProvider)?.uid;
 
-      // Stop sync, clear local DB, delete Firebase account
+      // Delete Firestore data (profile + tasks)
+      if (uid != null) {
+        await userService.deleteUserData(uid);
+      }
+
+      // Clear local DB, delete Firebase account
       await db.clearAllData();
       await authService.deleteAccount();
 
@@ -722,6 +733,31 @@ class _NotificationSection extends ConsumerWidget {
         },
         child: Text(l10n.requestPermission),
       ),
+    );
+  }
+}
+
+class _AdminSection extends ConsumerWidget {
+  const _AdminSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isAdmin = ref.watch(isAdminProvider);
+    if (!isAdmin) return const SizedBox.shrink();
+
+    final l10n = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionHeader(title: l10n.admin),
+        ListTile(
+          leading: const Icon(Icons.admin_panel_settings),
+          title: Text(l10n.userManagement),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => GoRouter.of(context).push('/admin'),
+        ),
+        const Divider(height: 32),
+      ],
     );
   }
 }

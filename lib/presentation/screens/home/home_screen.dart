@@ -19,8 +19,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  bool _loginDialogShown = false;
-
   @override
   void initState() {
     super.initState();
@@ -30,10 +28,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _showLoginDialogIfNeeded() {
-    if (_loginDialogShown) return;
+    final dismissed = ref.read(loginDismissedProvider);
+    if (dismissed) return;
     final isAuth = ref.read(isAuthenticatedProvider);
     if (!isAuth) {
-      _loginDialogShown = true;
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -44,11 +42,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
+    final l10n = context.l10n;
+
     final taskListAsync = ref.watch(taskListProvider);
     final filter = ref.watch(taskFilterProvider);
     final categoriesAsync = ref.watch(categoryListProvider);
-    final isAuthenticated = ref.watch(isAuthenticatedProvider);
-    final l10n = context.l10n;
 
     // Build a map of categoryId -> CategoryEntity for quick lookup
     final categoryMap = categoriesAsync.whenData((categories) {
@@ -58,6 +57,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.appTitle),
+        actions: [
+          if (isAuthenticated)
+            _LoggedInAction()
+          else
+            TextButton.icon(
+              onPressed: () => context.pushNamed('login'),
+              icon: const Icon(Icons.login, size: 18),
+              label: Text(l10n.login),
+            ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -71,15 +81,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               content: Text(
-                l10n.loginPrompt,
+                l10n.syncDisabledMessage,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
-              actions: [
-                TextButton(
-                  onPressed: () => context.pushNamed('login'),
-                  child: Text(l10n.login),
-                ),
-              ],
+              actions: const [SizedBox.shrink()],
             ),
           // Filter chips
           Padding(
@@ -256,6 +261,54 @@ class _SortChip extends ConsumerWidget {
   }
 }
 
+class _LoggedInAction extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(currentUserProvider);
+    if (user == null) return const SizedBox.shrink();
+
+    final displayName = user.displayName ?? user.email ?? '';
+    final l10n = context.l10n;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          displayName,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(width: 4),
+        IconButton(
+          tooltip: l10n.logout,
+          icon: const Icon(Icons.logout, size: 18),
+          onPressed: () async {
+            final confirmed = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text(l10n.logout),
+                content: Text(l10n.logoutConfirm),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text(l10n.cancel),
+                  ),
+                  FilledButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: Text(l10n.logout),
+                  ),
+                ],
+              ),
+            );
+            if (confirmed == true) {
+              await ref.read(authServiceProvider).signOut();
+            }
+          },
+        ),
+      ],
+    );
+  }
+}
+
 class _LoginPromptDialog extends ConsumerStatefulWidget {
   const _LoginPromptDialog();
 
@@ -359,7 +412,10 @@ class _LoginPromptDialogState extends ConsumerState<_LoginPromptDialog> {
             ),
             const SizedBox(height: 8),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                ref.read(loginDismissedProvider.notifier).state = true;
+                Navigator.of(context).pop();
+              },
               child: Text(l10n.continueWithoutAccount),
             ),
           ],

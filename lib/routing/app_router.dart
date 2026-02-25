@@ -8,6 +8,7 @@ import 'package:todo_app/presentation/screens/search/search_screen.dart';
 import 'package:todo_app/presentation/screens/settings/settings_screen.dart';
 import 'package:todo_app/presentation/screens/auth/login_screen.dart';
 import 'package:todo_app/presentation/screens/auth/register_screen.dart';
+import 'package:todo_app/presentation/screens/admin/admin_screen.dart';
 import 'package:todo_app/routing/app_shell.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -55,6 +56,12 @@ final appRouter = GoRouter(
       name: 'register',
       parentNavigatorKey: rootNavigatorKey,
       builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: '/admin',
+      name: 'admin',
+      parentNavigatorKey: rootNavigatorKey,
+      builder: (context, state) => const AdminScreen(),
     ),
     // Full-screen routes (outside shell)
     GoRoute(

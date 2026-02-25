@@ -486,11 +486,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountConfirm =>
-      'Are you sure you want to delete your account? This action cannot be undone.';
+      'All data will be deleted and cannot be recovered. Do you want to proceed?';
 
   @override
   String get deleteAccountWarning =>
-      'All your data will be permanently deleted.';
+      'All tasks, categories, and other data will be permanently deleted.';
 
   @override
   String get reauthRequired => 'Please sign in again to confirm.';
@@ -533,4 +533,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String relativeDaysAgo(int days) {
     return '$days days ago';
   }
+
+  @override
+  String get admin => 'Admin';
+
+  @override
+  String get totalUsers => 'Total Users';
+
+  @override
+  String get pendingApproval => 'Pending';
+
+  @override
+  String get approvedUsers => 'Approved';
+
+  @override
+  String get noUsers => 'No users';
+
+  @override
+  String get approved => 'Approved';
+
+  @override
+  String get approve => 'Approve';
+
+  @override
+  String get revokeApproval => 'Revoke Approval';
+
+  @override
+  String get makeAdmin => 'Make Admin';
+
+  @override
+  String get removeAdmin => 'Remove Admin';
+
+  @override
+  String get pendingApprovalTitle => 'Pending Approval';
+
+  @override
+  String get pendingApprovalMessage =>
+      'Your account is awaiting admin approval. Please wait until an administrator approves your access.';
+
+  @override
+  String get userManagement => 'User Management';
 }

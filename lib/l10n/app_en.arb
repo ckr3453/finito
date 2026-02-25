@@ -172,8 +172,8 @@
   "firebaseProviderAlreadyLinked": "This provider is already linked.",
 
   "deleteAccount": "Delete Account",
-  "deleteAccountConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
-  "deleteAccountWarning": "All your data will be permanently deleted.",
+  "deleteAccountConfirm": "All data will be deleted and cannot be recovered. Do you want to proceed?",
+  "deleteAccountWarning": "All tasks, categories, and other data will be permanently deleted.",
   "reauthRequired": "Please sign in again to confirm.",
   "accountDeleted": "Account deleted successfully.",
   "deleteAccountFailed": "Failed to delete account. Please try again.",
@@ -189,5 +189,19 @@
 
   "relativeToday": "Today",
   "relativeYesterday": "Yesterday",
-  "relativeDaysAgo": "{days} days ago"
+  "relativeDaysAgo": "{days} days ago",
+
+  "admin": "Admin",
+  "totalUsers": "Total Users",
+  "pendingApproval": "Pending",
+  "approvedUsers": "Approved",
+  "noUsers": "No users",
+  "approved": "Approved",
+  "approve": "Approve",
+  "revokeApproval": "Revoke Approval",
+  "makeAdmin": "Make Admin",
+  "removeAdmin": "Remove Admin",
+  "pendingApprovalTitle": "Pending Approval",
+  "pendingApprovalMessage": "Your account is awaiting admin approval. Please wait until an administrator approves your access.",
+  "userManagement": "User Management"
 }
