@@ -6,16 +6,19 @@ struct TodoEntry: TimelineEntry {
 }
 
 struct TodoTimelineProvider: TimelineProvider {
-    // TODO: Replace with actual App Group ID after Xcode target setup
     private let appGroupId = "group.com.davidtodo.todoapp"
 
     func placeholder(in context: Context) -> TodoEntry {
-        TodoEntry(date: Date(), data: .empty)
+        TodoEntry(date: Date(), data: .preview)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (TodoEntry) -> Void) {
-        let data = WidgetData.load(appGroupId: appGroupId)
-        completion(TodoEntry(date: Date(), data: data))
+        if context.isPreview {
+            completion(TodoEntry(date: Date(), data: .preview))
+        } else {
+            let data = WidgetData.load(appGroupId: appGroupId)
+            completion(TodoEntry(date: Date(), data: data))
+        }
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<TodoEntry>) -> Void) {
