@@ -22,6 +22,15 @@ A cross-platform TODO app with cloud sync. Manage your tasks from web, desktop, 
 - Multilingual support (Korean / English)
 - Works offline — syncs when you log in
 
+## Download
+
+Desktop builds are available on the [GitHub Releases](https://github.com/ckr3453/todo-app/releases) page.
+
+| Platform | File | Notes |
+|----------|------|-------|
+| Windows | `Finito-Windows-x64.zip` | Extract and run `finito.exe` |
+| macOS | `Finito-macOS.zip` | Unsigned — on first launch, go to `System Settings > Privacy & Security` and click "Open Anyway" |
+
 ## How to Use
 
 1. Visit https://finito-f95ea.web.app

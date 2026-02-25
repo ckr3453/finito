@@ -22,6 +22,15 @@
 - 다국어 지원 (한국어 / 영어)
 - 오프라인 사용 가능 — 로그인하면 동기화
 
+## 다운로드
+
+데스크탑 설치 파일은 [GitHub Releases](https://github.com/ckr3453/todo-app/releases) 페이지에서 받을 수 있습니다.
+
+| 플랫폼 | 파일 | 참고 |
+|--------|------|------|
+| Windows | `Finito-Windows-x64.zip` | 압축 해제 후 `finito.exe` 실행 |
+| macOS | `Finito-macOS.zip` | 서명되지 않음 — 첫 실행 시 `시스템 설정 > 개인정보 보호 및 보안`에서 "확인 없이 열기" 클릭 필요 |
+
 ## 사용 방법
 
 1. https://finito-f95ea.web.app 접속
