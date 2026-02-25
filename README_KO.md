@@ -13,6 +13,10 @@
 - 검색 및 필터링 (상태, 우선순위, 카테고리)
 - 마감일 / 우선순위 / 생성일 기준 정렬
 - 드래그 앤 드롭 순서 변경
+- 이메일 리마인더 (Cloud Functions + Gmail SMTP)
+- 관리자 승인 시스템 (신규 사용자 등록 시 관리자 승인 필요)
+- 관리자 대시보드 (사용자 승인/거부, 관리자 권한 부여/해제)
+- Google 및 이메일 인증
 - 다크 / 라이트 테마
 - 반응형 레이아웃 (모바일: 전체 화면, 와이드 스크린: 팝업 다이얼로그)
 - 다국어 지원 (한국어 / 영어)
@@ -25,6 +29,8 @@
 3. 할 일 추가 시작
 
 비로그인 시 데이터는 브라우저에 로컬 저장됩니다. 로그인하면 기기 간 동기화가 시작됩니다.
+
+최초 가입자는 자동으로 관리자 권한이 부여됩니다. 이후 가입자는 관리자 승인이 필요합니다.
 
 ### 지원 플랫폼
 
@@ -58,7 +64,8 @@ UI는 항상 로컬 DB(Drift/SQLite)에서 읽어 즉각 응답합니다. Firest
 | 프레임워크 | Flutter 3.38+ (Dart) |
 | 상태관리 | Riverpod 2.x (annotation + generator) |
 | 로컬 DB | Drift (SQLite ORM) — 웹은 IndexedDB fallback |
-| 백엔드 | Firebase (Firestore + Auth + Hosting) |
+| 백엔드 | Firebase (Firestore + Auth + Hosting + Cloud Functions) |
+| 이메일 | Cloud Functions + Gmail SMTP (nodemailer) |
 | 라우팅 | GoRouter |
 | 모델 | Freezed + json_serializable |
 | 위젯 연동 | home_widget (WidgetKit) |
@@ -74,11 +81,12 @@ lib/
 │   └── repositories/  # Repository 구현체
 ├── domain/            # 엔티티 (Freezed), enum, Repository 인터페이스
 ├── presentation/      # UI 레이어
-│   ├── screens/       # 홈, 상세, 편집, 카테고리, 검색, 설정, 인증
+│   ├── screens/       # 홈, 상세, 편집, 카테고리, 검색, 설정, 인증, 관리자
 │   ├── providers/     # Riverpod providers
 │   └── shared_widgets/
-├── services/          # 동기화, 알림, FCM, 위젯, 네트워크
-└── routing/           # GoRouter 설정
+├── services/          # 동기화, 알림, FCM, 위젯, 네트워크, 인증, 사용자
+├── routing/           # GoRouter 설정
+functions/             # Firebase Cloud Functions (이메일 리마인더)
 ```
 
 ## 개발
@@ -88,6 +96,7 @@ lib/
 - Flutter 3.38+ (또는 FVM)
 - Dart 3.10+
 - Firebase CLI
+- Node.js 20+ (Cloud Functions용)
 
 ### 설치 및 실행
 
@@ -104,6 +113,20 @@ dart run build_runner build --delete-conflicting-outputs
 
 # 앱 실행
 flutter run
+```
+
+### Cloud Functions 설정
+
+```bash
+cd functions
+npm install
+
+# Gmail 시크릿 설정 (Blaze 요금제 필요)
+firebase functions:secrets:set GMAIL_USER
+firebase functions:secrets:set GMAIL_APP_PASSWORD
+
+# 배포
+firebase deploy --only functions
 ```
 
 ## 라이선스
