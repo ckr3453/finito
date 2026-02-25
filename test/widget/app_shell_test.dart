@@ -26,7 +26,7 @@ Widget buildTestApp({
           GoRoute(
             path: '/',
             name: 'home',
-            builder: (_, __) => const Text('Home'),
+            builder: (_, _) => const Text('Home'),
           ),
         ],
       ),

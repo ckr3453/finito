@@ -18,9 +18,9 @@ void main() {
       container.dispose();
     });
 
-    test('initial state is null (system locale)', () {
+    test('initial state is Korean', () {
       final locale = container.read(appLocaleProvider);
-      expect(locale, isNull);
+      expect(locale, const Locale('ko'));
     });
 
     test('setLocale updates state to Korean', () async {
@@ -37,9 +37,9 @@ void main() {
       expect(container.read(appLocaleProvider), const Locale('en'));
     });
 
-    test('setLocale(null) resets to system', () async {
+    test('setLocale(null) resets to default', () async {
       final notifier = container.read(appLocaleProvider.notifier);
-      await notifier.setLocale(const Locale('ko'));
+      await notifier.setLocale(const Locale('en'));
       await notifier.setLocale(null);
 
       expect(container.read(appLocaleProvider), isNull);
@@ -73,15 +73,18 @@ void main() {
       expect(freshContainer.read(appLocaleProvider), const Locale('en'));
     });
 
-    test('loadSavedLocale does nothing when no persisted value', () async {
-      SharedPreferences.setMockInitialValues({});
-      final freshContainer = ProviderContainer();
-      addTearDown(freshContainer.dispose);
+    test(
+      'loadSavedLocale keeps default Korean when no persisted value',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final freshContainer = ProviderContainer();
+        addTearDown(freshContainer.dispose);
 
-      final notifier = freshContainer.read(appLocaleProvider.notifier);
-      await notifier.loadSavedLocale();
+        final notifier = freshContainer.read(appLocaleProvider.notifier);
+        await notifier.loadSavedLocale();
 
-      expect(freshContainer.read(appLocaleProvider), isNull);
-    });
+        expect(freshContainer.read(appLocaleProvider), const Locale('ko'));
+      },
+    );
   });
 }

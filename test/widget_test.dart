@@ -27,7 +27,7 @@ void main() {
     when(() => mockNotifSvc.rescheduleAll(any())).thenAnswer((_) async {});
 
     final mockWidgetSvc = MockWidgetService();
-    when(() => mockWidgetSvc.refreshWidget()).thenAnswer((_) async {});
+    when(mockWidgetSvc.refreshWidget).thenAnswer((_) async {});
     when(() => mockWidgetSvc.updateWidgetData(any())).thenAnswer((_) async {});
 
     final testDb = createTestDatabase();

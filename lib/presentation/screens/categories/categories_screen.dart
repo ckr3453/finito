@@ -8,6 +8,8 @@ import 'package:todo_app/presentation/providers/filter_providers.dart';
 import 'package:todo_app/presentation/providers/repository_providers.dart';
 import 'package:todo_app/presentation/screens/categories/category_editor_dialog.dart';
 import 'package:todo_app/presentation/shared_widgets/empty_state.dart';
+import 'package:todo_app/presentation/shared_widgets/sync_disabled_banner.dart';
+import 'package:todo_app/presentation/shared_widgets/user_action_bar.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   const CategoriesScreen({super.key});
@@ -18,30 +20,40 @@ class CategoriesScreen extends ConsumerWidget {
     final l10n = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.categories)),
-      body: categoriesAsync.when(
-        data: (categories) {
-          if (categories.isEmpty) {
-            return EmptyState(
-              icon: Icons.folder_off,
-              message: l10n.emptyCategoryMessage,
-              actionLabel: l10n.addCategory,
-              onAction: () => _showEditorDialog(context),
-            );
-          }
+      appBar: AppBar(
+        title: Text(l10n.categories),
+        actions: [const UserActionBar(), const SizedBox(width: 8)],
+      ),
+      body: Column(
+        children: [
+          const SyncDisabledBanner(),
+          Expanded(
+            child: categoriesAsync.when(
+              data: (categories) {
+                if (categories.isEmpty) {
+                  return EmptyState(
+                    icon: Icons.folder_off,
+                    message: l10n.emptyCategoryMessage,
+                    actionLabel: l10n.addCategory,
+                    onAction: () => _showEditorDialog(context),
+                  );
+                }
 
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              final category = categories[index];
-              return _CategoryTile(category: category);
-            },
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) =>
-            Center(child: Text(l10n.errorOccurred(error.toString()))),
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
+                    return _CategoryTile(category: category);
+                  },
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) =>
+                  Center(child: Text(l10n.errorOccurred(error.toString()))),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showEditorDialog(context),

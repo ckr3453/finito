@@ -31,6 +31,7 @@ void main() {
   setUp(() {
     mockAuth = MockFirebaseAuth();
     mockGoogleSignIn = MockGoogleSignIn();
+    when(mockGoogleSignIn.signOut).thenAnswer((_) async => null);
     authService = AuthService(auth: mockAuth, googleSignIn: mockGoogleSignIn);
   });
 

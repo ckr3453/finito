@@ -16,7 +16,7 @@ void main() {
 
     group('removeSplash', () {
       test('does not throw', () {
-        expect(() => removeSplash(), returnsNormally);
+        expect(removeSplash, returnsNormally);
       });
     });
   });

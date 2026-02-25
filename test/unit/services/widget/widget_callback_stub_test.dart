@@ -4,7 +4,7 @@ import 'package:todo_app/services/widget/widget_callback_stub.dart';
 void main() {
   group('registerWidgetCallback', () {
     test('does not throw', () {
-      expect(() => registerWidgetCallback(), returnsNormally);
+      expect(registerWidgetCallback, returnsNormally);
     });
   });
 }

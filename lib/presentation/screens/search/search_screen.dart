@@ -9,6 +9,7 @@ import 'package:todo_app/domain/entities/entities.dart';
 import 'package:todo_app/domain/enums/enums.dart';
 import 'package:todo_app/presentation/providers/filter_providers.dart';
 import 'package:todo_app/presentation/providers/task_providers.dart';
+import 'package:todo_app/presentation/shared_widgets/user_action_bar.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -45,6 +46,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        actions: [const UserActionBar(), const SizedBox(width: 8)],
         title: TextField(
           controller: _searchController,
           autofocus: true,

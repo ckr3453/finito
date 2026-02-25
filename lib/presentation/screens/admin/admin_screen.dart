@@ -47,23 +47,98 @@ class AdminScreen extends ConsumerWidget {
                 ),
               ),
               const Divider(height: 1),
-              // User list
+              // User list grouped by role
               Expanded(
                 child: users.isEmpty
                     ? Center(child: Text(l10n.noUsers))
-                    : ListView.builder(
-                        itemCount: users.length,
-                        itemBuilder: (context, index) {
-                          final user = users[index];
-                          return _UserTile(user: user);
-                        },
-                      ),
+                    : _GroupedUserList(users: users),
               ),
             ],
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
+      ),
+    );
+  }
+}
+
+class _GroupedUserList extends StatelessWidget {
+  final List<UserProfile> users;
+
+  const _GroupedUserList({required this.users});
+
+  @override
+  Widget build(BuildContext context) {
+    final admins = users.where((u) => u.isAdmin).toList();
+    final regularUsers = users.where((u) => !u.isAdmin).toList();
+    final l10n = context.l10n;
+
+    return ListView(
+      children: [
+        if (admins.isNotEmpty) ...[
+          _SectionHeader(
+            title: l10n.admin,
+            count: admins.length,
+            color: Colors.deepPurple,
+          ),
+          ...admins.map((u) => _UserTile(user: u)),
+        ],
+        if (regularUsers.isNotEmpty) ...[
+          _SectionHeader(
+            title: l10n.user,
+            count: regularUsers.length,
+            color: Colors.blue,
+          ),
+          ...regularUsers.map((u) => _UserTile(user: u)),
+        ],
+      ],
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  final int count;
+  final Color color;
+
+  const _SectionHeader({
+    required this.title,
+    required this.count,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      color: color.withValues(alpha: 0.08),
+      child: Row(
+        children: [
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              '$count',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
