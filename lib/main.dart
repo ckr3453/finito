@@ -1,9 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:todo_app/core/theme.dart';
 import 'package:todo_app/firebase_options.dart';
@@ -12,14 +11,22 @@ import 'package:todo_app/presentation/providers/locale_provider.dart';
 import 'package:todo_app/presentation/providers/notification_provider.dart';
 import 'package:todo_app/presentation/providers/widget_provider.dart';
 import 'package:todo_app/routing/app_router.dart';
-import 'package:todo_app/services/widget/widget_background_callback.dart';
+import 'package:todo_app/services/splash/splash_stub.dart'
+    if (dart.library.io) 'package:todo_app/services/splash/splash_native.dart';
+import 'package:todo_app/services/widget/widget_callback_stub.dart'
+    if (dart.library.io) 'package:todo_app/services/widget/widget_background_callback.dart';
+import 'package:todo_app/services/widget/home_widget_deeplink_stub.dart'
+    if (dart.library.io) 'package:todo_app/services/widget/home_widget_deeplink.dart';
 
 // Temporary StateProvider for theme mode until theme_provider.dart is generated
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
 Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  if (!kIsWeb) {
+    preserveSplash(widgetsBinding);
+  }
 
   try {
     await Firebase.initializeApp(
@@ -31,9 +38,12 @@ Future<void> main() async {
   }
 
   tz.initializeTimeZones();
-  registerWidgetCallback();
 
-  FlutterNativeSplash.remove();
+  if (!kIsWeb) {
+    registerWidgetCallback();
+    removeSplash();
+  }
+
   runApp(const ProviderScope(child: TodoApp()));
 }
 
@@ -49,7 +59,9 @@ class _TodoAppState extends ConsumerState<TodoApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _handleWidgetDeepLink();
+    if (!kIsWeb) {
+      handleWidgetDeepLink(onUri: _navigateFromUri);
+    }
     _initNotifications();
     ref.read(appLocaleProvider.notifier).loadSavedLocale();
   }
@@ -73,19 +85,10 @@ class _TodoAppState extends ConsumerState<TodoApp> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
+    if (!kIsWeb && state == AppLifecycleState.resumed) {
       final widgetSvc = ref.read(widgetServiceProvider);
       widgetSvc.refreshWidget();
     }
-  }
-
-  Future<void> _handleWidgetDeepLink() async {
-    final uri = await HomeWidget.initiallyLaunchedFromHomeWidget();
-    if (uri != null) _navigateFromUri(uri);
-
-    HomeWidget.widgetClicked.listen((uri) {
-      if (uri != null) _navigateFromUri(uri);
-    });
   }
 
   void _navigateFromUri(Uri uri) {

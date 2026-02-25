@@ -6,16 +6,15 @@ import 'package:todo_app/presentation/providers/repository_providers.dart';
 import 'package:todo_app/services/notification/fcm_client_impl.dart';
 import 'package:todo_app/services/notification/fcm_service.dart';
 import 'package:todo_app/services/notification/fcm_service_impl.dart';
-import 'package:todo_app/services/notification/local_notification_client_impl.dart';
 import 'package:todo_app/services/notification/notification_service.dart';
-import 'package:todo_app/services/notification/notification_service_impl.dart';
+import 'package:todo_app/services/notification/notification_service_factory.dart';
 
 part 'notification_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 NotificationService notificationService(Ref ref) {
   tz.initializeTimeZones();
-  return NotificationServiceImpl(client: LocalNotificationClientImpl());
+  return createNotificationService();
 }
 
 @Riverpod(keepAlive: true)
