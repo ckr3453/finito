@@ -97,6 +97,7 @@ class TaskFirestoreDto {
       'sortOrder': sortOrder,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
+      'reminderEmailSent': reminderTime == null ? null : false,
     };
   }
 

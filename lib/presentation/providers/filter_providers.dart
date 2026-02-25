@@ -4,6 +4,8 @@ import 'package:todo_app/domain/enums/enums.dart';
 
 part 'filter_providers.freezed.dart';
 
+enum TaskSortBy { dueDate, priority, createdAt }
+
 @freezed
 abstract class TaskFilter with _$TaskFilter {
   const factory TaskFilter({
@@ -11,6 +13,7 @@ abstract class TaskFilter with _$TaskFilter {
     Priority? priority,
     String? categoryId,
     String? searchQuery,
+    @Default(TaskSortBy.dueDate) TaskSortBy sortBy,
   }) = _TaskFilter;
 }
 
@@ -23,6 +26,7 @@ class TaskFilterNotifier extends StateNotifier<TaskFilter> {
   void setCategoryId(String? id) => state = state.copyWith(categoryId: id);
   void setSearchQuery(String? query) =>
       state = state.copyWith(searchQuery: query);
+  void setSortBy(TaskSortBy sortBy) => state = state.copyWith(sortBy: sortBy);
   void clearAll() => state = const TaskFilter();
 }
 

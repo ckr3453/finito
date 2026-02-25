@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
@@ -31,6 +32,10 @@ class AuthService {
   }
 
   Future<UserCredential> signInWithGoogle() async {
+    if (kIsWeb) {
+      final provider = GoogleAuthProvider();
+      return _auth.signInWithPopup(provider);
+    }
     final googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {
       throw FirebaseAuthException(
@@ -109,6 +114,10 @@ class AuthService {
         message: 'No user is currently signed in',
       );
     }
+    if (kIsWeb) {
+      final provider = GoogleAuthProvider();
+      return user.linkWithPopup(provider);
+    }
     final googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {
       throw FirebaseAuthException(
@@ -149,6 +158,10 @@ class AuthService {
         code: 'no-user',
         message: 'No user is currently signed in',
       );
+    }
+    if (kIsWeb) {
+      final provider = GoogleAuthProvider();
+      return user.reauthenticateWithPopup(provider);
     }
     final googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {

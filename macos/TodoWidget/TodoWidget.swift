@@ -1,36 +1,67 @@
+//
+//  TodoWidget.swift
+//  TodoWidget
+//
+//  Created by ckr on 2/25/26.
+//
+
 import WidgetKit
 import SwiftUI
 
-struct TodoSmallWidget: Widget {
-    let kind: String = "TodoSmallWidget"
+struct Provider: AppIntentTimelineProvider {
+    func placeholder(in context: Context) -> SimpleEntry {
+        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
+    }
 
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: TodoTimelineProvider()) { entry in
-            SmallWidgetView(entry: entry)
+    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
+        SimpleEntry(date: Date(), configuration: configuration)
+    }
+    
+    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
+        var entries: [SimpleEntry] = []
+
+        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
+        let currentDate = Date()
+        for hourOffset in 0 ..< 5 {
+            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
+            let entry = SimpleEntry(date: entryDate, configuration: configuration)
+            entries.append(entry)
         }
-        .configurationDisplayName("오늘의 할 일")
-        .description("오늘 마감인 할 일 개수와 목록을 보여줍니다.")
-        .supportedFamilies([.systemSmall])
+
+        return Timeline(entries: entries, policy: .atEnd)
+    }
+
+//    func relevances() async -> WidgetRelevances<ConfigurationAppIntent> {
+//        // Generate a list containing the contexts this widget is relevant in.
+//    }
+}
+
+struct SimpleEntry: TimelineEntry {
+    let date: Date
+    let configuration: ConfigurationAppIntent
+}
+
+struct TodoWidgetEntryView : View {
+    var entry: Provider.Entry
+
+    var body: some View {
+        VStack {
+            Text("Time:")
+            Text(entry.date, style: .time)
+
+            Text("Favorite Emoji:")
+            Text(entry.configuration.favoriteEmoji)
+        }
     }
 }
 
-struct TodoListWidget: Widget {
-    let kind: String = "TodoListWidget"
+struct TodoWidget: Widget {
+    let kind: String = "TodoWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: TodoTimelineProvider()) { entry in
-            MediumWidgetView(entry: entry)
+        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+            TodoWidgetEntryView(entry: entry)
+                .containerBackground(.fill.tertiary, for: .widget)
         }
-        .configurationDisplayName("할 일 목록")
-        .description("할 일 목록을 보여주고 완료 처리할 수 있습니다.")
-        .supportedFamilies([.systemMedium])
-    }
-}
-
-@main
-struct TodoWidgetBundle: WidgetBundle {
-    var body: some Widget {
-        TodoSmallWidget()
-        TodoListWidget()
     }
 }

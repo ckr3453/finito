@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In ko, this message translates to:
-  /// **'TODO'**
+  /// **'할 일 목록'**
   String get appTitle;
 
   /// No description provided for @filterAll.
@@ -995,19 +995,19 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccount.
   ///
   /// In ko, this message translates to:
-  /// **'계정 삭제'**
+  /// **'회원 탈퇴'**
   String get deleteAccount;
 
   /// No description provided for @deleteAccountConfirm.
   ///
   /// In ko, this message translates to:
-  /// **'정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'**
+  /// **'모든 데이터가 삭제되며 복구되지 않습니다. 진행하시겠습니까?'**
   String get deleteAccountConfirm;
 
   /// No description provided for @deleteAccountWarning.
   ///
   /// In ko, this message translates to:
-  /// **'모든 데이터가 영구적으로 삭제됩니다.'**
+  /// **'할 일, 카테고리 등 모든 데이터가 영구적으로 삭제됩니다.'**
   String get deleteAccountWarning;
 
   /// No description provided for @reauthRequired.
@@ -1034,6 +1034,42 @@ abstract class AppLocalizations {
   /// **'삭제 중...'**
   String get deleting;
 
+  /// No description provided for @minutesBefore.
+  ///
+  /// In ko, this message translates to:
+  /// **'분 전'**
+  String get minutesBefore;
+
+  /// No description provided for @hourBefore.
+  ///
+  /// In ko, this message translates to:
+  /// **'시간 전'**
+  String get hourBefore;
+
+  /// No description provided for @dayBefore.
+  ///
+  /// In ko, this message translates to:
+  /// **'일 전'**
+  String get dayBefore;
+
+  /// No description provided for @customTime.
+  ///
+  /// In ko, this message translates to:
+  /// **'직접 설정'**
+  String get customTime;
+
+  /// No description provided for @emptyInProgress.
+  ///
+  /// In ko, this message translates to:
+  /// **'진행중인 할 일이 없습니다'**
+  String get emptyInProgress;
+
+  /// No description provided for @emptyCompleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'완료된 할 일이 없습니다'**
+  String get emptyCompleted;
+
   /// No description provided for @relativeToday.
   ///
   /// In ko, this message translates to:
@@ -1051,6 +1087,84 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'{days}일 전'**
   String relativeDaysAgo(int days);
+
+  /// No description provided for @admin.
+  ///
+  /// In ko, this message translates to:
+  /// **'관리자'**
+  String get admin;
+
+  /// No description provided for @totalUsers.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 사용자'**
+  String get totalUsers;
+
+  /// No description provided for @pendingApproval.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인 대기'**
+  String get pendingApproval;
+
+  /// No description provided for @approvedUsers.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인됨'**
+  String get approvedUsers;
+
+  /// No description provided for @noUsers.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자 없음'**
+  String get noUsers;
+
+  /// No description provided for @approved.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인됨'**
+  String get approved;
+
+  /// No description provided for @approve.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인'**
+  String get approve;
+
+  /// No description provided for @revokeApproval.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인 취소'**
+  String get revokeApproval;
+
+  /// No description provided for @makeAdmin.
+  ///
+  /// In ko, this message translates to:
+  /// **'관리자 지정'**
+  String get makeAdmin;
+
+  /// No description provided for @removeAdmin.
+  ///
+  /// In ko, this message translates to:
+  /// **'관리자 해제'**
+  String get removeAdmin;
+
+  /// No description provided for @pendingApprovalTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인 대기 중'**
+  String get pendingApprovalTitle;
+
+  /// No description provided for @pendingApprovalMessage.
+  ///
+  /// In ko, this message translates to:
+  /// **'관리자의 승인을 기다리고 있습니다. 관리자가 접근을 승인할 때까지 잠시 기다려주세요.'**
+  String get pendingApprovalMessage;
+
+  /// No description provided for @userManagement.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자 관리'**
+  String get userManagement;
 }
 
 class _AppLocalizationsDelegate

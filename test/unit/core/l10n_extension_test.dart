@@ -30,7 +30,7 @@ void main() {
         ),
       );
 
-      expect(captured.appTitle, 'TODO');
+      expect(captured.appTitle, '할 일 목록');
       expect(captured.filterAll, '전체');
       expect(captured.cancel, '취소');
     });
@@ -59,7 +59,7 @@ void main() {
         ),
       );
 
-      expect(captured.appTitle, 'TODO');
+      expect(captured.appTitle, 'Tasks');
       expect(captured.filterAll, 'All');
       expect(captured.cancel, 'Cancel');
     });

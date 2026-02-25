@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 class AppTheme {
   AppTheme._();
 
   static const _seedColor = Color(0xFF4CAF50);
+  static const _webFontFamily = 'NotoSansKR';
 
   static ThemeData light() {
     final colorScheme = ColorScheme.fromSeed(
@@ -12,6 +14,7 @@ class AppTheme {
     );
     return ThemeData(
       useMaterial3: true,
+      fontFamily: kIsWeb ? _webFontFamily : null,
       colorScheme: colorScheme,
       appBarTheme: AppBarTheme(
         centerTitle: false,
@@ -44,6 +47,7 @@ class AppTheme {
     );
     return ThemeData(
       useMaterial3: true,
+      fontFamily: kIsWeb ? _webFontFamily : null,
       colorScheme: colorScheme,
       appBarTheme: AppBarTheme(
         centerTitle: false,

@@ -198,7 +198,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                     leading: const Icon(Icons.calendar_today),
                     title: Text(
                       _dueDate != null
-                          ? l10n.dueDateLabel(_dueDate!.toFormattedDate())
+                          ? l10n.dueDateLabel(_dueDate!.toFormattedDateTime())
                           : l10n.setDueDate,
                     ),
                     trailing: _dueDate != null
@@ -288,18 +288,87 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
 
   Future<void> _pickDueDate() async {
     final now = DateTime.now();
-    final picked = await showDatePicker(
+    final pickedDate = await showDatePicker(
       context: context,
       initialDate: _dueDate ?? now,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
     );
-    if (picked != null) {
-      setState(() => _dueDate = picked);
-    }
+    if (pickedDate == null || !mounted) return;
+
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: _dueDate != null
+          ? TimeOfDay.fromDateTime(_dueDate!)
+          : TimeOfDay.now(),
+    );
+    if (pickedTime == null) return;
+
+    setState(() {
+      _dueDate = DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+    });
   }
 
   Future<void> _pickReminderTime() async {
+    if (_dueDate != null) {
+      await _pickReminderFromPresets();
+    } else {
+      await _pickReminderManually();
+    }
+  }
+
+  Future<void> _pickReminderFromPresets() async {
+    final l10n = context.l10n;
+    final due = _dueDate!;
+    final presets = <(String, Duration)>[
+      ('15${l10n.minutesBefore}', const Duration(minutes: 15)),
+      ('30${l10n.minutesBefore}', const Duration(minutes: 30)),
+      ('1${l10n.hourBefore}', const Duration(hours: 1)),
+      ('1${l10n.dayBefore}', const Duration(days: 1)),
+    ];
+
+    final selected = await showModalBottomSheet<Duration?>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ...presets.map(
+              (preset) => ListTile(
+                title: Text(preset.$1),
+                subtitle: Text(due.subtract(preset.$2).toFormattedDateTime()),
+                onTap: () => Navigator.pop(context, preset.$2),
+              ),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.edit_calendar),
+              title: Text(l10n.customTime),
+              onTap: () => Navigator.pop(context, Duration.zero),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (selected == null || !mounted) return;
+
+    if (selected == Duration.zero) {
+      await _pickReminderManually();
+    } else {
+      setState(() {
+        _reminderTime = due.subtract(selected);
+      });
+    }
+  }
+
+  Future<void> _pickReminderManually() async {
     final now = DateTime.now();
     final pickedDate = await showDatePicker(
       context: context,

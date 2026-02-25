@@ -9,7 +9,7 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
-  String get appTitle => 'TODO';
+  String get appTitle => '할 일 목록';
 
   @override
   String get filterAll => '전체';
@@ -474,13 +474,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get firebaseProviderAlreadyLinked => '이 인증 방식은 이미 연결되어 있습니다.';
 
   @override
-  String get deleteAccount => '계정 삭제';
+  String get deleteAccount => '회원 탈퇴';
 
   @override
-  String get deleteAccountConfirm => '정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.';
+  String get deleteAccountConfirm => '모든 데이터가 삭제되며 복구되지 않습니다. 진행하시겠습니까?';
 
   @override
-  String get deleteAccountWarning => '모든 데이터가 영구적으로 삭제됩니다.';
+  String get deleteAccountWarning => '할 일, 카테고리 등 모든 데이터가 영구적으로 삭제됩니다.';
 
   @override
   String get reauthRequired => '확인을 위해 다시 로그인해주세요.';
@@ -495,6 +495,24 @@ class AppLocalizationsKo extends AppLocalizations {
   String get deleting => '삭제 중...';
 
   @override
+  String get minutesBefore => '분 전';
+
+  @override
+  String get hourBefore => '시간 전';
+
+  @override
+  String get dayBefore => '일 전';
+
+  @override
+  String get customTime => '직접 설정';
+
+  @override
+  String get emptyInProgress => '진행중인 할 일이 없습니다';
+
+  @override
+  String get emptyCompleted => '완료된 할 일이 없습니다';
+
+  @override
   String get relativeToday => '오늘';
 
   @override
@@ -504,4 +522,44 @@ class AppLocalizationsKo extends AppLocalizations {
   String relativeDaysAgo(int days) {
     return '$days일 전';
   }
+
+  @override
+  String get admin => '관리자';
+
+  @override
+  String get totalUsers => '전체 사용자';
+
+  @override
+  String get pendingApproval => '승인 대기';
+
+  @override
+  String get approvedUsers => '승인됨';
+
+  @override
+  String get noUsers => '사용자 없음';
+
+  @override
+  String get approved => '승인됨';
+
+  @override
+  String get approve => '승인';
+
+  @override
+  String get revokeApproval => '승인 취소';
+
+  @override
+  String get makeAdmin => '관리자 지정';
+
+  @override
+  String get removeAdmin => '관리자 해제';
+
+  @override
+  String get pendingApprovalTitle => '승인 대기 중';
+
+  @override
+  String get pendingApprovalMessage =>
+      '관리자의 승인을 기다리고 있습니다. 관리자가 접근을 승인할 때까지 잠시 기다려주세요.';
+
+  @override
+  String get userManagement => '사용자 관리';
 }

@@ -7,6 +7,7 @@ import 'package:todo_app/presentation/providers/category_providers.dart';
 import 'package:todo_app/presentation/providers/filter_providers.dart';
 import 'package:todo_app/presentation/providers/repository_providers.dart';
 import 'package:todo_app/presentation/screens/categories/category_editor_dialog.dart';
+import 'package:todo_app/presentation/shared_widgets/empty_state.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   const CategoriesScreen({super.key});
@@ -21,23 +22,11 @@ class CategoriesScreen extends ConsumerWidget {
       body: categoriesAsync.when(
         data: (categories) {
           if (categories.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.folder_off, size: 64, color: Colors.grey),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.emptyCategoryMessage,
-                    style: const TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.emptyCategoryHint,
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
-              ),
+            return EmptyState(
+              icon: Icons.folder_off,
+              message: l10n.emptyCategoryMessage,
+              actionLabel: l10n.addCategory,
+              onAction: () => _showEditorDialog(context),
             );
           }
 
