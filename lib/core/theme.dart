@@ -5,7 +5,7 @@ class AppTheme {
   AppTheme._();
 
   static const _seedColor = Color(0xFF4CAF50);
-  static const _webFontFamily = 'NotoSansKR';
+  static const _webFontFamily = 'Noto Sans KR';
 
   static ThemeData light() {
     final colorScheme = ColorScheme.fromSeed(

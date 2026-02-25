@@ -19,6 +19,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  bool _dialogShown = false;
+
   @override
   void initState() {
     super.initState();
@@ -28,10 +30,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _showLoginDialogIfNeeded() {
+    if (_dialogShown) return;
     final dismissed = ref.read(loginDismissedProvider);
     if (dismissed) return;
-    final isAuth = ref.read(isAuthenticatedProvider);
+    final authAsync = ref.read(authStateProvider);
+    // Stream이 아직 로딩 중이면 값이 올 때까지 기다림
+    if (authAsync.isLoading) {
+      ref.listenManual(authStateProvider, (prev, next) {
+        if (!next.isLoading && mounted) {
+          _showLoginDialogIfNeeded();
+        }
+      });
+      return;
+    }
+    final isAuth = authAsync.valueOrNull != null;
     if (!isAuth) {
+      _dialogShown = true;
       showDialog(
         context: context,
         barrierDismissible: false,
