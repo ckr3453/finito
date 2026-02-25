@@ -26,13 +26,19 @@ class HomeScreen extends ConsumerWidget {
     });
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.appTitle)),
+      appBar: AppBar(
+        title: Text(l10n.appTitle),
+      ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Filter chips
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
+            child: Wrap(
+              alignment: WrapAlignment.start,
+              spacing: 8,
+              runSpacing: 4,
               children: [
                 _FilterChip(
                   label: l10n.filterAll,
@@ -41,7 +47,6 @@ class HomeScreen extends ConsumerWidget {
                     ref.read(taskFilterProvider.notifier).setStatus(null);
                   },
                 ),
-                const SizedBox(width: 8),
                 _FilterChip(
                   label: l10n.filterInProgress,
                   selected: filter.status == TaskStatus.pending,
@@ -51,7 +56,6 @@ class HomeScreen extends ConsumerWidget {
                         .setStatus(TaskStatus.pending);
                   },
                 ),
-                const SizedBox(width: 8),
                 _FilterChip(
                   label: l10n.filterCompleted,
                   selected: filter.status == TaskStatus.completed,
@@ -59,6 +63,13 @@ class HomeScreen extends ConsumerWidget {
                     ref
                         .read(taskFilterProvider.notifier)
                         .setStatus(TaskStatus.completed);
+                  },
+                ),
+                const SizedBox(width: 4),
+                _SortChip(
+                  sortBy: filter.sortBy,
+                  onSelected: (sortBy) {
+                    ref.read(taskFilterProvider.notifier).setSortBy(sortBy);
                   },
                 ),
               ],
@@ -69,6 +80,20 @@ class HomeScreen extends ConsumerWidget {
             child: taskListAsync.when(
               data: (tasks) {
                 if (tasks.isEmpty) {
+                  if (filter.status == TaskStatus.completed) {
+                    return EmptyState(
+                      icon: Icons.check_circle_outline,
+                      message: l10n.emptyCompleted,
+                    );
+                  }
+                  if (filter.status == TaskStatus.pending) {
+                    return EmptyState(
+                      icon: Icons.hourglass_empty,
+                      message: l10n.emptyInProgress,
+                      actionLabel: l10n.emptyTaskAction,
+                      onAction: () => context.pushNamed('taskEditor'),
+                    );
+                  }
                   return EmptyState(
                     icon: Icons.check_circle_outline,
                     message: l10n.emptyTaskMessage,
@@ -77,6 +102,7 @@ class HomeScreen extends ConsumerWidget {
                   );
                 }
                 return ReorderableListView.builder(
+                  buildDefaultDragHandles: false,
                   padding: const EdgeInsets.only(bottom: 80),
                   itemCount: tasks.length,
                   onReorder: (oldIndex, newIndex) {
@@ -100,6 +126,7 @@ class HomeScreen extends ConsumerWidget {
                       key: ValueKey(task.id),
                       task: task,
                       category: category.valueOrNull,
+                      index: index,
                     );
                   },
                 );
@@ -126,6 +153,55 @@ class HomeScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.pushNamed('taskEditor'),
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class _SortChip extends ConsumerWidget {
+  final TaskSortBy sortBy;
+  final ValueChanged<TaskSortBy> onSelected;
+
+  const _SortChip({
+    required this.sortBy,
+    required this.onSelected,
+  });
+
+  String _sortLabel(TaskSortBy sortBy, BuildContext context) {
+    final l10n = context.l10n;
+    switch (sortBy) {
+      case TaskSortBy.dueDate:
+        return l10n.dueDate;
+      case TaskSortBy.priority:
+        return l10n.priority;
+      case TaskSortBy.createdAt:
+        return l10n.createdAt;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return PopupMenuButton<TaskSortBy>(
+      tooltip: '정렬기준 표시',
+      onSelected: onSelected,
+      itemBuilder: (context) => TaskSortBy.values.map((value) {
+        return PopupMenuItem(
+          value: value,
+          child: Row(
+            children: [
+              Text(_sortLabel(value, context)),
+              if (value == sortBy) ...[
+                const Spacer(),
+                const Icon(Icons.check, size: 18),
+              ],
+            ],
+          ),
+        );
+      }).toList(),
+      child: InputChip(
+        avatar: const Icon(Icons.sort, size: 16),
+        label: Text(_sortLabel(sortBy, context)),
+        onPressed: () {},
       ),
     );
   }

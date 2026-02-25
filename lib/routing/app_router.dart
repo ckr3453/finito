@@ -61,19 +61,53 @@ final appRouter = GoRouter(
       path: '/task/:id',
       name: 'taskDetail',
       parentNavigatorKey: rootNavigatorKey,
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final id = state.pathParameters['id']!;
-        return TaskDetailScreen(taskId: id);
+        final isWide = MediaQuery.of(context).size.width > 600;
+        if (isWide) {
+          return DialogPage(
+            builder: (_) => TaskDetailScreen(taskId: id),
+          );
+        }
+        return MaterialPage(child: TaskDetailScreen(taskId: id));
       },
     ),
     GoRoute(
       path: '/task-editor',
       name: 'taskEditor',
       parentNavigatorKey: rootNavigatorKey,
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final taskId = state.uri.queryParameters['taskId'];
-        return TaskEditorScreen(taskId: taskId);
+        final isWide = MediaQuery.of(context).size.width > 600;
+        if (isWide) {
+          return DialogPage(
+            builder: (_) => TaskEditorScreen(taskId: taskId),
+          );
+        }
+        return MaterialPage(child: TaskEditorScreen(taskId: taskId));
       },
     ),
   ],
 );
+
+class DialogPage extends Page<void> {
+  final WidgetBuilder builder;
+
+  const DialogPage({required this.builder, super.key});
+
+  @override
+  Route<void> createRoute(BuildContext context) {
+    return DialogRoute(
+      context: context,
+      settings: this,
+      builder: (context) => Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 80, vertical: 40),
+        clipBehavior: Clip.antiAlias,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560, maxHeight: 680),
+          child: builder(context),
+        ),
+      ),
+    );
+  }
+}

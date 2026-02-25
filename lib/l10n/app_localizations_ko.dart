@@ -9,7 +9,7 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
-  String get appTitle => 'TODO';
+  String get appTitle => '할 일 목록';
 
   @override
   String get filterAll => '전체';
@@ -493,6 +493,24 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get deleting => '삭제 중...';
+
+  @override
+  String get minutesBefore => '분 전';
+
+  @override
+  String get hourBefore => '시간 전';
+
+  @override
+  String get dayBefore => '일 전';
+
+  @override
+  String get customTime => '직접 설정';
+
+  @override
+  String get emptyInProgress => '진행중인 할 일이 없습니다';
+
+  @override
+  String get emptyCompleted => '완료된 할 일이 없습니다';
 
   @override
   String get relativeToday => '오늘';

@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'TODO';
+  String get appTitle => 'Tasks';
 
   @override
   String get filterAll => 'All';
@@ -504,6 +504,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleting => 'Deleting...';
+
+  @override
+  String get minutesBefore => ' min before';
+
+  @override
+  String get hourBefore => ' hour before';
+
+  @override
+  String get dayBefore => ' day before';
+
+  @override
+  String get customTime => 'Custom time';
+
+  @override
+  String get emptyInProgress => 'No tasks in progress';
+
+  @override
+  String get emptyCompleted => 'No completed tasks';
 
   @override
   String get relativeToday => 'Today';

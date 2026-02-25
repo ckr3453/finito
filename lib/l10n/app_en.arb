@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
 
-  "appTitle": "TODO",
+  "appTitle": "Tasks",
 
   "filterAll": "All",
   "filterInProgress": "In Progress",
@@ -178,6 +178,14 @@
   "accountDeleted": "Account deleted successfully.",
   "deleteAccountFailed": "Failed to delete account. Please try again.",
   "deleting": "Deleting...",
+
+  "minutesBefore": " min before",
+  "hourBefore": " hour before",
+  "dayBefore": " day before",
+  "customTime": "Custom time",
+
+  "emptyInProgress": "No tasks in progress",
+  "emptyCompleted": "No completed tasks",
 
   "relativeToday": "Today",
   "relativeYesterday": "Yesterday",

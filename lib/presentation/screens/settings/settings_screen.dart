@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -102,11 +103,13 @@ class SettingsScreen extends ConsumerWidget {
 
           const Divider(height: 32),
 
-          // Notification section
-          _SectionHeader(title: l10n.notifications),
-          const _NotificationSection(),
-
-          const Divider(height: 32),
+          // Notification section (hide on web - not supported)
+          if (!kIsWeb) ...[
+            _SectionHeader(title: l10n.notifications),
+            const _NotificationSection(),
+            const Divider(height: 32),
+          ] else
+            const Divider(height: 0),
 
           // Sync section
           _SectionHeader(title: l10n.sync),

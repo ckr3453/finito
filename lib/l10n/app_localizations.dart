@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In ko, this message translates to:
-  /// **'TODO'**
+  /// **'할 일 목록'**
   String get appTitle;
 
   /// No description provided for @filterAll.
@@ -1033,6 +1033,42 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'삭제 중...'**
   String get deleting;
+
+  /// No description provided for @minutesBefore.
+  ///
+  /// In ko, this message translates to:
+  /// **'분 전'**
+  String get minutesBefore;
+
+  /// No description provided for @hourBefore.
+  ///
+  /// In ko, this message translates to:
+  /// **'시간 전'**
+  String get hourBefore;
+
+  /// No description provided for @dayBefore.
+  ///
+  /// In ko, this message translates to:
+  /// **'일 전'**
+  String get dayBefore;
+
+  /// No description provided for @customTime.
+  ///
+  /// In ko, this message translates to:
+  /// **'직접 설정'**
+  String get customTime;
+
+  /// No description provided for @emptyInProgress.
+  ///
+  /// In ko, this message translates to:
+  /// **'진행중인 할 일이 없습니다'**
+  String get emptyInProgress;
+
+  /// No description provided for @emptyCompleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'완료된 할 일이 없습니다'**
+  String get emptyCompleted;
 
   /// No description provided for @relativeToday.
   ///

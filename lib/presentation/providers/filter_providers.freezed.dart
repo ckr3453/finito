@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TaskFilter {
 
- TaskStatus? get status; Priority? get priority; String? get categoryId; String? get searchQuery;
+ TaskStatus? get status; Priority? get priority; String? get categoryId; String? get searchQuery; TaskSortBy get sortBy;
 /// Create a copy of TaskFilter
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $TaskFilterCopyWith<TaskFilter> get copyWith => _$TaskFilterCopyWithImpl<TaskFil
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskFilter&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskFilter&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.sortBy, sortBy) || other.sortBy == sortBy));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,priority,categoryId,searchQuery);
+int get hashCode => Object.hash(runtimeType,status,priority,categoryId,searchQuery,sortBy);
 
 @override
 String toString() {
-  return 'TaskFilter(status: $status, priority: $priority, categoryId: $categoryId, searchQuery: $searchQuery)';
+  return 'TaskFilter(status: $status, priority: $priority, categoryId: $categoryId, searchQuery: $searchQuery, sortBy: $sortBy)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $TaskFilterCopyWith<$Res>  {
   factory $TaskFilterCopyWith(TaskFilter value, $Res Function(TaskFilter) _then) = _$TaskFilterCopyWithImpl;
 @useResult
 $Res call({
- TaskStatus? status, Priority? priority, String? categoryId, String? searchQuery
+ TaskStatus? status, Priority? priority, String? categoryId, String? searchQuery, TaskSortBy sortBy
 });
 
 
@@ -62,13 +62,14 @@ class _$TaskFilterCopyWithImpl<$Res>
 
 /// Create a copy of TaskFilter
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = freezed,Object? priority = freezed,Object? categoryId = freezed,Object? searchQuery = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = freezed,Object? priority = freezed,Object? categoryId = freezed,Object? searchQuery = freezed,Object? sortBy = null,}) {
   return _then(_self.copyWith(
 status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as TaskStatus?,priority: freezed == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
 as Priority?,categoryId: freezed == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
 as String?,searchQuery: freezed == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,sortBy: null == sortBy ? _self.sortBy : sortBy // ignore: cast_nullable_to_non_nullable
+as TaskSortBy,
   ));
 }
 
@@ -153,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TaskStatus? status,  Priority? priority,  String? categoryId,  String? searchQuery)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TaskStatus? status,  Priority? priority,  String? categoryId,  String? searchQuery,  TaskSortBy sortBy)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TaskFilter() when $default != null:
-return $default(_that.status,_that.priority,_that.categoryId,_that.searchQuery);case _:
+return $default(_that.status,_that.priority,_that.categoryId,_that.searchQuery,_that.sortBy);case _:
   return orElse();
 
 }
@@ -174,10 +175,10 @@ return $default(_that.status,_that.priority,_that.categoryId,_that.searchQuery);
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TaskStatus? status,  Priority? priority,  String? categoryId,  String? searchQuery)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TaskStatus? status,  Priority? priority,  String? categoryId,  String? searchQuery,  TaskSortBy sortBy)  $default,) {final _that = this;
 switch (_that) {
 case _TaskFilter():
-return $default(_that.status,_that.priority,_that.categoryId,_that.searchQuery);case _:
+return $default(_that.status,_that.priority,_that.categoryId,_that.searchQuery,_that.sortBy);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +195,10 @@ return $default(_that.status,_that.priority,_that.categoryId,_that.searchQuery);
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TaskStatus? status,  Priority? priority,  String? categoryId,  String? searchQuery)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TaskStatus? status,  Priority? priority,  String? categoryId,  String? searchQuery,  TaskSortBy sortBy)?  $default,) {final _that = this;
 switch (_that) {
 case _TaskFilter() when $default != null:
-return $default(_that.status,_that.priority,_that.categoryId,_that.searchQuery);case _:
+return $default(_that.status,_that.priority,_that.categoryId,_that.searchQuery,_that.sortBy);case _:
   return null;
 
 }
@@ -209,13 +210,14 @@ return $default(_that.status,_that.priority,_that.categoryId,_that.searchQuery);
 
 
 class _TaskFilter implements TaskFilter {
-  const _TaskFilter({this.status, this.priority, this.categoryId, this.searchQuery});
+  const _TaskFilter({this.status, this.priority, this.categoryId, this.searchQuery, this.sortBy = TaskSortBy.dueDate});
   
 
 @override final  TaskStatus? status;
 @override final  Priority? priority;
 @override final  String? categoryId;
 @override final  String? searchQuery;
+@override@JsonKey() final  TaskSortBy sortBy;
 
 /// Create a copy of TaskFilter
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +229,16 @@ _$TaskFilterCopyWith<_TaskFilter> get copyWith => __$TaskFilterCopyWithImpl<_Tas
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskFilter&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskFilter&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.sortBy, sortBy) || other.sortBy == sortBy));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,priority,categoryId,searchQuery);
+int get hashCode => Object.hash(runtimeType,status,priority,categoryId,searchQuery,sortBy);
 
 @override
 String toString() {
-  return 'TaskFilter(status: $status, priority: $priority, categoryId: $categoryId, searchQuery: $searchQuery)';
+  return 'TaskFilter(status: $status, priority: $priority, categoryId: $categoryId, searchQuery: $searchQuery, sortBy: $sortBy)';
 }
 
 
@@ -247,7 +249,7 @@ abstract mixin class _$TaskFilterCopyWith<$Res> implements $TaskFilterCopyWith<$
   factory _$TaskFilterCopyWith(_TaskFilter value, $Res Function(_TaskFilter) _then) = __$TaskFilterCopyWithImpl;
 @override @useResult
 $Res call({
- TaskStatus? status, Priority? priority, String? categoryId, String? searchQuery
+ TaskStatus? status, Priority? priority, String? categoryId, String? searchQuery, TaskSortBy sortBy
 });
 
 
@@ -264,13 +266,14 @@ class __$TaskFilterCopyWithImpl<$Res>
 
 /// Create a copy of TaskFilter
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = freezed,Object? priority = freezed,Object? categoryId = freezed,Object? searchQuery = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = freezed,Object? priority = freezed,Object? categoryId = freezed,Object? searchQuery = freezed,Object? sortBy = null,}) {
   return _then(_TaskFilter(
 status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as TaskStatus?,priority: freezed == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
 as Priority?,categoryId: freezed == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
 as String?,searchQuery: freezed == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,sortBy: null == sortBy ? _self.sortBy : sortBy // ignore: cast_nullable_to_non_nullable
+as TaskSortBy,
   ));
 }
 

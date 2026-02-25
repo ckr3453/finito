@@ -217,7 +217,7 @@ class TaskDetailScreen extends ConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton.icon(
-                  onPressed: () => _toggleCompletion(ref, task),
+                  onPressed: () => _toggleCompletion(context, ref, task),
                   icon: Icon(isCompleted ? Icons.undo : Icons.check_circle),
                   label: Text(
                     isCompleted ? l10n.markAsIncomplete : l10n.markAsComplete,
@@ -239,15 +239,29 @@ class TaskDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _toggleCompletion(WidgetRef ref, TaskEntity task) {
+  void _toggleCompletion(
+    BuildContext context, WidgetRef ref, TaskEntity task,
+  ) {
     final now = DateTime.now();
     final isCompleted = task.status == TaskStatus.completed;
+    final l10n = context.l10n;
     final updated = task.copyWith(
       status: isCompleted ? TaskStatus.pending : TaskStatus.completed,
       completedAt: isCompleted ? null : now,
       updatedAt: now,
     );
     ref.read(taskRepositoryProvider).updateTask(updated);
+    if (context.mounted) {
+      context.pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isCompleted ? l10n.markAsIncomplete : l10n.markAsComplete,
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {

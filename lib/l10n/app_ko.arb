@@ -1,7 +1,7 @@
 {
   "@@locale": "ko",
 
-  "appTitle": "TODO",
+  "appTitle": "할 일 목록",
 
   "filterAll": "전체",
   "filterInProgress": "진행중",
@@ -223,6 +223,14 @@
   "accountDeleted": "계정이 성공적으로 삭제되었습니다.",
   "deleteAccountFailed": "계정 삭제에 실패했습니다. 다시 시도해주세요.",
   "deleting": "삭제 중...",
+
+  "minutesBefore": "분 전",
+  "hourBefore": "시간 전",
+  "dayBefore": "일 전",
+  "customTime": "직접 설정",
+
+  "emptyInProgress": "진행중인 할 일이 없습니다",
+  "emptyCompleted": "완료된 할 일이 없습니다",
 
   "relativeToday": "오늘",
   "relativeYesterday": "어제",

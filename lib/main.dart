@@ -9,6 +9,7 @@ import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/l10n/app_localizations.dart';
 import 'package:todo_app/presentation/providers/locale_provider.dart';
 import 'package:todo_app/presentation/providers/notification_provider.dart';
+import 'package:todo_app/presentation/providers/theme_provider.dart';
 import 'package:todo_app/presentation/providers/widget_provider.dart';
 import 'package:todo_app/routing/app_router.dart';
 import 'package:todo_app/services/splash/splash_stub.dart'
@@ -17,9 +18,6 @@ import 'package:todo_app/services/widget/widget_callback_stub.dart'
     if (dart.library.io) 'package:todo_app/services/widget/widget_background_callback.dart';
 import 'package:todo_app/services/widget/home_widget_deeplink_stub.dart'
     if (dart.library.io) 'package:todo_app/services/widget/home_widget_deeplink.dart';
-
-// Temporary StateProvider for theme mode until theme_provider.dart is generated
-final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
 Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -64,6 +62,7 @@ class _TodoAppState extends ConsumerState<TodoApp> with WidgetsBindingObserver {
     }
     _initNotifications();
     ref.read(appLocaleProvider.notifier).loadSavedLocale();
+    ref.read(appThemeModeProvider.notifier).loadSavedTheme();
   }
 
   Future<void> _initNotifications() async {
@@ -105,7 +104,7 @@ class _TodoAppState extends ConsumerState<TodoApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeModeProvider);
+    final themeMode = ref.watch(appThemeModeProvider);
     final locale = ref.watch(appLocaleProvider);
     ref.watch(widgetAutoUpdateProvider);
     ref.watch(reminderAutoRescheduleProvider);

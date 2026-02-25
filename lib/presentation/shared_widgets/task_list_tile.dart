@@ -11,8 +11,14 @@ import 'package:todo_app/presentation/shared_widgets/priority_indicator.dart';
 class TaskListTile extends ConsumerWidget {
   final TaskEntity task;
   final CategoryEntity? category;
+  final int index;
 
-  const TaskListTile({super.key, required this.task, this.category});
+  const TaskListTile({
+    super.key,
+    required this.task,
+    this.category,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,10 +52,22 @@ class TaskListTile extends ConsumerWidget {
               children: [
                 // Priority color bar on the left
                 PriorityIndicator(priority: task.priority, width: 5),
+                // Drag handle
+                ReorderableDragStartListener(
+                  index: index,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Icon(
+                      Icons.drag_indicator,
+                      size: 20,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                    ),
+                  ),
+                ),
                 // Checkbox
                 Checkbox(
                   value: isCompleted,
-                  onChanged: (_) => _toggleCompletion(ref),
+                  onChanged: (_) => _toggleCompletion(context, ref),
                 ),
                 // Content area
                 Expanded(
@@ -78,47 +96,70 @@ class TaskListTile extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
-                        // Bottom row: due date + category
-                        Row(
+                        // Bottom row: due date + reminder + category
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             // Due date
-                            if (task.dueDate != null) ...[
-                              Icon(
-                                Icons.calendar_today,
-                                size: 14,
-                                color: isOverdue
-                                    ? Colors.red
-                                    : theme.colorScheme.onSurface.withValues(
-                                        alpha: 0.5,
-                                      ),
+                            if (task.dueDate != null)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 14,
+                                    color: isOverdue
+                                        ? Colors.red
+                                        : theme.colorScheme.onSurface
+                                            .withValues(alpha: 0.5),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    task.dueDate!.toFormattedDateTime(),
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: isOverdue
+                                          ? Colors.red
+                                          : theme.colorScheme.onSurface
+                                              .withValues(alpha: 0.5),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                task.dueDate!.toFormattedDate(),
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: isOverdue
-                                      ? Colors.red
-                                      : theme.colorScheme.onSurface.withValues(
-                                          alpha: 0.5,
-                                        ),
-                                ),
+                            // Reminder
+                            if (task.reminderTime != null)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.notifications_active,
+                                    size: 14,
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.5),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    task.reminderTime!.toFormattedDateTime(),
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.5),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 8),
-                            ],
                             // Category chip
                             if (category != null)
-                              Flexible(
-                                child: Chip(
-                                  label: Text(category!.name),
-                                  labelStyle: theme.textTheme.labelSmall,
-                                  backgroundColor: Color(
-                                    category!.colorValue,
-                                  ).withValues(alpha: 0.2),
-                                  padding: EdgeInsets.zero,
-                                  materialTapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                  visualDensity: VisualDensity.compact,
-                                ),
+                              Chip(
+                                label: Text(category!.name),
+                                labelStyle: theme.textTheme.labelSmall,
+                                backgroundColor: Color(
+                                  category!.colorValue,
+                                ).withValues(alpha: 0.2),
+                                padding: EdgeInsets.zero,
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                visualDensity: VisualDensity.compact,
                               ),
                           ],
                         ),
@@ -126,7 +167,6 @@ class TaskListTile extends ConsumerWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
               ],
             ),
           ),
@@ -156,14 +196,23 @@ class TaskListTile extends ConsumerWidget {
     );
   }
 
-  void _toggleCompletion(WidgetRef ref) {
+  void _toggleCompletion(BuildContext context, WidgetRef ref) {
     final now = DateTime.now();
     final isCompleted = task.status == TaskStatus.completed;
+    final l10n = context.l10n;
     final updated = task.copyWith(
       status: isCompleted ? TaskStatus.pending : TaskStatus.completed,
       completedAt: isCompleted ? null : now,
       updatedAt: now,
     );
     ref.read(taskRepositoryProvider).updateTask(updated);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          isCompleted ? l10n.markAsIncomplete : l10n.markAsComplete,
+        ),
+        duration: const Duration(seconds: 1),
+      ),
+    );
   }
 }
