@@ -46,7 +46,7 @@ private fun SmallWidgetContent(context: Context, data: WidgetData) {
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(ColorProvider(Color.WHITE, Color.parseColor("#1E1E1E")))
+            .background(ColorProvider(Color.WHITE))
             .padding(12.dp)
             .clickable(actionStartActivity(intent)),
         verticalAlignment = Alignment.Top,
@@ -57,7 +57,7 @@ private fun SmallWidgetContent(context: Context, data: WidgetData) {
             style = TextStyle(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = ColorProvider(Color.BLACK, Color.WHITE),
+                color = ColorProvider(Color.BLACK),
             ),
         )
         Text(
@@ -65,7 +65,7 @@ private fun SmallWidgetContent(context: Context, data: WidgetData) {
             style = TextStyle(
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = ColorProvider(Color.parseColor("#1976D2"), Color.parseColor("#64B5F6")),
+                color = ColorProvider(Color.parseColor("#1976D2")),
             ),
         )
         Spacer(modifier = GlanceModifier.height(4.dp))
@@ -74,7 +74,7 @@ private fun SmallWidgetContent(context: Context, data: WidgetData) {
                 text = "· ${task.title}",
                 style = TextStyle(
                     fontSize = 12.sp,
-                    color = ColorProvider(Color.DKGRAY, Color.LTGRAY),
+                    color = ColorProvider(Color.DKGRAY),
                 ),
                 maxLines = 1,
             )

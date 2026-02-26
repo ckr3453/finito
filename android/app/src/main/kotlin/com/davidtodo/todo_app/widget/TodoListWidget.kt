@@ -45,7 +45,7 @@ private fun ListWidgetContent(context: Context, data: WidgetData) {
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(ColorProvider(Color.WHITE, Color.parseColor("#1E1E1E")))
+            .background(ColorProvider(Color.WHITE))
             .padding(12.dp),
     ) {
         // Header
@@ -58,7 +58,7 @@ private fun ListWidgetContent(context: Context, data: WidgetData) {
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ColorProvider(Color.BLACK, Color.WHITE),
+                    color = ColorProvider(Color.BLACK),
                 ),
             )
             Spacer(modifier = GlanceModifier.defaultWeight())
@@ -67,7 +67,7 @@ private fun ListWidgetContent(context: Context, data: WidgetData) {
                 text = "$completedCount/${data.tasks.size}",
                 style = TextStyle(
                     fontSize = 12.sp,
-                    color = ColorProvider(Color.GRAY, Color.LTGRAY),
+                    color = ColorProvider(Color.GRAY),
                 ),
             )
         }
@@ -84,7 +84,7 @@ private fun ListWidgetContent(context: Context, data: WidgetData) {
                 text = "할 일이 없습니다",
                 style = TextStyle(
                     fontSize = 13.sp,
-                    color = ColorProvider(Color.GRAY, Color.LTGRAY),
+                    color = ColorProvider(Color.GRAY),
                 ),
             )
         }
@@ -106,9 +106,9 @@ private fun TaskRow(context: Context, task: WidgetTask) {
         else -> "LOW"
     }
     val priorityColor = when (task.priority) {
-        "high" -> ColorProvider(Color.parseColor("#D32F2F"), Color.parseColor("#EF5350"))
-        "medium" -> ColorProvider(Color.parseColor("#F57C00"), Color.parseColor("#FFB74D"))
-        else -> ColorProvider(Color.GRAY, Color.LTGRAY)
+        "high" -> ColorProvider(Color.parseColor("#D32F2F"))
+        "medium" -> ColorProvider(Color.parseColor("#F57C00"))
+        else -> ColorProvider(Color.GRAY)
     }
 
     Row(
@@ -128,7 +128,7 @@ private fun TaskRow(context: Context, task: WidgetTask) {
             text = task.title,
             style = TextStyle(
                 fontSize = 13.sp,
-                color = ColorProvider(Color.BLACK, Color.WHITE),
+                color = ColorProvider(Color.BLACK),
             ),
             maxLines = 1,
             modifier = GlanceModifier.defaultWeight(),
