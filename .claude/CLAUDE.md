@@ -6,7 +6,7 @@ Cross-platform TODO application with cloud sync and native widgets.
 - **Framework**: Flutter 3.38+ (Dart)
 - **State Management**: Riverpod 2.x (riverpod_annotation + riverpod_generator)
 - **Local DB**: Drift (SQLite ORM)
-- **Backend**: Firebase (Firestore + Auth + FCM)
+- **Backend**: Firebase (Firestore + Auth + Hosting + Cloud Functions)
 - **Routing**: go_router
 - **Models**: Freezed + json_serializable
 - **Widget Bridge**: home_widget
@@ -26,11 +26,12 @@ lib/
 │   └── repositories/  # Local+remote combined
 ├── domain/            # Entities (Freezed), enums, repository interfaces
 ├── presentation/      # UI layer
-│   ├── screens/       # home, task_detail, task_editor, categories, search, settings, auth
+│   ├── screens/       # home, task_detail, task_editor, categories, search, settings, auth, admin
 │   ├── providers/     # Riverpod providers
 │   └── shared_widgets/
-├── services/          # sync, notification, fcm, widget, connectivity
-└── routing/           # GoRouter config
+├── services/          # sync, notification, fcm, widget, connectivity, auth, user
+├── routing/           # GoRouter config
+functions/             # Firebase Cloud Functions (email reminders)
 ```
 
 ## Git Branching Strategy
@@ -55,4 +56,7 @@ lib/
 - Code generation: `dart run build_runner build --delete-conflicting-outputs`
 
 ## Platforms
-- iOS, Android, macOS, Windows + native widgets for each
+- Web, Android, macOS, Windows
+- Android: app + widget
+- macOS: app + widget (widget data sync requires Apple Developer account)
+- Web/Windows: app only
