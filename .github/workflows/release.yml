@@ -6,6 +6,56 @@ on:
       - 'v*'
 
 jobs:
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate Firebase options placeholder
+        run: |
+          cat > lib/firebase_options.dart << 'DART'
+          import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
+
+          class DefaultFirebaseOptions {
+            static FirebaseOptions get currentPlatform {
+              return const FirebaseOptions(
+                apiKey: 'placeholder',
+                appId: 'placeholder',
+                messagingSenderId: 'placeholder',
+                projectId: 'placeholder',
+              );
+            }
+          }
+          DART
+          dart format lib/firebase_options.dart
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Rename APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk Finito-Android.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-build
+          path: Finito-Android.apk
+
   build-windows:
     name: Build Windows
     runs-on: windows-latest
@@ -102,12 +152,16 @@ jobs:
 
   release:
     name: Create Release
-    needs: [build-windows, build-macos]
+    needs: [build-android, build-windows, build-macos]
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-build
+
       - uses: actions/download-artifact@v4
         with:
           name: windows-build
@@ -122,5 +176,6 @@ jobs:
           name: Finito ${{ github.ref_name }}
           generate_release_notes: true
           files: |
+            Finito-Android.apk
             Finito-Windows-x64.zip
             Finito-macOS.zip

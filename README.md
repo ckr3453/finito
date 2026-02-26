@@ -2,7 +2,7 @@
 
 [한국어](README_KO.md)
 
-A cross-platform TODO app with cloud sync. Manage your tasks from web or desktop — your data stays in sync across all devices via Google account.
+A cross-platform TODO app with cloud sync. Manage your tasks from web, desktop, or mobile — your data stays in sync across all devices via Google account.
 
 **Live Demo**: https://finito-f95ea.web.app
 
@@ -23,10 +23,11 @@ A cross-platform TODO app with cloud sync. Manage your tasks from web or desktop
 
 ## Download
 
-Desktop builds are available on the [GitHub Releases](https://github.com/ckr3453/finito/releases) page.
+Builds are available on the [GitHub Releases](https://github.com/ckr3453/finito/releases) page.
 
 | Platform | File | Notes |
 |----------|------|-------|
+| Android | `Finito-Android.apk` | Allow install from unknown sources |
 | Windows | `Finito-Windows-x64.zip` | Extract and run `finito.exe` |
 | macOS | `Finito-macOS.zip` | Unsigned — on first launch, go to `System Settings > Privacy & Security` and click "Open Anyway" |
 
@@ -43,6 +44,7 @@ Without login, tasks are stored locally in your browser. Log in to sync across d
 | Platform | App | Widget |
 |----------|-----|--------|
 | Web | Available | - |
+| Android | Available | Available |
 | macOS | Available | UI only (data sync requires Apple Developer account) |
 | Windows | Available | - |
 
