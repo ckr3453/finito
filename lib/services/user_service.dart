@@ -51,8 +51,10 @@ class UserService {
     final doc = await docRef.get();
     if (!doc.exists) {
       // First user becomes admin; all users are auto-approved
-      final usersSnapshot =
-          await _firestore.collection(FirestorePaths.usersCol).limit(1).get();
+      final usersSnapshot = await _firestore
+          .collection(FirestorePaths.usersCol)
+          .limit(1)
+          .get();
       final isFirstUser = usersSnapshot.docs.isEmpty;
 
       await docRef.set({
