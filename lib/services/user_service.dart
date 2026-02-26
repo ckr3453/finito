@@ -50,7 +50,7 @@ class UserService {
     final docRef = _firestore.doc(FirestorePaths.userDoc(uid));
     final doc = await docRef.get();
     if (!doc.exists) {
-      // First user becomes admin + auto-approved
+      // First user becomes admin; all users are auto-approved
       final usersSnapshot = await _firestore
           .collection(FirestorePaths.usersCol)
           .limit(1)
@@ -60,7 +60,7 @@ class UserService {
       await docRef.set({
         'email': email,
         'displayName': displayName,
-        'approved': isFirstUser,
+        'approved': true,
         'isAdmin': isFirstUser,
         'createdAt': FieldValue.serverTimestamp(),
       });
