@@ -90,7 +90,7 @@ void main() {
       expect(doc.data()!['email'], 'first@example.com');
     });
 
-    test('second user does NOT get admin or approved', () async {
+    test('second user is auto-approved but NOT admin', () async {
       // Create first user
       await service.ensureUserProfile(
         uid: 'first-user',
@@ -106,7 +106,7 @@ void main() {
       final doc = await fakeFirestore
           .doc(FirestorePaths.userDoc('second-user'))
           .get();
-      expect(doc.data()!['approved'], false);
+      expect(doc.data()!['approved'], true);
       expect(doc.data()!['isAdmin'], false);
     });
 

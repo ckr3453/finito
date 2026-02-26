@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:todo_app/presentation/providers/auth_provider.dart';
-import 'package:todo_app/presentation/providers/user_provider.dart';
-import 'package:todo_app/presentation/screens/admin/pending_approval_screen.dart';
 
-class AppShell extends ConsumerWidget {
+class AppShell extends StatelessWidget {
   final Widget child;
   const AppShell({super.key, required this.child});
 
@@ -18,27 +14,7 @@ class AppShell extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isAuthenticated = ref.watch(isAuthenticatedProvider);
-
-    // Approval gate: block all shell routes for unapproved users
-    if (isAuthenticated) {
-      final profileAsync = ref.watch(currentUserProfileProvider);
-      // Still loading profile
-      if (profileAsync.isLoading && !profileAsync.hasValue) {
-        return const Scaffold(body: Center(child: CircularProgressIndicator()));
-      }
-      // Error loading profile — let the user through (don't block on Firestore errors)
-      if (profileAsync.hasError && !profileAsync.hasValue) {
-        // Skip approval check, proceed normally
-      } else {
-        final isApproved = ref.watch(isApprovedProvider);
-        if (profileAsync.value != null && !isApproved) {
-          return const PendingApprovalScreen();
-        }
-      }
-    }
-
+  Widget build(BuildContext context) {
     final index = _currentIndex(context);
     final isWide = MediaQuery.sizeOf(context).width >= 600;
 
