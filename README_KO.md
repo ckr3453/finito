@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-클라우드 동기화를 지원하는 크로스 플랫폼 TODO 앱. 웹, 데스크탑 어디서든 Google 계정으로 할 일을 관리하세요.
+클라우드 동기화를 지원하는 크로스 플랫폼 TODO 앱. 웹, 데스크탑, 모바일 어디서든 Google 계정으로 할 일을 관리하세요.
 
 **바로 사용하기**: https://finito-f95ea.web.app
 
@@ -23,10 +23,11 @@
 
 ## 다운로드
 
-데스크탑 설치 파일은 [GitHub Releases](https://github.com/ckr3453/finito/releases) 페이지에서 받을 수 있습니다.
+설치 파일은 [GitHub Releases](https://github.com/ckr3453/finito/releases) 페이지에서 받을 수 있습니다.
 
 | 플랫폼 | 파일 | 참고 |
 |--------|------|------|
+| Android | `Finito-Android.apk` | 출처를 알 수 없는 앱 설치 허용 필요 |
 | Windows | `Finito-Windows-x64.zip` | 압축 해제 후 `finito.exe` 실행 |
 | macOS | `Finito-macOS.zip` | 서명되지 않음 — 첫 실행 시 `시스템 설정 > 개인정보 보호 및 보안`에서 "확인 없이 열기" 클릭 필요 |
 
@@ -43,6 +44,7 @@
 | 플랫폼 | 앱 | 위젯 |
 |--------|-----|------|
 | 웹 | 사용 가능 | - |
+| Android | 사용 가능 | 사용 가능 |
 | macOS | 사용 가능 | UI만 (데이터 연동은 Apple Developer 계정 필요) |
 | Windows | 사용 가능 | - |
 
