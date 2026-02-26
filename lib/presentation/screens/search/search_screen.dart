@@ -26,6 +26,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   void dispose() {
     _debounceTimer?.cancel();
     _searchController.dispose();
+    // Clear search query when leaving search screen
+    ref.read(taskFilterProvider.notifier).setSearchQuery(null);
     super.dispose();
   }
 
