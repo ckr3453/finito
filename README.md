@@ -39,8 +39,6 @@ Desktop builds are available on the [GitHub Releases](https://github.com/ckr3453
 
 Without login, tasks are stored locally in your browser. Log in to sync across devices.
 
-The first registered user is automatically granted admin access. Subsequent users require admin approval.
-
 ### Supported Platforms
 
 | Platform | App | Widget |
