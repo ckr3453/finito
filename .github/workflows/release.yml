@@ -45,6 +45,16 @@ jobs:
           DART
           dart format lib/firebase_options.dart
 
+      - name: Generate google-services.json placeholder
+        run: |
+          cat > android/app/google-services.json << 'JSON'
+          {
+            "project_info": { "project_number": "0", "project_id": "placeholder", "storage_bucket": "placeholder" },
+            "client": [{ "client_info": { "mobilesdk_app_id": "1:0:android:placeholder", "android_client_info": { "package_name": "com.davidtodo.todo_app" } }, "api_key": [{ "current_key": "placeholder" }] }],
+            "configuration_version": "1"
+          }
+          JSON
+
       - name: Build APK
         run: flutter build apk --release
 
