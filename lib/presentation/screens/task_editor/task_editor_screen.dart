@@ -445,6 +445,9 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
       }
 
       if (mounted) {
+        // Invalidate detail provider so the detail screen refreshes
+        ref.invalidate(taskDetailProvider(_isEditing ? widget.taskId! : ''));
+        ref.invalidate(taskTagsProvider(_isEditing ? widget.taskId! : ''));
         context.pop();
       }
     } catch (e) {
