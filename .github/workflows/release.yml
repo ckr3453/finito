@@ -113,56 +113,9 @@ jobs:
           name: windows-build
           path: Finito-Windows-x64.zip
 
-  build-macos:
-    name: Build macOS
-    runs-on: macos-latest
-    timeout-minutes: 30
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Generate Firebase options placeholder
-        run: |
-          cat > lib/firebase_options.dart << 'DART'
-          import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
-
-          class DefaultFirebaseOptions {
-            static FirebaseOptions get currentPlatform {
-              return const FirebaseOptions(
-                apiKey: 'placeholder',
-                appId: 'placeholder',
-                messagingSenderId: 'placeholder',
-                projectId: 'placeholder',
-              );
-            }
-          }
-          DART
-          dart format lib/firebase_options.dart
-
-      - name: Build macOS
-        run: flutter build macos --release
-
-      - name: Archive macOS build
-        run: |
-          cd build/macos/Build/Products/Release
-          zip -r "$GITHUB_WORKSPACE/Finito-macOS.zip" finito.app
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: macos-build
-          path: Finito-macOS.zip
-
   release:
     name: Create Release
-    needs: [build-android, build-windows, build-macos]
+    needs: [build-android, build-windows]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -176,10 +129,6 @@ jobs:
         with:
           name: windows-build
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: macos-build
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -188,4 +137,3 @@ jobs:
           files: |
             Finito-Android.apk
             Finito-Windows-x64.zip
-            Finito-macOS.zip

@@ -200,10 +200,9 @@ class _SortChip extends ConsumerWidget {
           ),
         );
       }).toList(),
-      child: InputChip(
+      child: Chip(
         avatar: const Icon(Icons.sort, size: 16),
         label: Text(_sortLabel(sortBy, context)),
-        onPressed: () {},
       ),
     );
   }

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/presentation/providers/auth_provider.dart';
+import 'package:todo_app/presentation/providers/database_provider.dart';
+import 'package:todo_app/presentation/providers/sync_providers.dart';
 
 class UserActionBar extends ConsumerWidget {
   const UserActionBar({super.key});
@@ -50,11 +52,18 @@ class _LoggedInBar extends ConsumerWidget {
           tooltip: l10n.logout,
           icon: const Icon(Icons.logout, size: 18),
           onPressed: () async {
+            final syncService = ref.read(taskSyncServiceProvider);
+            final unsyncedCount = syncService.currentUnsyncedCount;
+
+            final message = unsyncedCount > 0
+                ? '${l10n.logoutConfirm}\n\n${l10n.logoutUnsyncedWarning(unsyncedCount)}'
+                : l10n.logoutConfirm;
+
             final confirmed = await showDialog<bool>(
               context: context,
               builder: (context) => AlertDialog(
                 title: Text(l10n.logout),
-                content: Text(l10n.logoutConfirm),
+                content: Text(message),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context, false),
@@ -68,6 +77,7 @@ class _LoggedInBar extends ConsumerWidget {
               ),
             );
             if (confirmed == true) {
+              await ref.read(appDatabaseProvider).clearAllData();
               await ref.read(authServiceProvider).signOut();
             }
           },

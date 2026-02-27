@@ -22,8 +22,9 @@ TaskRepository taskRepository(Ref ref) {
   if (user == null) {
     return ref.watch(localTaskRepositoryProvider);
   }
+  final db = ref.watch(appDatabaseProvider);
   final syncService = ref.watch(taskSyncServiceProvider);
-  syncService.start(user.uid);
+  db.clearAllData().then((_) => syncService.start(user.uid));
   return SyncedTaskRepository(
     local: ref.watch(localTaskRepositoryProvider),
     syncService: syncService,
