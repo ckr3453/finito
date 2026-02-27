@@ -1,37 +1,23 @@
 const { onSchedule } = require("firebase-functions/v2/scheduler");
-const { defineSecret } = require("firebase-functions/params");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, Timestamp } = require("firebase-admin/firestore");
-const { getAuth } = require("firebase-admin/auth");
-const nodemailer = require("nodemailer");
+const { getMessaging } = require("firebase-admin/messaging");
 
 initializeApp();
 
-const gmailUser = defineSecret("GMAIL_USER");
-const gmailAppPassword = defineSecret("GMAIL_APP_PASSWORD");
-
 /**
  * Scheduled function: runs every 5 minutes.
- * Checks all users' tasks for reminders that are due and sends email.
+ * Checks all users' tasks for reminders that are due and sends FCM push.
  */
-exports.sendReminderEmails = onSchedule(
+exports.sendReminderPush = onSchedule(
   {
     schedule: "every 5 minutes",
     timeZone: "Asia/Seoul",
-    secrets: [gmailUser, gmailAppPassword],
   },
   async () => {
     const db = getFirestore();
-    const auth = getAuth();
+    const messaging = getMessaging();
     const now = Timestamp.now();
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: gmailUser.value(),
-        pass: gmailAppPassword.value(),
-      },
-    });
 
     // Get all users
     const usersSnapshot = await db.collection("users").listDocuments();
@@ -44,27 +30,24 @@ exports.sendReminderEmails = onSchedule(
         .collection(`users/${userId}/tasks`)
         .where("reminderTime", "<=", now)
         .where("status", "==", "pending")
-        .where("reminderEmailSent", "==", false)
+        .where("reminderPushSent", "==", false)
         .get();
 
       if (tasksSnapshot.empty) continue;
 
-      // Get user email from Firebase Auth
-      let userEmail;
-      try {
-        const userRecord = await auth.getUser(userId);
-        userEmail = userRecord.email;
-      } catch {
-        console.log(`User ${userId} not found in Auth, skipping.`);
+      // Get user's FCM tokens
+      const tokensSnapshot = await db
+        .collection(`users/${userId}/fcmTokens`)
+        .get();
+
+      if (tokensSnapshot.empty) {
+        console.log(`User ${userId} has no FCM tokens, skipping.`);
         continue;
       }
 
-      if (!userEmail) {
-        console.log(`User ${userId} has no email, skipping.`);
-        continue;
-      }
+      const tokens = tokensSnapshot.docs.map((doc) => doc.data().token);
 
-      // Send email for each task
+      // Send push for each task
       for (const taskDoc of tasksSnapshot.docs) {
         const task = taskDoc.data();
 
@@ -78,40 +61,59 @@ exports.sendReminderEmails = onSchedule(
           ? new Date(task.dueDate.seconds * 1000).toLocaleString("ko-KR", {
               timeZone: "Asia/Seoul",
             })
-          : "없음";
+          : "";
 
-        const mailOptions = {
-          from: `Finito <${gmailUser.value()}>`,
-          to: userEmail,
-          subject: `[Finito] ${task.title}`,
-          html: `
-            <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-              <h2 style="color: #1976D2;">Finito - 리마인더</h2>
-              <div style="background: #f5f5f5; padding: 16px; border-radius: 8px;">
-                <h3 style="margin: 0 0 8px;">${task.title}</h3>
-                ${task.description ? `<p style="color: #666; margin: 0 0 8px;">${task.description}</p>` : ""}
-                <p style="margin: 4px 0; font-size: 14px;">
-                  <strong>우선순위:</strong> ${priorityLabel}
-                </p>
-                <p style="margin: 4px 0; font-size: 14px;">
-                  <strong>마감일:</strong> ${dueDateStr}
-                </p>
-              </div>
-              <p style="color: #999; font-size: 12px; margin-top: 16px;">
-                이 이메일은 Finito 앱에서 설정한 리마인더입니다.
-              </p>
-            </div>
-          `,
+        const body = [
+          task.description || "",
+          dueDateStr ? `마감: ${dueDateStr}` : "",
+          `우선순위: ${priorityLabel}`,
+        ]
+          .filter(Boolean)
+          .join(" | ");
+
+        const message = {
+          notification: {
+            title: task.title,
+            body: body,
+          },
+          data: {
+            taskId: taskDoc.id,
+          },
+          tokens: tokens,
         };
 
         try {
-          await transporter.sendMail(mailOptions);
+          const response = await messaging.sendEachForMulticast(message);
+          console.log(
+            `Push sent for task "${task.title}" to ${userId}: ${response.successCount} success, ${response.failureCount} failure`
+          );
+
+          // Clean up invalid tokens
+          const tokensToDelete = [];
+          response.responses.forEach((resp, idx) => {
+            if (
+              resp.error &&
+              (resp.error.code === "messaging/registration-token-not-registered" ||
+                resp.error.code === "messaging/invalid-registration-token")
+            ) {
+              tokensToDelete.push(tokensSnapshot.docs[idx].ref);
+            }
+          });
+
+          if (tokensToDelete.length > 0) {
+            const batch = db.batch();
+            tokensToDelete.forEach((ref) => batch.delete(ref));
+            await batch.commit();
+            console.log(
+              `Cleaned up ${tokensToDelete.length} invalid tokens for user ${userId}`
+            );
+          }
+
           // Mark as sent
-          await taskDoc.ref.update({ reminderEmailSent: true });
-          console.log(`Reminder sent to ${userEmail} for task: ${task.title}`);
+          await taskDoc.ref.update({ reminderPushSent: true });
         } catch (error) {
           console.error(
-            `Failed to send email to ${userEmail}: ${error.message}`
+            `Failed to send push for task "${task.title}" to ${userId}: ${error.message}`
           );
         }
       }

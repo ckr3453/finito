@@ -6,3 +6,5 @@ export 'fcm_client.dart';
 export 'fcm_client_impl.dart';
 export 'fcm_service.dart';
 export 'fcm_service_impl.dart';
+export 'noop_fcm_service.dart';
+export 'fcm_background_handler.dart';

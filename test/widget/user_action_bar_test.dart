@@ -8,9 +8,11 @@ import 'package:todo_app/data/database/app_database.dart';
 import 'package:todo_app/l10n/app_localizations.dart';
 import 'package:todo_app/presentation/providers/auth_provider.dart';
 import 'package:todo_app/presentation/providers/database_provider.dart';
+import 'package:todo_app/presentation/providers/notification_provider.dart';
 import 'package:todo_app/presentation/providers/sync_providers.dart';
 import 'package:todo_app/presentation/shared_widgets/user_action_bar.dart';
 import 'package:todo_app/services/auth_service.dart';
+import 'package:todo_app/services/notification/fcm_service.dart';
 import 'package:todo_app/services/task_sync_service.dart';
 
 class MockUser extends Mock implements User {}
@@ -22,6 +24,8 @@ class MockTaskSyncService extends Mock implements TaskSyncService {}
 class MockAppDatabase extends Mock implements AppDatabase {}
 
 class MockUserInfo extends Mock implements UserInfo {}
+
+class MockFcmService extends Mock implements FcmService {}
 
 Widget buildSubject({required List<Override> overrides}) {
   return ProviderScope(
@@ -47,12 +51,14 @@ void main() {
   late MockAuthService mockAuthService;
   late MockTaskSyncService mockSyncService;
   late MockAppDatabase mockDb;
+  late MockFcmService mockFcmService;
 
   setUp(() {
     mockUser = MockUser();
     mockAuthService = MockAuthService();
     mockSyncService = MockTaskSyncService();
     mockDb = MockAppDatabase();
+    mockFcmService = MockFcmService();
 
     when(() => mockUser.displayName).thenReturn('Test User');
     when(() => mockUser.email).thenReturn('test@example.com');
@@ -61,6 +67,9 @@ void main() {
     when(() => mockUser.providerData).thenReturn([]);
     when(() => mockDb.clearAllData()).thenAnswer((_) async {});
     when(() => mockAuthService.signOut()).thenAnswer((_) async {});
+    when(
+      () => mockFcmService.deleteTokenFromFirestore(any()),
+    ).thenAnswer((_) async {});
   });
 
   group('UserActionBar', () {
@@ -88,6 +97,7 @@ void main() {
             authServiceProvider.overrideWithValue(mockAuthService),
             taskSyncServiceProvider.overrideWithValue(mockSyncService),
             appDatabaseProvider.overrideWithValue(mockDb),
+            fcmServiceProvider.overrideWithValue(mockFcmService),
           ],
         ),
       );
@@ -109,6 +119,7 @@ void main() {
             authServiceProvider.overrideWithValue(mockAuthService),
             taskSyncServiceProvider.overrideWithValue(mockSyncService),
             appDatabaseProvider.overrideWithValue(mockDb),
+            fcmServiceProvider.overrideWithValue(mockFcmService),
           ],
         ),
       );
@@ -133,6 +144,7 @@ void main() {
             authServiceProvider.overrideWithValue(mockAuthService),
             taskSyncServiceProvider.overrideWithValue(mockSyncService),
             appDatabaseProvider.overrideWithValue(mockDb),
+            fcmServiceProvider.overrideWithValue(mockFcmService),
           ],
         ),
       );
@@ -156,6 +168,7 @@ void main() {
             authServiceProvider.overrideWithValue(mockAuthService),
             taskSyncServiceProvider.overrideWithValue(mockSyncService),
             appDatabaseProvider.overrideWithValue(mockDb),
+            fcmServiceProvider.overrideWithValue(mockFcmService),
           ],
         ),
       );
@@ -185,6 +198,7 @@ void main() {
             authServiceProvider.overrideWithValue(mockAuthService),
             taskSyncServiceProvider.overrideWithValue(mockSyncService),
             appDatabaseProvider.overrideWithValue(mockDb),
+            fcmServiceProvider.overrideWithValue(mockFcmService),
           ],
         ),
       );
@@ -214,6 +228,7 @@ void main() {
             authServiceProvider.overrideWithValue(mockAuthService),
             taskSyncServiceProvider.overrideWithValue(mockSyncService),
             appDatabaseProvider.overrideWithValue(mockDb),
+            fcmServiceProvider.overrideWithValue(mockFcmService),
           ],
         ),
       );

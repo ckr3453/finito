@@ -44,7 +44,9 @@ jobs:
           dart format lib/firebase_options.dart
 
       - name: Build web
-        run: flutter build web --release
+        env:
+          FCM_VAPID_KEY: ${{ secrets.FCM_VAPID_KEY }}
+        run: flutter build web --release --dart-define=FCM_VAPID_KEY=$FCM_VAPID_KEY
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0

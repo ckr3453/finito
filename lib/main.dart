@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,6 +13,7 @@ import 'package:todo_app/presentation/providers/notification_provider.dart';
 import 'package:todo_app/presentation/providers/theme_provider.dart';
 import 'package:todo_app/presentation/providers/widget_provider.dart';
 import 'package:todo_app/routing/app_router.dart';
+import 'package:todo_app/services/notification/fcm_background_handler.dart';
 import 'package:todo_app/services/splash/splash_stub.dart'
     if (dart.library.io) 'package:todo_app/services/splash/splash_native.dart';
 import 'package:todo_app/services/widget/widget_callback_stub.dart'
@@ -32,6 +34,10 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    // Register FCM background handler (Android only, web uses service worker)
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    }
   } catch (e) {
     debugPrint('Firebase initialization failed: $e');
     debugPrint('Running in local-only mode.');
@@ -74,6 +80,16 @@ class _TodoAppState extends ConsumerState<TodoApp> with WidgetsBindingObserver {
         }
       },
     );
+
+    // Setup FCM message handlers for push notification taps
+    final fcmSvc = ref.read(fcmServiceProvider);
+    await fcmSvc.setupMessageHandlers(
+      onNotificationTap: (taskId) {
+        if (taskId != null) {
+          appRouter.push('/task/$taskId');
+        }
+      },
+    );
   }
 
   @override
@@ -108,6 +124,7 @@ class _TodoAppState extends ConsumerState<TodoApp> with WidgetsBindingObserver {
     final locale = ref.watch(appLocaleProvider);
     ref.watch(widgetAutoUpdateProvider);
     ref.watch(reminderAutoRescheduleProvider);
+    ref.watch(fcmTokenAutoSaveProvider);
 
     return MaterialApp.router(
       title: 'Finito',

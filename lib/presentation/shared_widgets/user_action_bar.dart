@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:todo_app/core/l10n_extension.dart';
 import 'package:todo_app/presentation/providers/auth_provider.dart';
 import 'package:todo_app/presentation/providers/database_provider.dart';
+import 'package:todo_app/presentation/providers/notification_provider.dart';
 import 'package:todo_app/presentation/providers/sync_providers.dart';
 
 class UserActionBar extends ConsumerWidget {
@@ -77,6 +78,12 @@ class _LoggedInBar extends ConsumerWidget {
               ),
             );
             if (confirmed == true) {
+              final uid = ref.read(currentUserProvider)?.uid;
+              if (uid != null) {
+                await ref
+                    .read(fcmServiceProvider)
+                    .deleteTokenFromFirestore(uid);
+              }
               await ref.read(appDatabaseProvider).clearAllData();
               await ref.read(authServiceProvider).signOut();
             }
