@@ -36,9 +36,7 @@ Widget buildSubject({required List<Override> overrides}) {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
-        appBar: AppBar(
-          actions: const [UserActionBar(), SizedBox(width: 8)],
-        ),
+        appBar: AppBar(actions: const [UserActionBar(), SizedBox(width: 8)]),
       ),
     ),
   );
@@ -70,9 +68,7 @@ void main() {
       await tester.pumpWidget(
         buildSubject(
           overrides: [
-            authStateProvider.overrideWith(
-              (ref) => Stream<User?>.value(null),
-            ),
+            authStateProvider.overrideWith((ref) => Stream<User?>.value(null)),
           ],
         ),
       );
@@ -145,10 +141,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.logout));
       await tester.pumpAndSettle();
 
-      expect(
-        find.textContaining('동기화되지 않은 변경사항이 3건'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('동기화되지 않은 변경사항이 3건'), findsOneWidget);
     });
 
     testWidgets('로그아웃 확인 시 clearAllData와 signOut이 호출된다', (tester) async {
@@ -180,8 +173,7 @@ void main() {
       verify(() => mockAuthService.signOut()).called(1);
     });
 
-    testWidgets('로그아웃 취소 시 clearAllData와 signOut이 호출되지 않는다',
-        (tester) async {
+    testWidgets('로그아웃 취소 시 clearAllData와 signOut이 호출되지 않는다', (tester) async {
       when(() => mockSyncService.currentUnsyncedCount).thenReturn(0);
 
       await tester.pumpWidget(
