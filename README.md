@@ -13,7 +13,7 @@ A cross-platform TODO app with cloud sync. Manage your tasks from web, desktop, 
 - Search and filtering (status, priority, category)
 - Sorting by due date, priority, or creation date
 - Drag-and-drop reordering
-- Email reminders via Cloud Functions (Gmail SMTP)
+- Push notification reminders via FCM (Web, Android)
 - Admin dashboard for user management (grant/revoke admin, approve/reject users)
 - Google and email authentication
 - Dark / Light theme
@@ -69,7 +69,7 @@ UI always reads from local DB (Drift/SQLite) for instant response. Firestore syn
 | State Management | Riverpod 2.x (annotation + generator) |
 | Local DB | Drift (SQLite ORM) — web uses IndexedDB fallback |
 | Backend | Firebase (Firestore + Auth + Hosting + Cloud Functions) |
-| Email | Cloud Functions + Gmail SMTP (nodemailer) |
+| Push Notifications | FCM (Cloud Functions + Firebase Messaging) |
 | Routing | GoRouter |
 | Models | Freezed + json_serializable |
 | Widget Bridge | home_widget (Android) |
@@ -90,7 +90,7 @@ lib/
 │   └── shared_widgets/
 ├── services/          # sync, notification, fcm, widget, connectivity, auth, user
 ├── routing/           # GoRouter config
-functions/             # Firebase Cloud Functions (email reminders)
+functions/             # Firebase Cloud Functions (push reminders)
 ```
 
 ## Development
@@ -125,11 +125,7 @@ flutter run
 cd functions
 npm install
 
-# Set Gmail secrets (requires Blaze plan)
-firebase functions:secrets:set GMAIL_USER
-firebase functions:secrets:set GMAIL_APP_PASSWORD
-
-# Deploy
+# Deploy (requires Blaze plan)
 firebase deploy --only functions
 ```
 

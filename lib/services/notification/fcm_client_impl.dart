@@ -8,7 +8,8 @@ class FcmClientImpl implements FcmClient {
     : _messaging = messaging ?? FirebaseMessaging.instance;
 
   @override
-  Future<String?> getToken() => _messaging.getToken();
+  Future<String?> getToken({String? vapidKey}) =>
+      _messaging.getToken(vapidKey: vapidKey);
 
   @override
   Stream<String> get onTokenRefresh => _messaging.onTokenRefresh;

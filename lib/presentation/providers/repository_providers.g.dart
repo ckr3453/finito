@@ -24,7 +24,7 @@ final localTaskRepositoryProvider = Provider<LocalTaskRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LocalTaskRepositoryRef = ProviderRef<LocalTaskRepository>;
-String _$taskRepositoryHash() => r'41c3bd85ec37496af654b02cb987d245cdd8acc8';
+String _$taskRepositoryHash() => r'd3ed3582ca5cbbc7532272716a66abd9405b17b7';
 
 /// See also [taskRepository].
 @ProviderFor(taskRepository)

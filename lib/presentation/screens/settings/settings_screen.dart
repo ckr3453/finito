@@ -105,12 +105,10 @@ class SettingsScreen extends ConsumerWidget {
 
           const Divider(height: 32),
 
-          // Notification section (hide on web - not supported)
-          if (!kIsWeb) ...[
-            _SectionHeader(title: l10n.notifications),
-            const _NotificationSection(),
-            const Divider(height: 32),
-          ],
+          // Notification section
+          _SectionHeader(title: l10n.notifications),
+          const _NotificationSection(),
+          const Divider(height: 32),
 
           // Sync section
           _SectionHeader(title: l10n.sync),
@@ -224,8 +222,10 @@ class _DeleteAccountButton extends ConsumerWidget {
       final userService = ref.read(userServiceProvider);
       final uid = ref.read(currentUserProvider)?.uid;
 
-      // Delete Firestore data (profile + tasks)
+      // Delete FCM tokens and Firestore data (profile + tasks)
       if (uid != null) {
+        final fcmSvc = ref.read(fcmServiceProvider);
+        await fcmSvc.deleteTokenFromFirestore(uid);
         await userService.deleteUserData(uid);
       }
 
@@ -401,8 +401,15 @@ class _NotificationSection extends ConsumerWidget {
       subtitle: Text(l10n.notificationPermissionDesc),
       trailing: FilledButton.tonal(
         onPressed: () async {
-          final notifSvc = ref.read(notificationServiceProvider);
-          final granted = await notifSvc.requestPermission();
+          // On web, request FCM permission. On native, request local notification permission.
+          final bool granted;
+          if (kIsWeb) {
+            final fcmSvc = ref.read(fcmServiceProvider);
+            granted = await fcmSvc.requestPermission();
+          } else {
+            final notifSvc = ref.read(notificationServiceProvider);
+            granted = await notifSvc.requestPermission();
+          }
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

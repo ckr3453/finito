@@ -1,5 +1,5 @@
 abstract class FcmClient {
-  Future<String?> getToken();
+  Future<String?> getToken({String? vapidKey});
 
   Stream<String> get onTokenRefresh;
 

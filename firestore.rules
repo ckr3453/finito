@@ -31,5 +31,10 @@ service cloud.firestore {
 
       // Cloud Functions (service account) can read all tasks for reminders
     }
+
+    // FCM tokens
+    match /users/{userId}/fcmTokens/{tokenId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
   }
 }
