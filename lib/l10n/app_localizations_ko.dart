@@ -417,6 +417,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get logoutConfirm => '로그아웃 하시겠습니까?';
 
   @override
+  String logoutUnsyncedWarning(int count) {
+    return '동기화되지 않은 변경사항이 $count건 있습니다. 로그아웃하면 해당 데이터가 삭제됩니다.';
+  }
+
+  @override
   String get emailNotVerified => '이메일 미인증';
 
   @override

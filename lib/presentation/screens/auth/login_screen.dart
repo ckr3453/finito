@@ -19,7 +19,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _isGoogleLoading = false;
-  bool _isAnonymousLoading = false;
   bool _obscurePassword = true;
 
   @override
@@ -97,32 +96,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } finally {
       if (mounted) setState(() => _isGoogleLoading = false);
-    }
-  }
-
-  Future<void> _signInAnonymously() async {
-    setState(() => _isAnonymousLoading = true);
-
-    try {
-      final authService = ref.read(authServiceProvider);
-      await authService.signInAnonymously();
-
-      if (mounted) context.go('/');
-    } on FirebaseAuthException catch (e) {
-      if (mounted) {
-        final l10n = context.l10n;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_mapFirebaseError(e.code, l10n))),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(context.l10n.loginFailed)));
-      }
-    } finally {
-      if (mounted) setState(() => _isAnonymousLoading = false);
     }
   }
 
@@ -310,17 +283,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         child: Text(l10n.signUp),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: _isAnonymousLoading ? null : _signInAnonymously,
-                    child: _isAnonymousLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.continueWithoutAccount),
                   ),
                 ],
               ),

@@ -878,6 +878,12 @@ abstract class AppLocalizations {
   /// **'로그아웃 하시겠습니까?'**
   String get logoutConfirm;
 
+  /// No description provided for @logoutUnsyncedWarning.
+  ///
+  /// In ko, this message translates to:
+  /// **'동기화되지 않은 변경사항이 {count}건 있습니다. 로그아웃하면 해당 데이터가 삭제됩니다.'**
+  String logoutUnsyncedWarning(int count);
+
   /// No description provided for @emailNotVerified.
   ///
   /// In ko, this message translates to:

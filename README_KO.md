@@ -29,7 +29,6 @@
 |--------|------|------|
 | Android | `Finito-Android.apk` | 출처를 알 수 없는 앱 설치 허용 필요 |
 | Windows | `Finito-Windows-x64.zip` | 압축 해제 후 `finito.exe` 실행 |
-| macOS | `Finito-macOS.zip` | 서명되지 않음 — 첫 실행 시 `시스템 설정 > 개인정보 보호 및 보안`에서 "확인 없이 열기" 클릭 필요 |
 
 ## 사용 방법
 
@@ -45,7 +44,6 @@
 |--------|-----|------|
 | 웹 | 사용 가능 | - |
 | Android | 사용 가능 | 사용 가능 |
-| macOS | 사용 가능 | UI만 (데이터 연동은 Apple Developer 계정 필요) |
 | Windows | 사용 가능 | - |
 
 ## 아키텍처
@@ -74,7 +72,7 @@ UI는 항상 로컬 DB(Drift/SQLite)에서 읽어 즉각 응답합니다. Firest
 | 이메일 | Cloud Functions + Gmail SMTP (nodemailer) |
 | 라우팅 | GoRouter |
 | 모델 | Freezed + json_serializable |
-| 위젯 연동 | home_widget (WidgetKit) |
+| 위젯 연동 | home_widget (Android) |
 
 ### 프로젝트 구조
 

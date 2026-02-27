@@ -29,7 +29,6 @@ Builds are available on the [GitHub Releases](https://github.com/ckr3453/finito/
 |----------|------|-------|
 | Android | `Finito-Android.apk` | Allow install from unknown sources |
 | Windows | `Finito-Windows-x64.zip` | Extract and run `finito.exe` |
-| macOS | `Finito-macOS.zip` | Unsigned — on first launch, go to `System Settings > Privacy & Security` and click "Open Anyway" |
 
 ## How to Use
 
@@ -45,7 +44,6 @@ Without login, tasks are stored locally in your browser. Log in to sync across d
 |----------|-----|--------|
 | Web | Available | - |
 | Android | Available | Available |
-| macOS | Available | UI only (data sync requires Apple Developer account) |
 | Windows | Available | - |
 
 ## Architecture
@@ -74,7 +72,7 @@ UI always reads from local DB (Drift/SQLite) for instant response. Firestore syn
 | Email | Cloud Functions + Gmail SMTP (nodemailer) |
 | Routing | GoRouter |
 | Models | Freezed + json_serializable |
-| Widget Bridge | home_widget (WidgetKit) |
+| Widget Bridge | home_widget (Android) |
 
 ### Project Structure
 

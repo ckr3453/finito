@@ -421,6 +421,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logoutConfirm => 'Are you sure you want to log out?';
 
   @override
+  String logoutUnsyncedWarning(int count) {
+    return 'You have $count unsynced changes. They will be lost if you log out.';
+  }
+
+  @override
   String get emailNotVerified => 'Email not verified';
 
   @override

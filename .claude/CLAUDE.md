@@ -9,7 +9,7 @@ Cross-platform TODO application with cloud sync and native widgets.
 - **Backend**: Firebase (Firestore + Auth + Hosting + Cloud Functions)
 - **Routing**: go_router
 - **Models**: Freezed + json_serializable
-- **Widget Bridge**: home_widget
+- **Widget Bridge**: home_widget (Android)
 
 ## Architecture
 - **Local-First + Cloud-Synced**: UI reads from Drift, background sync to Firestore
@@ -56,7 +56,6 @@ functions/             # Firebase Cloud Functions (email reminders)
 - Code generation: `dart run build_runner build --delete-conflicting-outputs`
 
 ## Platforms
-- Web, Android, macOS, Windows
+- Web, Android, Windows
 - Android: app + widget
-- macOS: app + widget (widget data sync requires Apple Developer account)
 - Web/Windows: app only

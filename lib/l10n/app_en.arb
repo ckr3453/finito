@@ -149,6 +149,7 @@
   "loggedIn": "Logged in",
   "logout": "Logout",
   "logoutConfirm": "Are you sure you want to log out?",
+  "logoutUnsyncedWarning": "You have {count} unsynced changes. They will be lost if you log out.",
 
   "emailNotVerified": "Email not verified",
   "emailNotVerifiedDesc": "Please verify your email address.",
