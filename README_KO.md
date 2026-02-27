@@ -4,8 +4,6 @@
 
 클라우드 동기화를 지원하는 크로스 플랫폼 TODO 앱. 웹, 데스크탑, 모바일 어디서든 Google 계정으로 할 일을 관리하세요.
 
-> **참고**: macOS와 iOS는 Apple Developer 계정($99/년) 없이는 Firebase Auth의 키체인 접근이 불가하여 지원하지 않습니다.
-
 **바로 사용하기**: https://finito-f95ea.web.app
 
 ## 주요 기능
@@ -15,7 +13,7 @@
 - 검색 및 필터링 (상태, 우선순위, 카테고리)
 - 마감일 / 우선순위 / 생성일 기준 정렬
 - 드래그 앤 드롭 순서 변경
-- 이메일 리마인더 (Cloud Functions + Gmail SMTP)
+- FCM 푸시 알림 리마인더 (Web, Android)
 - 관리자 대시보드 (관리자 권한 부여/해제, 사용자 승인/거부)
 - Google 및 이메일 인증
 - 다크 / 라이트 테마
@@ -71,7 +69,7 @@ UI는 항상 로컬 DB(Drift/SQLite)에서 읽어 즉각 응답합니다. Firest
 | 상태관리 | Riverpod 2.x (annotation + generator) |
 | 로컬 DB | Drift (SQLite ORM) — 웹은 IndexedDB fallback |
 | 백엔드 | Firebase (Firestore + Auth + Hosting + Cloud Functions) |
-| 이메일 | Cloud Functions + Gmail SMTP (nodemailer) |
+| 푸시 알림 | FCM (Cloud Functions + Firebase Messaging) |
 | 라우팅 | GoRouter |
 | 모델 | Freezed + json_serializable |
 | 위젯 연동 | home_widget (Android) |
@@ -92,7 +90,7 @@ lib/
 │   └── shared_widgets/
 ├── services/          # 동기화, 알림, FCM, 위젯, 네트워크, 인증, 사용자
 ├── routing/           # GoRouter 설정
-functions/             # Firebase Cloud Functions (이메일 리마인더)
+functions/             # Firebase Cloud Functions (푸시 리마인더)
 ```
 
 ## 개발
@@ -127,11 +125,7 @@ flutter run
 cd functions
 npm install
 
-# Gmail 시크릿 설정 (Blaze 요금제 필요)
-firebase functions:secrets:set GMAIL_USER
-firebase functions:secrets:set GMAIL_APP_PASSWORD
-
-# 배포
+# 배포 (Blaze 요금제 필요)
 firebase deploy --only functions
 ```
 
