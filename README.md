@@ -4,8 +4,6 @@
 
 A cross-platform TODO app with cloud sync. Manage your tasks from web, desktop, or mobile — your data stays in sync across all devices via Google account.
 
-> **Note**: macOS and iOS are not supported due to Apple Developer account requirements for Firebase Auth keychain access.
-
 **Live Demo**: https://finito-f95ea.web.app
 
 ## Features

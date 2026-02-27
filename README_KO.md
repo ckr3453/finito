@@ -4,8 +4,6 @@
 
 클라우드 동기화를 지원하는 크로스 플랫폼 TODO 앱. 웹, 데스크탑, 모바일 어디서든 Google 계정으로 할 일을 관리하세요.
 
-> **참고**: macOS와 iOS는 Apple Developer 계정($99/년) 없이는 Firebase Auth의 키체인 접근이 불가하여 지원하지 않습니다.
-
 **바로 사용하기**: https://finito-f95ea.web.app
 
 ## 주요 기능
