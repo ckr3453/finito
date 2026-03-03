@@ -148,6 +148,10 @@ void main() {
   // Group 3: Write operations
   // ============================================================
   group('write operations', () {
+    setUp(() {
+      when(() => mockSyncService.syncNow()).thenAnswer((_) async {});
+    });
+
     test('createTask delegates to local', () async {
       final task = makeEntity(id: 'task-1');
       when(() => mockLocal.createTask(any())).thenAnswer((_) async {});
@@ -189,6 +193,7 @@ void main() {
   // ============================================================
   group('tag operations', () {
     test('setTagsForTask delegates to local', () async {
+      when(() => mockSyncService.syncNow()).thenAnswer((_) async {});
       when(
         () => mockLocal.setTagsForTask('task-1', ['tag-1', 'tag-2']),
       ).thenAnswer((_) async {});
@@ -243,6 +248,10 @@ void main() {
   // Group 6: Write operations wait for ready
   // ============================================================
   group('write operations wait for ready', () {
+    setUp(() {
+      when(() => mockSyncService.syncNow()).thenAnswer((_) async {});
+    });
+
     test('createTask waits for ready before delegating to local', () async {
       final completer = Completer<void>();
       final repo = SyncedTaskRepository(
@@ -352,20 +361,78 @@ void main() {
   });
 
   // ============================================================
-  // Group 7: No direct interaction with sync service
+  // Group 7: Write operations trigger syncNow
   // ============================================================
-  group('sync service interaction', () {
-    test('write operations do not directly call sync service', () async {
+  group('write operations trigger syncNow', () {
+    test('createTask calls syncNow after local write', () async {
       final task = makeEntity(id: 'task-1');
       when(() => mockLocal.createTask(any())).thenAnswer((_) async {});
-      when(() => mockLocal.updateTask(any())).thenAnswer((_) async {});
-      when(() => mockLocal.deleteTask(any())).thenAnswer((_) async {});
+      when(() => mockSyncService.syncNow()).thenAnswer((_) async {});
 
       await repository.createTask(task);
+
+      verifyInOrder([
+        () => mockLocal.createTask(task),
+        () => mockSyncService.syncNow(),
+      ]);
+    });
+
+    test('updateTask calls syncNow after local write', () async {
+      final task = makeEntity(id: 'task-1', title: 'Updated');
+      when(() => mockLocal.updateTask(any())).thenAnswer((_) async {});
+      when(() => mockSyncService.syncNow()).thenAnswer((_) async {});
+
       await repository.updateTask(task);
+
+      verifyInOrder([
+        () => mockLocal.updateTask(task),
+        () => mockSyncService.syncNow(),
+      ]);
+    });
+
+    test('deleteTask calls syncNow after local write', () async {
+      when(() => mockLocal.deleteTask(any())).thenAnswer((_) async {});
+      when(() => mockSyncService.syncNow()).thenAnswer((_) async {});
+
       await repository.deleteTask('task-1');
 
-      verifyZeroInteractions(mockSyncService);
+      verifyInOrder([
+        () => mockLocal.deleteTask('task-1'),
+        () => mockSyncService.syncNow(),
+      ]);
+    });
+
+    test('reorderTasks calls syncNow after local write', () async {
+      when(() => mockLocal.reorderTasks(any())).thenAnswer((_) async {});
+      when(() => mockSyncService.syncNow()).thenAnswer((_) async {});
+
+      final orders = {'task-1': 0, 'task-2': 1};
+      await repository.reorderTasks(orders);
+
+      verifyInOrder([
+        () => mockLocal.reorderTasks(orders),
+        () => mockSyncService.syncNow(),
+      ]);
+    });
+
+    test('upsertTask does not call syncNow', () async {
+      final task = makeEntity(id: 'task-1');
+      when(() => mockLocal.upsertTask(any())).thenAnswer((_) async {});
+
+      await repository.upsertTask(task);
+
+      verifyNever(() => mockSyncService.syncNow());
+    });
+
+    test('read operations do not call syncNow', () async {
+      final task = makeEntity(id: 'task-1');
+      when(() => mockLocal.getTaskById(any())).thenAnswer((_) async => task);
+      when(() => mockLocal.getUnsyncedTasks()).thenAnswer((_) async => [task]);
+
+      await repository.getTaskById('task-1');
+      await repository.getUnsyncedTasks();
+
+      verifyNever(() => mockSyncService.syncNow());
     });
   });
 }
