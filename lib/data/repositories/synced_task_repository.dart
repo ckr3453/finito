@@ -49,13 +49,15 @@ class SyncedTaskRepository implements TaskRepository {
   @override
   Future<void> createTask(TaskEntity task) async {
     await _ready;
-    return _local.createTask(task);
+    await _local.createTask(task);
+    unawaited(_syncService.syncNow());
   }
 
   @override
   Future<void> updateTask(TaskEntity task) async {
     await _ready;
-    return _local.updateTask(task);
+    await _local.updateTask(task);
+    unawaited(_syncService.syncNow());
   }
 
   @override
@@ -66,13 +68,15 @@ class SyncedTaskRepository implements TaskRepository {
   @override
   Future<void> deleteTask(String id) async {
     await _ready;
-    return _local.deleteTask(id);
+    await _local.deleteTask(id);
+    unawaited(_syncService.syncNow());
   }
 
   @override
   Future<void> setTagsForTask(String taskId, List<String> tagIds) async {
     await _ready;
-    return _local.setTagsForTask(taskId, tagIds);
+    await _local.setTagsForTask(taskId, tagIds);
+    unawaited(_syncService.syncNow());
   }
 
   @override
@@ -93,6 +97,7 @@ class SyncedTaskRepository implements TaskRepository {
   @override
   Future<void> reorderTasks(Map<String, int> sortOrders) async {
     await _ready;
-    return _local.reorderTasks(sortOrders);
+    await _local.reorderTasks(sortOrders);
+    unawaited(_syncService.syncNow());
   }
 }
