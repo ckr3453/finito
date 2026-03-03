@@ -25,20 +25,33 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Generate Firebase options placeholder
+      - name: Generate Firebase options
+        env:
+          FIREBASE_WEB_API_KEY: ${{ secrets.FIREBASE_WEB_API_KEY }}
+          FIREBASE_WEB_APP_ID: ${{ secrets.FIREBASE_WEB_APP_ID }}
+          FIREBASE_WEB_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          FIREBASE_WEB_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_WEB_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          FIREBASE_WEB_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          FIREBASE_WEB_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
         run: |
-          cat > lib/firebase_options.dart << 'DART'
+          cat > lib/firebase_options.dart << DART
           import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 
           class DefaultFirebaseOptions {
             static FirebaseOptions get currentPlatform {
-              return const FirebaseOptions(
-                apiKey: 'placeholder',
-                appId: 'placeholder',
-                messagingSenderId: 'placeholder',
-                projectId: 'placeholder',
-              );
+              return web;
             }
+
+            static const FirebaseOptions web = FirebaseOptions(
+              apiKey: '${FIREBASE_WEB_API_KEY}',
+              appId: '${FIREBASE_WEB_APP_ID}',
+              messagingSenderId: '${FIREBASE_WEB_MESSAGING_SENDER_ID}',
+              projectId: '${FIREBASE_WEB_PROJECT_ID}',
+              authDomain: '${FIREBASE_WEB_AUTH_DOMAIN}',
+              storageBucket: '${FIREBASE_WEB_STORAGE_BUCKET}',
+              measurementId: '${FIREBASE_WEB_MEASUREMENT_ID}',
+            );
           }
           DART
           dart format lib/firebase_options.dart
