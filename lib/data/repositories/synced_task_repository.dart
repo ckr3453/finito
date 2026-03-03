@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:todo_app/data/repositories/local_task_repository.dart';
 import 'package:todo_app/domain/entities/entities.dart';
 import 'package:todo_app/domain/enums/enums.dart';
@@ -7,12 +9,15 @@ import 'package:todo_app/services/task_sync_service.dart';
 class SyncedTaskRepository implements TaskRepository {
   final LocalTaskRepository _local;
   final TaskSyncService _syncService;
+  final Future<void> _ready;
 
   SyncedTaskRepository({
     required LocalTaskRepository local,
     required TaskSyncService syncService,
+    required Future<void> ready,
   }) : _local = local,
-       _syncService = syncService;
+       _syncService = syncService,
+       _ready = ready;
 
   TaskSyncService get syncService => _syncService;
 
@@ -42,12 +47,14 @@ class SyncedTaskRepository implements TaskRepository {
   }
 
   @override
-  Future<void> createTask(TaskEntity task) {
+  Future<void> createTask(TaskEntity task) async {
+    await _ready;
     return _local.createTask(task);
   }
 
   @override
-  Future<void> updateTask(TaskEntity task) {
+  Future<void> updateTask(TaskEntity task) async {
+    await _ready;
     return _local.updateTask(task);
   }
 
@@ -57,12 +64,14 @@ class SyncedTaskRepository implements TaskRepository {
   }
 
   @override
-  Future<void> deleteTask(String id) {
+  Future<void> deleteTask(String id) async {
+    await _ready;
     return _local.deleteTask(id);
   }
 
   @override
-  Future<void> setTagsForTask(String taskId, List<String> tagIds) {
+  Future<void> setTagsForTask(String taskId, List<String> tagIds) async {
+    await _ready;
     return _local.setTagsForTask(taskId, tagIds);
   }
 
@@ -82,7 +91,8 @@ class SyncedTaskRepository implements TaskRepository {
   }
 
   @override
-  Future<void> reorderTasks(Map<String, int> sortOrders) {
+  Future<void> reorderTasks(Map<String, int> sortOrders) async {
+    await _ready;
     return _local.reorderTasks(sortOrders);
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:todo_app/data/repositories/local_task_repository.dart';
@@ -29,6 +31,7 @@ void main() {
     repository = SyncedTaskRepository(
       local: mockLocal,
       syncService: mockSyncService,
+      ready: Future<void>.value(),
     );
   });
 
@@ -237,7 +240,119 @@ void main() {
   });
 
   // ============================================================
-  // Group 6: No direct interaction with sync service
+  // Group 6: Write operations wait for ready
+  // ============================================================
+  group('write operations wait for ready', () {
+    test('createTask waits for ready before delegating to local', () async {
+      final completer = Completer<void>();
+      final repo = SyncedTaskRepository(
+        local: mockLocal,
+        syncService: mockSyncService,
+        ready: completer.future,
+      );
+      final task = makeEntity(id: 'task-1');
+      when(() => mockLocal.createTask(any())).thenAnswer((_) async {});
+
+      final future = repo.createTask(task);
+
+      // ready가 완료되기 전에는 local에 위임하지 않음
+      await Future<void>.delayed(Duration.zero);
+      verifyNever(() => mockLocal.createTask(any()));
+
+      completer.complete();
+      await future;
+
+      verify(() => mockLocal.createTask(task)).called(1);
+    });
+
+    test('updateTask waits for ready before delegating to local', () async {
+      final completer = Completer<void>();
+      final repo = SyncedTaskRepository(
+        local: mockLocal,
+        syncService: mockSyncService,
+        ready: completer.future,
+      );
+      final task = makeEntity(id: 'task-1', title: 'Updated');
+      when(() => mockLocal.updateTask(any())).thenAnswer((_) async {});
+
+      final future = repo.updateTask(task);
+
+      await Future<void>.delayed(Duration.zero);
+      verifyNever(() => mockLocal.updateTask(any()));
+
+      completer.complete();
+      await future;
+
+      verify(() => mockLocal.updateTask(task)).called(1);
+    });
+
+    test('deleteTask waits for ready before delegating to local', () async {
+      final completer = Completer<void>();
+      final repo = SyncedTaskRepository(
+        local: mockLocal,
+        syncService: mockSyncService,
+        ready: completer.future,
+      );
+      when(() => mockLocal.deleteTask(any())).thenAnswer((_) async {});
+
+      final future = repo.deleteTask('task-1');
+
+      await Future<void>.delayed(Duration.zero);
+      verifyNever(() => mockLocal.deleteTask(any()));
+
+      completer.complete();
+      await future;
+
+      verify(() => mockLocal.deleteTask('task-1')).called(1);
+    });
+
+    test('reorderTasks waits for ready before delegating to local', () async {
+      final completer = Completer<void>();
+      final repo = SyncedTaskRepository(
+        local: mockLocal,
+        syncService: mockSyncService,
+        ready: completer.future,
+      );
+      when(() => mockLocal.reorderTasks(any())).thenAnswer((_) async {});
+
+      final orders = {'task-1': 0, 'task-2': 1};
+      final future = repo.reorderTasks(orders);
+
+      await Future<void>.delayed(Duration.zero);
+      verifyNever(() => mockLocal.reorderTasks(any()));
+
+      completer.complete();
+      await future;
+
+      verify(() => mockLocal.reorderTasks(orders)).called(1);
+    });
+
+    test('read operations do not wait for ready', () async {
+      final completer = Completer<void>();
+      final repo = SyncedTaskRepository(
+        local: mockLocal,
+        syncService: mockSyncService,
+        ready: completer.future,
+      );
+      final task = makeEntity(id: 'task-1');
+      when(() => mockLocal.getTaskById('task-1')).thenAnswer((_) async => task);
+      when(
+        () => mockLocal.watchAllTasks(),
+      ).thenAnswer((_) => Stream.value([task]));
+
+      // ready가 미완료여도 read는 즉시 동작
+      final result = await repo.getTaskById('task-1');
+      expect(result, task);
+
+      expect(repo.watchAllTasks(), emits([task]));
+
+      // completer는 아직 완료되지 않음
+      completer.complete();
+    });
+  });
+
+  // ============================================================
+  // Group 7: No direct interaction with sync service
   // ============================================================
   group('sync service interaction', () {
     test('write operations do not directly call sync service', () async {
