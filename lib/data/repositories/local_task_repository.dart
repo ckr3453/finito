@@ -114,7 +114,8 @@ class LocalTaskRepository implements TaskRepository {
 
   @override
   Future<void> updateTask(TaskEntity task) async {
-    await _db.taskDao.updateTask(_toCompanion(task));
+    final companion = _toCompanion(task.copyWith(isSynced: false));
+    await _db.taskDao.updateTask(companion);
     await _db.taskDao.setTagsForTask(task.id, task.tagIds);
   }
 
