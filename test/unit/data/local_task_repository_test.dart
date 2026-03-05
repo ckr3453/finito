@@ -233,5 +233,15 @@ void main() {
       final unsynced = await repo.getUnsyncedTasks();
       expect(unsynced, isEmpty);
     });
+
+    test('updateTask resets isSynced to false', () async {
+      await repo.createTask(makeTask(id: 'sync-reset', isSynced: true));
+      final task = await repo.getTaskById('sync-reset');
+      await repo.updateTask(task!.copyWith(title: 'Updated'));
+
+      final unsynced = await repo.getUnsyncedTasks();
+      expect(unsynced, hasLength(1));
+      expect(unsynced.first.id, 'sync-reset');
+    });
   });
 }
